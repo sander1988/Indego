@@ -1,4 +1,6 @@
 # Indego
+Fork from iMarkus/Indego
+
 Home Assistant Custom Component for Bosch Indego Lawn Mower
 
 Place the indego.py in
