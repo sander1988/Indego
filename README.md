@@ -3,20 +3,18 @@ Fork from iMarkus/Indego (thanks for the inspiration and all your work with the 
 
 Home Assistant Custom Component for Bosch Indego Lawn Mower
 
-Place the indego.py in
+Place the files in custom-component in your Home Assistant folder for custom-componentes
 
-    config/custom_components/sensor
+    config/custom_components
     
 Add new platform to your configuration.yaml
 
-    - platform: indego
-      host: api.indego.iot.bosch-si.com
-      port: 443
+    indego:
       username: !secret indego_username
       password: !secret indego_password
       id: !secret indego_id
 
-Add your account (usually mail address), password and serial number to secrets.yaml or directly in configuration.yaml. 
+Add your account (usually mail address), password and serial number to secrets.yaml: 
 
     indego_username: x.y@mail.com
     indego_password: mysecretpw
@@ -24,11 +22,12 @@ Add your account (usually mail address), password and serial number to secrets.y
 
 Finally add your new sensor called indego_state: 
 
-    sensor.indego_state
-
+    sensor:
+      - platform: indego
+    
 Debugging:
 
     logger:
       default: error
       logs:
-        custom_components.sensor.indego: debug
+        custom_components.indego: debug
