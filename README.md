@@ -1,5 +1,5 @@
 # Indego
-Fork from iMarkus/Indego
+Fork from iMarkus/Indego (thanks for the inspiration and all your work with the basics!)
 
 Home Assistant Custom Component for Bosch Indego Lawn Mower
 
