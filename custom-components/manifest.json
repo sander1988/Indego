@@ -1,0 +1,8 @@
+{
+  "domain": "Indego_sensor",
+  "name": "Indego Sensor",
+  "documentation": "https://github.com/jm-73/Indego/",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": []
+}

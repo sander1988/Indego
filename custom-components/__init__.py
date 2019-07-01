@@ -1,0 +1,1 @@
+"""The Indego sensor integration."""
