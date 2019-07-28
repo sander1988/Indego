@@ -18,6 +18,7 @@ from homeassistant.components.switch import (PLATFORM_SCHEMA)
 
 _LOGGER = logging.getLogger(__name__)
 
+
 DOMAIN = 'indego'
 DATA_KEY = DOMAIN
 CONF_HOST = 'api.indego.iot.bosch-si.com'
