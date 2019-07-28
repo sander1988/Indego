@@ -13,27 +13,18 @@ from homeassistant.util import Throttle
 from requests.auth import HTTPBasicAuth
 from homeassistant.const import TEMP_CELSIUS
 from homeassistant.helpers.entity import Entity
-import homeassistant.helpers.config_validation as cv
 from homeassistant.components.switch import (PLATFORM_SCHEMA)
 
 _LOGGER = logging.getLogger(__name__)
 
-DOMAIN = 'indego'
-DATA_KEY = DOMAIN
 CONF_HOST = 'api.indego.iot.bosch-si.com'
 CONF_PORT = '443'
-CONF_REGION = 'region'
-ATTR_VIN = 'vin'
 DEFAULT_NAME = 'Bosch Indego Mower'
-DEFAULT_REGION = 'en'
-MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=120)
-UPDATE_INTERVAL = 5  # in minutes
-SERVICE_UPDATE_STATE = 'update_state'
 
 _LOGGER.info("Indego init sensor ++++++++++++++++")
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
-    vol.Optional('name', default='Indego'): cv.string,
+    vol.Optional('name', default=DEFAULT_NAME): cv.string,
     vol.Required(CONF_USERNAME):  cv.string,
     vol.Required(CONF_PASSWORD):  cv.string,
     vol.Required(CONF_ID):  cv.string
@@ -41,18 +32,20 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Setup the sensor platform."""
-    _LOGGER.info("Set up the Idego Sensor!")
+    _LOGGER.info("Set up the Indego Platform!")
     
     add_entities([IndegoState('state', config)])
     add_entities([IndegoMowed('state', config)])
+    add_entities([IndegoAlerts('state', config)])
+    add_entities([IndegoNextPredictiveSession('state', config)])
+    add_entities([IndegoMowingMode('state', config)])
 
 class IndegoState(Entity):
-    """Representation of a Sensor."""
+    """Representation of the State Sensor."""
 
     def __init__(self, sensor, config):
-        """Initialize the sensor."""
+        """Initialize the State sensor."""
         self._state = None
-        self._model = 'Indego Jens'
         self.mower_name = config.get('name')
         self.mower_username = config.get(CONF_USERNAME)
         self.mower_password = config.get(CONF_PASSWORD)
@@ -73,15 +66,6 @@ class IndegoState(Entity):
     def state(self):
         """Return the state of the sensor."""
         return self._state
-    
-    @property
-    def model(self):
-        """Return the model of the mover."""
-        tmp_model = indegoAPI_Instance.getModel()
-        return tmp_model
-        #return self._state['Model']
-        #return self._state
-
 
     def update(self):
         """Fetch new state data for the sensor.
@@ -110,11 +94,8 @@ class IndegoState(Entity):
         test = indegoAPI_Instance.getState()
         self._state = test
 
-
-
-
 class IndegoMowed(Entity):
-    """Representation of a Sensor."""
+    """Representation of the lawn mowed percentage"""
 
     def __init__(self, sensor, config):
         """Initialize the sensor."""
@@ -143,7 +124,7 @@ class IndegoMowed(Entity):
         """Fetch new state data for the sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        _LOGGER.info("Update Indego state!")
+        _LOGGER.info("Update Indego Mowed Percentage!")
 
         host = CONF_HOST
         _LOGGER.debug(f"Host = {host}")
@@ -164,6 +145,165 @@ class IndegoMowed(Entity):
         indegoAPI_Instance = IndegoAPI(api_url=url, username=username, password=password, serial=serial)
         _LOGGER.debug("setup-Update Idego API")
         test = indegoAPI_Instance.getMowed()
+        self._state = test
+
+class IndegoAlerts(Entity):
+    """Representation of the alerts"""
+
+    def __init__(self, sensor, config):
+        """Initialize the sensor."""
+        self._state = None
+        self.mower_name = config.get('name')
+        self.mower_username = config.get(CONF_USERNAME)
+        self.mower_password = config.get(CONF_PASSWORD)
+        self.mower_id = config.get(CONF_ID)
+    
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        tmp_name = str(self.mower_name) + '_alerts' 
+        return tmp_name
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    #@property
+    #def unit_of_measurement(self):
+    #    """Return the unit of measurement."""
+    #    return '%'
+    
+    def update(self):
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        _LOGGER.info("Update Indego Alerts!")
+
+        host = CONF_HOST
+        _LOGGER.debug(f"Host = {host}")
+        port = CONF_PORT
+        _LOGGER.debug(f"Port = {port}")
+        name = self.mower_name
+        _LOGGER.debug(f"Mower name = {name}")
+        username = self.mower_username
+        _LOGGER.debug(f"Mower username = {username}")
+        password = self.mower_password
+        _LOGGER.debug(f"Mower password = {password}")
+        serial = self.mower_id
+        _LOGGER.debug(f"Mower ID = {serial}")
+        url = "https://{}:{}/api/v1/".format(host, port)
+        _LOGGER.debug(f"Indego API Host = {url}")
+
+        _LOGGER.debug("Instanciate Idego API")
+        indegoAPI_Instance = IndegoAPI(api_url=url, username=username, password=password, serial=serial)
+        _LOGGER.debug("setup-Update Idego API")
+        test_data = indegoAPI_Instance.getAlerts()
+        _LOGGER.debug(f"Alert data: {test_data}")
+        test = len(test_data)
+        _LOGGER.debug(f"Alerts: {test}")
+        self._state = test
+
+class IndegoNextPredictiveSession(Entity):
+    """Representation of the next predicitve session"""
+
+    def __init__(self, sensor, config):
+        """Initialize the sensor."""
+        self._state = None
+        self.mower_name = config.get('name')
+        self.mower_username = config.get(CONF_USERNAME)
+        self.mower_password = config.get(CONF_PASSWORD)
+        self.mower_id = config.get(CONF_ID)
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        tmp_name = str(self.mower_name) + '_next_predictive_session' 
+        return tmp_name
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    def update(self):
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        _LOGGER.info("Update Indego Next Session!")
+
+        host = CONF_HOST
+        _LOGGER.debug(f"Host = {host}")
+        port = CONF_PORT
+        _LOGGER.debug(f"Port = {port}")
+        name = self.mower_name
+        _LOGGER.debug(f"Mower name = {name}")
+        username = self.mower_username
+        _LOGGER.debug(f"Mower username = {username}")
+        password = self.mower_password
+        _LOGGER.debug(f"Mower password = {password}")
+        serial = self.mower_id
+        _LOGGER.debug(f"Mower ID = {serial}")
+        url = "https://{}:{}/api/v1/".format(host, port)
+        _LOGGER.debug(f"Indego API Host = {url}")
+
+        _LOGGER.debug("Instanciate Idego API")
+        indegoAPI_Instance = IndegoAPI(api_url=url, username=username, password=password, serial=serial)
+        _LOGGER.debug("setup-Update Idego API")
+        test = indegoAPI_Instance.getNextPredicitiveCutting()
+        _LOGGER.debug(f"Next session: {test}")
+        #test = len(test_data)
+        #_LOGGER.debug(f"Alerts: {test}")
+        self._state = test
+
+class IndegoMowingMode(Entity):
+    """Representation of the mowing mode"""
+
+    def __init__(self, sensor, config):
+        """Initialize the sensor."""
+        self._state = None
+        self.mower_name = config.get('name')
+        self.mower_username = config.get(CONF_USERNAME)
+        self.mower_password = config.get(CONF_PASSWORD)
+        self.mower_id = config.get(CONF_ID)
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        tmp_name = str(self.mower_name) + '_mowing_mode' 
+        return tmp_name
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    def update(self):
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        _LOGGER.info("Update Indego Mowing Mode!")
+
+        host = CONF_HOST
+        _LOGGER.debug(f"Host = {host}")
+        port = CONF_PORT
+        _LOGGER.debug(f"Port = {port}")
+        name = self.mower_name
+        _LOGGER.debug(f"Mower name = {name}")
+        username = self.mower_username
+        _LOGGER.debug(f"Mower username = {username}")
+        password = self.mower_password
+        _LOGGER.debug(f"Mower password = {password}")
+        serial = self.mower_id
+        _LOGGER.debug(f"Mower ID = {serial}")
+        url = "https://{}:{}/api/v1/".format(host, port)
+        _LOGGER.debug(f"Indego API Host = {url}")
+
+        _LOGGER.debug("Instanciate Idego API")
+        indegoAPI_Instance = IndegoAPI(api_url=url, username=username, password=password, serial=serial)
+        _LOGGER.debug("setup-Update Idego API")
+        test = indegoAPI_Instance.getMowingMode()
+        _LOGGER.debug(f"Mower Mode: {test}")
+        #test = len(test_data)
+        #_LOGGER.debug(f"Alerts: {test}")
         self._state = test
 
 
@@ -385,7 +525,8 @@ class IndegoAPI():
         complete_url = 'alerts'
         Runtime_temp = self.get(complete_url)
         _LOGGER.debug("Runtime_temp: " + str(Runtime_temp))
-        value = str(Runtime_temp)
+        #value = str(Runtime_temp)
+        value = Runtime_temp
         return value
 
     def getNextPredicitiveCutting(self):
