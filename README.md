@@ -23,13 +23,18 @@ Add your account (usually mail address), password and serial number to secrets.y
 Usage
 
 There are two sensor entities:
+--- | ---
+<name>_mower_state | This is the current state of the mower. Updated every 30 seconds.
 
-<name>_mower_state
-This is the current state of the mower. Updated every 30 seconds.
+<name>_lawn_mowed | This is the current percentage of the lawn that is mowed.
 
-<name>_lawn_mowed
-This is the current percentage of the lawn that is mowed.
- 
+<name>_alerts | Number of alerts on the mower
+
+<name>_mowing_mode | The mowing mode set for the mower
+
+<name>_next_predicitve_session | Next predicted mowing session (currently not working)
+
+
 Debugging:
 
     logger:
