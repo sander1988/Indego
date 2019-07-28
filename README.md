@@ -28,6 +28,9 @@ Debugging:
         custom_components.indego: debug
 
 Credits:
+
 Fork from iMarkus/Indego (thanks for the inspiration and all your work with the basics!)
+
 Inspiration from http://grauonline.de/wordpress/?page_id=219
+
 Inspiration from https://github.com/jofleck/iot-device-bosch-indego-controller
