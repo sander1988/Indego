@@ -1,6 +1,4 @@
 # Indego
-Fork from iMarkus/Indego (thanks for the inspiration and all your work with the basics!)
-
 Home Assistant Custom Component for Bosch Indego Lawn Mower
 
 Place the files in custom-component in your Home Assistant folder for custom-componentes
@@ -28,3 +26,8 @@ Debugging:
       default: error
       logs:
         custom_components.indego: debug
+
+Credits:
+Fork from iMarkus/Indego (thanks for the inspiration and all your work with the basics!)
+Inspiration from http://grauonline.de/wordpress/?page_id=219
+Inspiration from https://github.com/jofleck/iot-device-bosch-indego-controller
