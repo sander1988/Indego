@@ -5,7 +5,7 @@ Place the files in custom-component in your Home Assistant folder for custom-com
 
     config/custom_components
     
-Add the sensor to your configuration.yaml
+Add the platform to your configuration.yaml
 
     sensor:
       - platform: indego
@@ -19,13 +19,24 @@ Add your account (usually mail address), password and serial number to secrets.y
     indego_username: name@mail.com
     indego_password: mysecretpw
     indego_id: 123456789
-    
+
+Usage
+
+There are two sensor entities:
+
+<name>_mower_state
+This is the current state of the mower. Updated every 30 seconds.
+
+<name>_lawn_mowed
+This is the current percentage of the lawn that is mowed.
+ 
 Debugging:
 
     logger:
       default: error
       logs:
         custom_components.indego: debug
+
 
 Credits:
 
