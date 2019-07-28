@@ -18,7 +18,6 @@ from homeassistant.components.switch import (PLATFORM_SCHEMA)
 
 _LOGGER = logging.getLogger(__name__)
 
-
 DOMAIN = 'indego'
 DATA_KEY = DOMAIN
 CONF_HOST = 'api.indego.iot.bosch-si.com'
@@ -43,27 +42,46 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 def setup_platform(hass, config, add_entities, discovery_info=None):
     """Setup the sensor platform."""
     _LOGGER.info("Set up the Idego Sensor!")
-    add_entities([IndegoSensor('state', config)])
     
-class IndegoSensor(Entity):
+    add_entities([IndegoState('state', config)])
+    add_entities([IndegoMowed('state', config)])
+
+class IndegoState(Entity):
     """Representation of a Sensor."""
 
     def __init__(self, sensor, config):
         """Initialize the sensor."""
         self._state = None
+        self._model = 'Indego Jens'
         self.mower_name = config.get('name')
         self.mower_username = config.get(CONF_USERNAME)
         self.mower_password = config.get(CONF_PASSWORD)
         self.mower_id = config.get(CONF_ID)
+
+    @property
+    def id(self):
+        """Return the id of the Automower."""
+        return self._id
+    
     @property
     def name(self):
         """Return the name of the sensor."""
-        return self.mower_name
+        tmp_name = self.mower_name + '_mower_state'
+        return tmp_name
 
     @property
     def state(self):
         """Return the state of the sensor."""
         return self._state
+    
+    @property
+    def model(self):
+        """Return the model of the mover."""
+        tmp_model = indegoAPI_Instance.getModel()
+        return tmp_model
+        #return self._state['Model']
+        #return self._state
+
 
     def update(self):
         """Fetch new state data for the sensor.
@@ -91,6 +109,63 @@ class IndegoSensor(Entity):
         _LOGGER.debug("setup-Update Idego API")
         test = indegoAPI_Instance.getState()
         self._state = test
+
+
+
+
+class IndegoMowed(Entity):
+    """Representation of a Sensor."""
+
+    def __init__(self, sensor, config):
+        """Initialize the sensor."""
+        self._state = None
+        self.mower_name = config.get('name')
+        self.mower_username = config.get(CONF_USERNAME)
+        self.mower_password = config.get(CONF_PASSWORD)
+        self.mower_id = config.get(CONF_ID)
+    @property
+    def name(self):
+        """Return the name of the sensor."""
+        tmp_name = str(self.mower_name) + '_lawn_mowed' 
+        return tmp_name
+
+    @property
+    def state(self):
+        """Return the state of the sensor."""
+        return self._state
+
+    @property
+    def unit_of_measurement(self):
+        """Return the unit of measurement."""
+        return '%'
+    
+    def update(self):
+        """Fetch new state data for the sensor.
+        This is the only method that should fetch new data for Home Assistant.
+        """
+        _LOGGER.info("Update Indego state!")
+
+        host = CONF_HOST
+        _LOGGER.debug(f"Host = {host}")
+        port = CONF_PORT
+        _LOGGER.debug(f"Port = {port}")
+        name = self.mower_name
+        _LOGGER.debug(f"Mower name = {name}")
+        username = self.mower_username
+        _LOGGER.debug(f"Mower username = {username}")
+        password = self.mower_password
+        _LOGGER.debug(f"Mower password = {password}")
+        serial = self.mower_id
+        _LOGGER.debug(f"Mower ID = {serial}")
+        url = "https://{}:{}/api/v1/".format(host, port)
+        _LOGGER.debug(f"Indego API Host = {url}")
+
+        _LOGGER.debug("Instanciate Idego API")
+        indegoAPI_Instance = IndegoAPI(api_url=url, username=username, password=password, serial=serial)
+        _LOGGER.debug("setup-Update Idego API")
+        test = indegoAPI_Instance.getMowed()
+        self._state = test
+
 
 class IndegoAPI():
     """Simple wrapper for Indego's API."""
@@ -447,3 +522,4 @@ class IndegoAPI():
         #value = Runtime_temp
         value = "error"
         return value
+
