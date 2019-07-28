@@ -23,7 +23,9 @@ Add your account (usually mail address), password and serial number to secrets.y
 Usage
 
 There are two sensor entities:
+
 |sensor | description|
+|-------|------------|
 |<name>_mower_state | This is the current state of the mower. Updated every 30 seconds.|
 |<name>_lawn_mowed | This is the current percentage of the lawn that is mowed.|
 |<name>_alerts | Number of alerts on the mower|
