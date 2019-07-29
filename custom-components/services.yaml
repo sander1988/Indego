@@ -1,0 +1,6 @@
+send_command:
+  description: Send command to mower.
+  fields:
+    command: 
+      description: The command you wish to send to the mower. 
+      example: mow, returnToDock, pause.
