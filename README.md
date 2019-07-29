@@ -1,25 +1,27 @@
 # Indego
-Home Assistant Custom Component for Bosch Indego Lawn Mower
+Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 ## Files
-Place the files in custom-component in your Home Assistant folder for custom-componentes
+Place the files in custom-component in your Home Assistant folder for custom-components:
 
     config/custom_components
     
 ## Configuration
 Add the domain to your configuration.yaml
 
-indego:
-  name: Mower name
-  username: !secret indego_username
-  password: !secret indego_password
-  id: !secret indego_id
+.. code:: bash
+
+    indego:
+      name: Mower name
+      username: !secret indego_username
+      password: !secret indego_password
+      id: !secret indego_id
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to secrets.yaml: 
 
-  indego_username: name@mail.com
-  indego_password: mysecretpw
-  indego_id: 123456789
+    indego_username: name@mail.com
+    indego_password: mysecretpw
+    indego_id: 123456789
 
 ## Usage
 
@@ -27,8 +29,8 @@ There are four sensor entities:
 
 |sensor | description|
 |-------|------------|
-|<name>_mower_state | This is the current state of the mower. Updated every 30 seconds.|
-|<name>_lawn_mowed | This is the current percentage of the lawn that is mowed.|
+|<name>_mower_state | Current state of the mower|
+|<name>_lawn_mowed | Current percentage of the lawn that is mowed|
 |<name>_alerts | Number of alerts on the mower|
 |<name>_mowing_mode | The mowing mode set for the mower|
 

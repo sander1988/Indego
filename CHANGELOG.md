@@ -13,12 +13,6 @@ Added different icons to the sensors
 Dynamic icon for Alert Sensor
 Added RELEASENOTES.md
 
-indego:
-  name: Mower name
-  username: !secret indego_username
-  password: !secret indego_password
-  id: !secret indego_id
-
 ## 0.1 2019-07-27
 
 ### Changes
