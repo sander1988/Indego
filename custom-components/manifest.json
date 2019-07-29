@@ -1,8 +1,8 @@
 {
-  "domain": "Indego_sensor",
-  "name": "Indego Sensor",
-  "documentation": "https://github.com/jm-73/Indego/",
+  "domain": "indego",
+  "name": "Indego Mower",
+  "documentation": "https://github.com/jm-73/Indego",
   "dependencies": [],
-  "codeowners": [],
-  "requirements": []
+  "codeowners": [jm-73],
+  "requirements": ["pyIndego==0.1.4"]
 }

@@ -1,28 +1,29 @@
 # Indego
 Home Assistant Custom Component for Bosch Indego Lawn Mower
 
+## Files
 Place the files in custom-component in your Home Assistant folder for custom-componentes
 
     config/custom_components
     
-Add the platform to your configuration.yaml
+## Configuration
+Add the domain to your configuration.yaml
 
-    sensor:
-      - platform: indego
-        name: Mower name
-        username: !secret indego_username
-        password: !secret indego_password
-        id: !secret indego_id
+indego:
+  name: Mower name
+  username: !secret indego_username
+  password: !secret indego_password
+  id: !secret indego_id
 
-Add your account (usually mail address), password and serial number to secrets.yaml: 
+Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to secrets.yaml: 
 
-    indego_username: name@mail.com
-    indego_password: mysecretpw
-    indego_id: 123456789
+  indego_username: name@mail.com
+  indego_password: mysecretpw
+  indego_id: 123456789
 
-Usage
+## Usage
 
-There are two sensor entities:
+There are four sensor entities:
 
 |sensor | description|
 |-------|------------|
@@ -30,8 +31,18 @@ There are two sensor entities:
 |<name>_lawn_mowed | This is the current percentage of the lawn that is mowed.|
 |<name>_alerts | Number of alerts on the mower|
 |<name>_mowing_mode | The mowing mode set for the mower|
-|<name>_next_predicitve_session | Next predicted mowing session (currently not working)|
 
+There are a service exposed to HA:
+
+|service | description|
+|-------|------------|
+|indego.mower_command | Send json string to the service|
+
+|json string| description|
+|-------|------------|
+|{"command":"mow"}|start/continue mowing|
+|{"command":"pause"}|pause mower|
+|{"command":"returnToDock"}|Return mower to dock|
 
 Debugging:
 
@@ -43,7 +54,7 @@ Debugging:
 
 Credits:
 
-Fork from iMarkus/Indego (thanks for the inspiration and all your work with the basics!)
+Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
 Inspiration from http://grauonline.de/wordpress/?page_id=219
 
