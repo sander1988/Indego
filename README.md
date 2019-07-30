@@ -2,7 +2,7 @@
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 ## Files
-Place the folder Indego (including the files) in custom-component in your Home Assistant folder for custom-components:
+Place the folder custom_components/indego (including the files) in custom_component in your Home Assistant config folder:
 
     config/custom_components
     
@@ -23,6 +23,7 @@ Add your credentials used with Bosch Mower app (mail address, password and mower
 
 ## Usage
 
+### Entities
 There are four sensor entities:
 
 |Sensor | Description|
@@ -32,6 +33,11 @@ There are four sensor entities:
 |MowerName_alerts | Number of alerts on the mower|
 |MowerName_mowing_mode | The mowing mode set for the mower|
 
+Add them to your HA gui. Example of the sensors in the HA frontend.
+![GitHub Logo](/doc/Indego_Sensors.png)
+Format: ![Alt Text](url)
+
+### Service
 There are a service exposed to HA:
 
 |Service |Description|
@@ -44,11 +50,32 @@ There are a service exposed to HA:
 |{"command":"pause"} | Pause mower|
 |{"command":"returnToDock"} | Return mower to dock|
 
-Debugging:
+Example creating automation in HA gui:
 
+
+Example for automations.yaml:
+
+``` yaml
+# automation.yaml
+- id: '1564475250261'
+  alias: Mower start
+  trigger:
+  - at: '10:30'
+    platform: time
+  condition: []
+  action:
+  - data:
+      command: mow
+    service: indego.mover_command
+```
+
+Debugging:
+``` yaml
+#configuration.yaml
     logger:
       logs:
         custom_components.indego: debug
+```
 
 ## Credits
 
