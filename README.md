@@ -1,26 +1,27 @@
 # Indego
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
-## Files
-Place the folder custom_components/indego (including the files) in custom_component in your Home Assistant config folder:
-
-    config/custom_components
+## Installation
+Place the folder indego in your custom_component in the Home Assistant config folder (config/custom_components).
     
 ## Configuration
 Add the domain to your configuration.yaml
-
-    indego:
-      name: MowerName
-      username: !secret indego_username
-      password: !secret indego_password
-      id: !secret indego_id
+``` yaml
+#configuration.yaml
+indego:
+  name: MowerName
+  username: !secret indego_username
+  password: !secret indego_password
+  id: !secret indego_id
+```
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
-
-    indego_username: name@mail.com
-    indego_password: mysecretpw
-    indego_id: 123456789
-
+``` yaml
+#secrets.yaml
+indego_username: name@mail.com
+indego_password: mysecretpw
+indego_id: 123456789
+```
 ## Usage
 
 ### Entities
@@ -34,11 +35,11 @@ There are four sensor entities:
 |MowerName_mowing_mode | The mowing mode set for the mower|
 
 Add them to your HA gui. Example of the sensors in the HA frontend.
-![GitHub Logo](/doc/Indego_Sensors.png)
+![GitHub Logo](/doc/Indego_Sensors.PNG)
 Format: ![Alt Text](url)
 
 ### Service
-There are a service exposed to HA:
+There are a service exposed to HA called indego.mower_command. It sends a specified command to the mower.
 
 |Service |Description|
 |-------|------------|
@@ -56,7 +57,7 @@ Example creating automation in HA gui:
 Example for automations.yaml:
 
 ``` yaml
-# automation.yaml
+# automations.yaml
 - id: '1564475250261'
   alias: Mower start
   trigger:
@@ -69,12 +70,14 @@ Example for automations.yaml:
     service: indego.mover_command
 ```
 
-Debugging:
+## Debugging
+To get debug logs in your log file, specify theese options in your configuration file:
+
 ``` yaml
 #configuration.yaml
-    logger:
-      logs:
-        custom_components.indego: debug
+logger:
+  logs:
+    custom_components.indego: debug
 ```
 
 ## Credits
