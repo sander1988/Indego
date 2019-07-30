@@ -35,8 +35,9 @@ There are four sensor entities:
 |MowerName_mowing_mode | The mowing mode set for the mower|
 
 Add them to your HA gui. Example of the sensors in the HA frontend.
-![GitHub Logo](/doc/Indego_Sensors.PNG)
-Format: ![Alt Text](url)
+![GitHub Logo](/doc/Indego_Sensors.PNG)(url)
+
+!(/doc/Indego_Sensors.PNG)(url)
 
 ### Service
 There are a service exposed to HA called indego.mower_command. It sends a specified command to the mower.
@@ -52,7 +53,7 @@ There are a service exposed to HA called indego.mower_command. It sends a specif
 |{"command":"returnToDock"} | Return mower to dock|
 
 Example creating automation in HA gui:
-
+![GitHub Logo](/doc/Indego_Call_Service.PNG)(url)
 
 Example for automations.yaml:
 
