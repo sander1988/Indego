@@ -51,7 +51,7 @@ There are a service exposed to HA called indego.mower_command. It sends a specif
 |{"command":"returnToDock"} | Return mower to dock|
 
 Example creating automation in HA gui:
-![GitHub Logo](/doc/Indego_Call_Service.PNG)(url)
+![GitHub Logo](/doc/Indego_Call_service.PNG)
 
 Example for automations.yaml:
 
