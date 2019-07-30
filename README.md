@@ -41,17 +41,13 @@ There are four sensor entities:
 
 
 ### Service
-There are a service exposed to HA called indego.mower_command. It sends a specified command to the mower.
+There are a service exposed to HA called indego.mower_command. It sends a specified command to the mower. Accepted commands are:
 
-|Service |Description|
-|-------|------------|
-|indego.mower_command | Send Json string to the service|
-
-|Json string|Description|
-|-------|------------|
-|{"command":"mow"} | Start/continue mowing|
-|{"command":"pause"} | Pause mower|
-|{"command":"returnToDock"} | Return mower to dock|
+|Command      |Description           |
+|-------------|----------------------|
+|mow          | Start/continue mowing|
+|pause        | Pause mower          |
+|returnToDock | Return mower to dock |
 
 Example creating automation in HA gui:
 ![Services](/doc/Indego_Call_service.PNG)
@@ -86,7 +82,7 @@ logger:
 
 If you experience issues/bugs with this the best way to report them is to open an issue in **this** repo.
 
-[Issue link](https://github.com/jm-73/Indego/)
+[Issue link](https://github.com/jm-73/Indego/issues)
 
 ## Credits
 
