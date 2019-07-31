@@ -6,7 +6,7 @@ Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 
 ## Installation
-Place the folder `indego` in your `config/custom_component` in your Home Assistant.
+Copy the folder `indego` in your `config/custom_component` in your Home Assistant.
     
 ## Configuration
 Add the domain to your configuration.yaml
