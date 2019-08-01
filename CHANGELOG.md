@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.3 2019-08-01
+Tested with Hassio 0.96.5 and Bosch Indego 1000
+
+### Breaking changes
+Fixed a typo in service name. New name is "indego.mower_command"
+Changed default names on sensors to make them shorter.
+
+### Changes
+Uses pyIndego 0.1.6
+- Added getSerial in API
+Added sensor for Runtime
+Added properties on sensor **mower state**
+- model
+- serial
+- firmware 
+Added properties on sensor **lawn mowed**
+- Session Operation
+- Session Mowing
+- Session Charging
+Added binary sensor **update available**
+Added sensor "runtime total" with properties
+- Total Operation
+- Total Mowing
+- Total Charging 
+Code refactoring and typos corrected
+
 ## 0.2 2019-07-29
 Tested with Hassio 0.96.5
 

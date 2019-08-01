@@ -2,7 +2,7 @@
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 
-![Entities in Home Asistant](/doc/Indego_Sensors.PNG)
+![Entities in Home Asistant](/doc/1-Indego_Sensors.png)
 
 
 ## Installation
@@ -13,7 +13,7 @@ Add the domain to your configuration.yaml
 ``` yaml
 #configuration.yaml
 indego:
-  name: MowerName
+  name: Indego
   username: !secret indego_username
   password: !secret indego_password
   id: !secret indego_id
@@ -29,19 +29,28 @@ indego_id: 123456789
 ## Usage
 
 ### Entities
-There are four sensor entities:
+There are six sensor entities:
 
-|Sensor | Description|
-|-------|------------|
-|MowerName_mower_state | Current state of the mower|
-|MowerName_lawn_mowed | Current percentage of the lawn that is mowed|
-|MowerName_alerts | Number of alerts on the mower|
-|MowerName_mowing_mode | The mowing mode set for the mower|
+|Sensor                  | Description                                     |
+|------------------------|-------------------------------------------------|
+|Indego mower state      | Current state                                   |
+|Indego lawn mowed       | Current percentage of the lawn that is mowed    |
+|Indego alerts           | Number of alerts                                |
+|Indego mowing mode      | The mowing mode set                             |
+|Indego update available | Check if there are any firmware update availabe |
+|Indego runtime total    | Sum the total runtime of the mover              |
 
+**mover state** has properties for model name, serial and firmware.
+![Entities in Home Asistant](/doc/2-Indego_State_details.png)
 
+**lawn moved** has properties for session total, mowing and charging time.
+![Entities in Home Asistant](/doc/3-Indego_Sensors.png)
+
+**Indego runtime total** has properties for total, mowig and charging time.
+![Entities in Home Asistant](/doc/4-Indego_Sensors.png)
 
 ### Service
-There are a service exposed to HA called indego.mower_command. It sends a specified command to the mower. Accepted commands are:
+There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
 
 |Command      |Description           |
 |-------------|----------------------|
@@ -50,7 +59,7 @@ There are a service exposed to HA called indego.mower_command. It sends a specif
 |returnToDock | Return mower to dock |
 
 Example creating automation in HA gui:
-![Services](/doc/Indego_Call_service.PNG)
+![Services](/doc/5-Indego_Call_service.png)
 
 Example for automations.yaml:
 
@@ -65,7 +74,7 @@ Example for automations.yaml:
   action:
   - data:
       command: mow
-    service: indego.mover_command
+    service: indego.mower_command
 ```
 
 ## Debugging

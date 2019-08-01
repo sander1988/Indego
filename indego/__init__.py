@@ -8,31 +8,27 @@ import threading
 import voluptuous as vol
 from aiohttp.hdrs import CONTENT_TYPE
 from datetime import timedelta
-from homeassistant.const import (CONF_NAME, CONF_USERNAME, CONF_PASSWORD, CONF_ID, CONF_REGION, CONTENT_TYPE_JSON)
+from homeassistant.const import (CONF_NAME, CONF_USERNAME, CONF_PASSWORD, CONF_ID, CONTENT_TYPE_JSON)
 from homeassistant.helpers import discovery
 from homeassistant.helpers.event import track_utc_time_change
 from homeassistant.util import Throttle
 from requests.auth import HTTPBasicAuth
-#from pyIndego import *
+
+######
+# Working in 0.94, not working in 0.95
+# from pyIndego import *
+######
 
 _LOGGER = logging.getLogger(__name__)
 
 DOMAIN = 'indego'
 DATA_KEY = DOMAIN
-CONF_HOST = 'api.indego.iot.bosch-si.com'
-CONF_PORT = '443'
-CONF_REGION = 'region'
 CONF_SEND_COMMAND = 'command'
-ATTR_VIN = 'vin'
-DEFAULT_NAME = 'Bosch Indego Mower'
-DEFAULT_REGION = 'en'
+DEFAULT_NAME = 'Indego'
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=120)
-#INDEGO_COMPONENTS = ['sensor', 'binary_sensor', 'device_tracker', 'lock']
-INDEGO_COMPONENTS = ['sensor']
+INDEGO_COMPONENTS = ['sensor', 'binary_sensor']
 UPDATE_INTERVAL = 5  # in minutes
-SERVICE_UPDATE_STATE = 'update_state'
 DEFAULT_URL = 'https://api.indego.iot.bosch-si.com:443/api/v1/'
-
 IndegoAPI_Instance = None
 
 CONFIG_SCHEMA = vol.Schema({
@@ -40,8 +36,7 @@ CONFIG_SCHEMA = vol.Schema({
         vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
-        vol.Required(CONF_ID): cv.string,
-        vol.Required(CONF_REGION, default=DEFAULT_REGION): vol.Any('sv', 'en')
+        vol.Required(CONF_ID): cv.string
     }),
 }, extra=vol.ALLOW_EXTRA)
 
@@ -55,24 +50,18 @@ def setup(hass, config: dict):
     """Set up the Indego components."""
     global IndegoAPI_Instance, CONF_MOWER_NAME
     
-    host = CONF_HOST
-    _LOGGER.debug(f"Host = {host}")
-    port = CONF_PORT
-    _LOGGER.debug(f"Port = {port}")
-    mower_name = config[DOMAIN].get(CONF_NAME)
+    _LOGGER.debug(f"API URL = {DEFAULT_URL}")    
     CONF_MOWER_NAME = config[DOMAIN].get(CONF_NAME)
-    _LOGGER.debug(f"Name = {mower_name}")
+    _LOGGER.debug(f"Name = {CONF_MOWER_NAME}")
     mower_username = config[DOMAIN].get(CONF_USERNAME)
     _LOGGER.debug(f"Username = {mower_username}")
     mower_password = config[DOMAIN].get(CONF_PASSWORD)
     _LOGGER.debug(f"Password = {mower_password}")
     mower_serial = config[DOMAIN].get(CONF_ID)
     _LOGGER.debug(f"ID = {mower_serial}")
-    url = "https://{}:{}/api/v1/".format(host, port)
-    _LOGGER.debug(f"Idego API Host = {url}")
 
     try:
-        _LOGGER.debug("Idego new pyIndego API")
+        _LOGGER.debug("Idego pyIndego API")
         IndegoAPI_Instance = IndegoAPI(username=mower_username, password=mower_password, serial=mower_serial)
         
     except (requests.exceptions.ConnectionError,
@@ -83,20 +72,15 @@ def setup(hass, config: dict):
     for component in INDEGO_COMPONENTS:
         discovery.load_platform(hass, component, DOMAIN, {}, config)
     
-    ATTR_NAME = 'command'
     DEFAULT_NAME = None
-    #SERVICE_NAME = CONF_MOWER_NAME + 'mower_command'
-    SERVICE_NAME = 'mover_command'
+    SERVICE_NAME = 'mower_command'
     def send_command(call):
         """Handle the service call."""
-        name = call.data.get(ATTR_NAME, DEFAULT_NAME)
-        #hass.states.set('hello_service.hello', name)
+        name = call.data.get(CONF_SEND_COMMAND, DEFAULT_NAME)
         _LOGGER.debug("Indego.send_command service called")
         _LOGGER.debug("Command: %s", name)
         IndegoAPI_Instance.putCommand(name)
-
     hass.services.register(DOMAIN, SERVICE_NAME, send_command, schema=SERVICE_SCHEMA)
-
     return True
 
 class IndegoAPI():
@@ -274,9 +258,10 @@ class IndegoAPI():
         elif value == 1537:
             self._state = 'Stuck on lawn, help needed'
         elif value == 64513:
-            self._state = 'Waking up mover'
+            self._state = 'Sleeping'
         else:
             self._state = value
+            _LOGGER.debug(f"Value = {value}")
         return self._state
 
     def getMowed(self):
@@ -327,6 +312,7 @@ class IndegoAPI():
         return value
 
     def getNextPredicitiveCutting(self):
+        # Not working
         _LOGGER.debug("getNetPRedicitveCutting")
         complete_url = 'alms/' + self.serial + '/predictive/nextcutting?last=YYYY-MM-DDTHH:MM:SS%2BHH:MM'
         Runtime_temp = self.get(complete_url)
@@ -381,6 +367,10 @@ class IndegoAPI():
             self._state = 'Undefined ' + value
         return self._state
 
+    def getSerial(self):
+        _LOGGER.debug("getSerial")
+        return self.serial
+
     def getFirmware(self):
         _LOGGER.debug("getFirmware")
         complete_url = 'alms/' + self.serial
@@ -403,11 +393,12 @@ class IndegoAPI():
         return value
 
     def getUserAdjustment(self):
+        # No idea what this does?
         _LOGGER.debug("getUserAdjustment")
         complete_url = 'alms/' + self.serial + '/predictive/useradjustment'
         Runtime_temp = self.get(complete_url)
         value = Runtime_temp
-        return value
+        return value['user_adjustment']
 
     def getCalendar(self):
         _LOGGER.debug("getCalendar")
@@ -438,14 +429,18 @@ class IndegoAPI():
         _LOGGER.debug("getUpdateAvailable")
         complete_url = 'alms/' + self.serial + '/updates'
         Runtime_temp = self.get(complete_url)
-        value = Runtime_temp
+        value = Runtime_temp['available']
+        #if value == 'True':
+        #    value_binary = 0
+        #else:
+        #    value_binary = 1
+        #return value_binary
         return value
 
     def putCommand(self, command):
         _LOGGER.debug("postCommand: " + command)
         if command == "mow" or command == "pause" or command == "returnToDock":
             complete_url = "alms/" + self.serial + "/state"
-            #accepted commands = mow, pause, returnToDock
             temp = self.put(complete_url, command)
             
             return temp
