@@ -2,8 +2,7 @@
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 
-![Entities in Home Asistant](/doc/1-Indego_Sensors.png)
-
+![Entities in Home Asistant](/doc/1-Indego_Sensors.png){: width=150}
 
 ## Installation
 Copy the folder `indego` in your `config/custom_component` in your Home Assistant.
@@ -41,13 +40,13 @@ There are six sensor entities:
 |Indego runtime total    | Sum the total runtime of the mover              |
 
 **mover state** has properties for model name, serial and firmware.
-![Entities in Home Asistant](/doc/2-Indego_State_details.png)
+![State Detail](/doc/2-Indego_State_details.png)
 
 **lawn moved** has properties for session total, mowing and charging time.
-![Entities in Home Asistant](/doc/3-Indego_Sensors.png)
+![Lawn Mowed](/doc/3-Indego_Lawn_mowed.png)
 
 **Indego runtime total** has properties for total, mowig and charging time.
-![Entities in Home Asistant](/doc/4-Indego_Sensors.png)
+![Runtime Total](/doc/4-Indego_Runtime_detail.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
