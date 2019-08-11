@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4 2019-08-11
+Tested with Hassio 0.97.1 and Bosch Indego 1000
+
+### Breaking changes
+
+### Changes
+- Rewritten API to make less calls to Bosch API servers.
+- Added class Mower to implement better handling of API and updates.
+- Added two sensors: **Indego battery %** and **Indego battery V** (experimental)
+
 ## 0.3 2019-08-01
 Tested with Hassio 0.96.5 and Bosch Indego 1000
 

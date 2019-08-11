@@ -10,15 +10,16 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     _LOGGER.debug("Setup Binary Sensor Platform")    
 
     update_available_sensor_name = CONF_MOWER_NAME + ' update available'
-    add_devices([IndegoUpdateAvailable(update_available_sensor_name)])
+    add_devices([IndegoUpdateAvailable(API, update_available_sensor_name)])
 
     _LOGGER.debug("Finished Binary Sensor Platform setup!")    
 
 class IndegoUpdateAvailable(Entity):
     """Indego Update Available Sensor."""
 
-    def __init__(self, device_label):
+    def __init__(self, IAPI, device_label):
         """Initialize Update Avaliable sensor"""
+        self._IAPI = IAPI
         self._state = None
         self._device_label = device_label
             
@@ -30,7 +31,8 @@ class IndegoUpdateAvailable(Entity):
     @property
     def state(self):
         """Return the user adjustment."""
-        return self._state
+        #return self._state
+        return self._IAPI._firmware_available
 
     @property
     def is_on(self):
@@ -49,10 +51,5 @@ class IndegoUpdateAvailable(Entity):
         return tmp_icon
 
     def update(self):
-        """Fetch firmware sensor."""
-        _LOGGER.debug("Update Firmware Available Sensor")    
-        tmp_mode = API.getUpdateAvailable()
-        _LOGGER.debug(f"Update available = {tmp_mode}")    
-        self._state = tmp_mode
-        #self._state = 'True'
-        _LOGGER.debug("Finished update available sensor")    
+        """Request an update from the BloomSky API."""
+        self._IAPI.refresh_devices()

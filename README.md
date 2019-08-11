@@ -12,10 +12,10 @@ Add the domain to your configuration.yaml
 ``` yaml
 #configuration.yaml
 indego:
-  name: Indego
+  name:     Indego
   username: !secret indego_username
   password: !secret indego_password
-  id: !secret indego_id
+  id:       !secret indego_id
 ```
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
@@ -23,21 +23,23 @@ Add your credentials used with Bosch Mower app (mail address, password and mower
 #secrets.yaml
 indego_username: name@mail.com
 indego_password: mysecretpw
-indego_id: 123456789
+indego_id:       123456789
 ```
 ## Usage
 
 ### Entities
-There are six sensor entities:
+ All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-|Sensor                  | Description                                     |
-|------------------------|-------------------------------------------------|
-|Indego mower state      | Current state                                   |
-|Indego lawn mowed       | Current percentage of the lawn that is mowed    |
-|Indego alerts           | Number of alerts                                |
-|Indego mowing mode      | The mowing mode set                             |
-|Indego update available | Check if there are any firmware update availabe |
-|Indego runtime total    | Sum the total runtime of the mover              |
+|Sensor                  | Description                                      |
+|------------------------|--------------------------------------------------|
+|Indego mower state      | Current state                                    |
+|Indego lawn mowed       | Current percentage of the lawn that is mowed     |
+|Indego mowing mode      | The mowing mode set                              |
+|Indego update available | Check if there are any firmware update available |
+|Indego runtime total    | Sum the total runtime of the mover               |
+|Indego alerts           | Number of alerts                                 |
+|Indego battery %        | Battery percentage (experimental)                |
+|Indego battery V        | Battery voltageNumber (experimental)             |
 
 **mover state** has properties for model name, serial and firmware.
 
@@ -50,6 +52,8 @@ There are six sensor entities:
 **Indego runtime total** has properties for total, mowig and charging time.
 
 ![Runtime Total](/doc/4-Indego_Runtime_detail.png)
+
+**Indego battery %** has properties for percentage, voltage, cycles, discharge and temperature.
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:

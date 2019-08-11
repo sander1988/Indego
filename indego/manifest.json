@@ -4,5 +4,5 @@
   "documentation": "https://github.com/jm-73/Indego",
   "dependencies": [],
   "codeowners": ["@jm-73"],
-  "requirements": ["pyIndego==0.2.0"]
+  "requirements": ["pyIndego==0.2.7"]
 }
