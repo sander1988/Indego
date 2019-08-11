@@ -11,6 +11,9 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
 
     mower_state_sensor_name = GLOB_MOWER_NAME + ' mower state'
     add_devices([IndegoStateSensor(API, mower_state_sensor_name)])
+
+    mower_state_sensor_name = GLOB_MOWER_NAME + ' mower state detail'
+    add_devices([IndegoStateSensorDetail(API, mower_state_sensor_name)])
     
     lawn_mowed_sensor_name = GLOB_MOWER_NAME + ' lawn mowed'
     add_devices([IndegoLawnMowedSensor(API, lawn_mowed_sensor_name)])
@@ -52,11 +55,34 @@ class IndegoStateSensor(Entity):
     @property
     def device_state_attributes(self):
         return {
-            'State #':  self._IAPI._mower_state,
             'Model':    self._IAPI._model_description,
             'Serial':   self._IAPI._serial,
             'Firmware': self._IAPI._alm_firmware_version
             }
+
+class IndegoStateSensorDetail(Entity):
+    def __init__(self, IAPI, device_label):
+        self._mower        = mower
+        self._IAPI         = IAPI
+        self._state        = None
+        self._device_label = device_label
+    @property
+    def name(self):
+        return self._device_label
+    @property
+    def state(self):
+        return self._IAPI._mower_state_description_detailed
+    @property
+    def icon(self):
+        return 'mdi:robot'
+    #def update(self):
+    #    self._mower.update(self)
+    @property
+    def device_state_attributes(self):
+        return {
+            'State #':  self._IAPI._mower_state,
+            }
+            
 
 class IndegoLawnMowedSensor(Entity):
     def __init__(self, IAPI, device_label):

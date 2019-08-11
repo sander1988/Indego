@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.6 2019-08-11
+Tested with Hassio 0.97.1 and Bosch Indego 1000
+
+### Breaking changes
+
+### Changes
+- Added sensor **Indego State Detailed**
+- Modified sensor **Indego Mower State** to have 5 states:
+    - Docked
+    - Mowing
+    - Diagnostic mode
+    - End of life
+    - Software update
+    - Stuck
+- Better handling of API calls (in case of unknown response)
+
 ## 0.5 2019-08-11
 Tested with Hassio 0.96.5 and 0.97.1 and Bosch Indego 1000
 

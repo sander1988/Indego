@@ -90,6 +90,7 @@ class Mower():
         #Get data for State, 
         IndegoAPI_Instance.getState()
         IndegoAPI_Instance.MowerStateDescription()
+        IndegoAPI_Instance.MowerStateDescriptionDetailed()
         IndegoAPI_Instance.Runtime()
         IndegoAPI_Instance.RuntimeTotal()
         IndegoAPI_Instance.RuntimeSession()

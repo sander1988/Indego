@@ -30,30 +30,31 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-|Sensor                  | Description                                      |
-|------------------------|--------------------------------------------------|
-|Indego mower state      | Current state                                    |
-|Indego lawn mowed       | Current percentage of the lawn that is mowed     |
-|Indego mowing mode      | The mowing mode set                              |
-|Indego runtime total    | Sum the total runtime of the mover               |
-|Indego alerts           | Number of alerts                                 |
-|Indego battery %        | Battery percentage (experimental)                |
-|Indego battery V        | Battery voltageNumber (experimental)             |
+|Sensor                    | Description                                      |
+|--------------------------|--------------------------------------------------|
+|Indego mower state        | Current state                                    |
+|Indego lawn mowed         | Current percentage of the lawn that is mowed     |
+|Indego mowing mode        | The mowing mode set                              |
+|Indego runtime total      | Sum the total runtime of the mover               |
+|Indego alerts             | Number of alerts                                 |
+|Indego battery %          | Battery percentage (experimental)                |
+|Indego battery V          | Battery voltageNumber (experimental)             |
+|Indego mower state detail | Current state in detail                          |
 
-**mover state** has properties for model name, serial and firmware.
+**Indego mover state** has properties for model name, serial and firmware.
 
-![State Detail](/doc/2-Indego_State_details.png)
+![Mower State](/doc/2-Indego_mower_state.png)
 
-**lawn moved** has properties for session total, mowing and charging time.
+**Indego lawn moved** has properties for session total, mowing and charging time.
 
-![Lawn Mowed](/doc/3-Indego_Lawn_mowed.png)
+![Lawn Mowed](/doc/3-Indego_lawn_mowed2.png)
 
 **Indego runtime total** has properties for total, mowig and charging time.
 
-![Runtime Total](/doc/4-Indego_Runtime_detail.png)
+![Runtime Total](/doc/4-Indego_runtime_total.png)
 
 **Indego battery %** has properties for percentage, voltage, cycles, discharge and temperature.
-![Battery sensor](/doc/5-Indego_Battery_Sensor.png)
+![Battery sensor](/doc/5-Indego_battery.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
@@ -65,6 +66,7 @@ There are a service exposed to HA called **indego.mower_command**. It sends a sp
 |returnToDock | Return mower to dock |
 
 Example creating automation in HA gui:
+
 ![Services](/doc/6-Indego_Call_service.png)
 
 Example for automations.yaml:
