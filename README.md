@@ -41,11 +41,11 @@ indego_id:       123456789
 |Indego battery V          | Battery voltageNumber (experimental)             |
 |Indego mower state detail | Current state in detail                          |
 
-**mover state** has properties for model name, serial and firmware.
+**Indego mover state** has properties for model name, serial and firmware.
 
 ![Mower State](/doc/2-Indego_mower_state.png)
 
-**lawn moved** has properties for session total, mowing and charging time.
+**Indego lawn moved** has properties for session total, mowing and charging time.
 
 ![Lawn Mowed](/doc/3-Indego_lawn_mowed2.png)
 
