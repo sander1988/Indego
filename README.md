@@ -30,15 +30,16 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-|Sensor                  | Description                                      |
-|------------------------|--------------------------------------------------|
-|Indego mower state      | Current state                                    |
-|Indego lawn mowed       | Current percentage of the lawn that is mowed     |
-|Indego mowing mode      | The mowing mode set                              |
-|Indego runtime total    | Sum the total runtime of the mover               |
-|Indego alerts           | Number of alerts                                 |
-|Indego battery %        | Battery percentage (experimental)                |
-|Indego battery V        | Battery voltageNumber (experimental)             |
+|Sensor                    | Description                                      |
+|--------------------------|--------------------------------------------------|
+|Indego mower state        | Current state                                    |
+|Indego lawn mowed         | Current percentage of the lawn that is mowed     |
+|Indego mowing mode        | The mowing mode set                              |
+|Indego runtime total      | Sum the total runtime of the mover               |
+|Indego alerts             | Number of alerts                                 |
+|Indego battery %          | Battery percentage (experimental)                |
+|Indego battery V          | Battery voltageNumber (experimental)             |
+|Indego mower state detail | Current state in detail                          |
 
 **mover state** has properties for model name, serial and firmware.
 
