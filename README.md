@@ -47,7 +47,7 @@ indego_id:       123456789
 
 **lawn moved** has properties for session total, mowing and charging time.
 
-![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)
+![Lawn Mowed](/doc/3-Indego_lawn_mowed2.png)
 
 **Indego runtime total** has properties for total, mowig and charging time.
 
@@ -66,6 +66,7 @@ There are a service exposed to HA called **indego.mower_command**. It sends a sp
 |returnToDock | Return mower to dock |
 
 Example creating automation in HA gui:
+
 ![Services](/doc/6-Indego_Call_service.png)
 
 Example for automations.yaml:
