@@ -43,18 +43,18 @@ indego_id:       123456789
 
 **mover state** has properties for model name, serial and firmware.
 
-![State Detail](/doc/2-Indego_State_details.png)
+![Mower State](/doc/2-Indego_mower_state.png)
 
 **lawn moved** has properties for session total, mowing and charging time.
 
-![Lawn Mowed](/doc/3-Indego_Lawn_mowed.png)
+![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)
 
 **Indego runtime total** has properties for total, mowig and charging time.
 
-![Runtime Total](/doc/4-Indego_Runtime_detail.png)
+![Runtime Total](/doc/4-Indego_runtime_total.png)
 
 **Indego battery %** has properties for percentage, voltage, cycles, discharge and temperature.
-![Battery sensor](/doc/5-Indego_Battery_Sensor.png)
+![Battery sensor](/doc/5-Indego_battery.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
