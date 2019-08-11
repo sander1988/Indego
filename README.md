@@ -35,7 +35,6 @@ indego_id:       123456789
 |Indego mower state      | Current state                                    |
 |Indego lawn mowed       | Current percentage of the lawn that is mowed     |
 |Indego mowing mode      | The mowing mode set                              |
-|Indego update available | Check if there are any firmware update available |
 |Indego runtime total    | Sum the total runtime of the mover               |
 |Indego alerts           | Number of alerts                                 |
 |Indego battery %        | Battery percentage (experimental)                |
@@ -54,6 +53,7 @@ indego_id:       123456789
 ![Runtime Total](/doc/4-Indego_Runtime_detail.png)
 
 **Indego battery %** has properties for percentage, voltage, cycles, discharge and temperature.
+![Battery sensor](/doc/5-Indego_Battery_Sensor.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
@@ -65,7 +65,7 @@ There are a service exposed to HA called **indego.mower_command**. It sends a sp
 |returnToDock | Return mower to dock |
 
 Example creating automation in HA gui:
-![Services](/doc/5-Indego_Call_service.png)
+![Services](/doc/6-Indego_Call_service.png)
 
 Example for automations.yaml:
 
