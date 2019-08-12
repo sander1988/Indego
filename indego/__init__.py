@@ -65,6 +65,16 @@ def setup(hass, config: dict):
     now = datetime.datetime.now()
     track_utc_time_change(hass, Mower.refresh_1h, minute=0, second=30)
 
+    DEFAULT_NAME = None
+    SERVICE_NAME = 'mower_command'
+    def send_command(call):
+        """Handle the service call."""
+        name = call.data.get(CONF_SEND_COMMAND, DEFAULT_NAME)
+        _LOGGER.debug("Indego.send_command service called")
+        _LOGGER.debug("Command: %s", name)
+        IndegoAPI_Instance.putCommand(name)
+    hass.services.register(DOMAIN, SERVICE_NAME, send_command, schema=SERVICE_SCHEMA)
+    
     return True    
 
 class Mower():
@@ -126,6 +136,7 @@ class Mower():
         #Get data for State, 
         IndegoAPI_Instance.getState()
         IndegoAPI_Instance.MowerStateDescription()
+        IndegoAPI_Instance.MowerStateDescriptionDetailed()
         IndegoAPI_Instance.Runtime()
         IndegoAPI_Instance.RuntimeTotal()
         IndegoAPI_Instance.RuntimeSession()
