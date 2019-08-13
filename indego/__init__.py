@@ -65,7 +65,6 @@ def setup(hass, config: dict):
     now = datetime.datetime.now()
     track_utc_time_change(hass, Mower.refresh_1h, minute=0, second=30)
 
-
     DEFAULT_NAME = None
     SERVICE_NAME = 'mower_command'
     def send_command(call):
