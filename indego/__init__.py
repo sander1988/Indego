@@ -65,6 +65,17 @@ def setup(hass, config: dict):
     now = datetime.datetime.now()
     track_utc_time_change(hass, Mower.refresh_1h, minute=0, second=30)
 
+
+    DEFAULT_NAME = None
+    SERVICE_NAME = 'mower_command'
+    def send_command(call):
+        """Handle the service call."""
+        name = call.data.get(CONF_SEND_COMMAND, DEFAULT_NAME)
+        _LOGGER.debug("Indego.send_command service called")
+        _LOGGER.debug("Command: %s", name)
+        IndegoAPI_Instance.putCommand(name)
+    hass.services.register(DOMAIN, SERVICE_NAME, send_command, schema=SERVICE_SCHEMA)
+    
     return True    
 
 class Mower():
@@ -95,15 +106,19 @@ class Mower():
         IndegoAPI_Instance.RuntimeTotal()
         IndegoAPI_Instance.RuntimeSession()
         
-        #Get data for MowingMode
+        #Get data for MowingMode, modeldata
         IndegoAPI_Instance.getGenericData()
         IndegoAPI_Instance.MowingModeDescription()
         IndegoAPI_Instance.ModelDescription() 
+        IndegoAPI_Instance.ModelVoltage() 
+        IndegoAPI_Instance.ModelVoltageMin()
+        IndegoAPI_Instance.ModelVoltageMax()  
 
         #Get data for battery, mowingmode
         IndegoAPI_Instance.getOperatingData()
         IndegoAPI_Instance.Battery()
         IndegoAPI_Instance.BatteryPercent()
+        IndegoAPI_Instance.BatteryPercentAdjusted()
         IndegoAPI_Instance.BatteryVoltage()
         IndegoAPI_Instance.BatteryCycles()
         IndegoAPI_Instance.BatteryDischarge()
@@ -126,14 +141,16 @@ class Mower():
         #Get data for State, 
         IndegoAPI_Instance.getState()
         IndegoAPI_Instance.MowerStateDescription()
+        IndegoAPI_Instance.MowerStateDescriptionDetailed()
         IndegoAPI_Instance.Runtime()
         IndegoAPI_Instance.RuntimeTotal()
         IndegoAPI_Instance.RuntimeSession()
-                
+        
         #Get data for battery, mowingmode
         IndegoAPI_Instance.getOperatingData()
         IndegoAPI_Instance.Battery()
         IndegoAPI_Instance.BatteryPercent()
+        IndegoAPI_Instance.BatteryPercentAdjusted()
         IndegoAPI_Instance.BatteryVoltage()
         IndegoAPI_Instance.BatteryCycles()
         IndegoAPI_Instance.BatteryDischarge()
@@ -148,11 +165,14 @@ class Mower():
         _LOGGER.debug("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         _LOGGER.debug("  Refresh Indego sensors hourly")
         
-        #Get data for MowingMode
+        #Get data for MowingMode, modeldata
         IndegoAPI_Instance.getGenericData()
         IndegoAPI_Instance.MowingModeDescription()
-        IndegoAPI_Instance.ModelDescription()
-
+        IndegoAPI_Instance.ModelDescription() 
+        IndegoAPI_Instance.ModelVoltage() 
+        IndegoAPI_Instance.ModelVoltageMin()
+        IndegoAPI_Instance.ModelVoltageMax()  
+        
         #Get data for alerts
         IndegoAPI_Instance.getAlerts()
         IndegoAPI_Instance.AlertsCount()

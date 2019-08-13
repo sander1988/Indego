@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7 2019-08-??
+Tested with Hassio 0.97.1 and Bosch Indego 1000
+
+### Breaking changes
+
+### Changes
+- Bumped pyIndego to 0.7.0.
+- Added max and min values on **Indego battery %** and **Indego Battery V**.
+- Corrected bug that prevented **Indego Mower state detail** to update status (Issue #8).
+- Indego mower percent now shows an adjusted value for Gen 1 mowers. For gen 2 mower it shows the reported value (as it is reported correctly).
+
 ## 0.6 2019-08-11
 Tested with Hassio 0.97.1 and Bosch Indego 1000
 

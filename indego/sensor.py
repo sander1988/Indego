@@ -81,6 +81,7 @@ class IndegoStateSensorDetail(Entity):
     def device_state_attributes(self):
         return {
             'State #':  self._IAPI._mower_state,
+            'State description':  self._IAPI._mower_state_description_detailed
             }
             
 
@@ -181,9 +182,11 @@ class IndegoMowingMode(Entity):
 
 class IndegoBattery(Entity):
     def __init__(self, IAPI, device_label):
-        self._IAPI         = IAPI
-        self._state        = None
-        self._device_label = device_label
+        self._IAPI                  = IAPI
+        self._state                 = None
+        self._device_label          = device_label
+        self._battery_percent_max   = self._IAPI._battery_percent
+        self._battery_percent_min   = self._IAPI._battery_percent
     @property
     def name(self):
         return self._device_label
@@ -192,7 +195,11 @@ class IndegoBattery(Entity):
         return '%'
     @property
     def state(self):
-        return self._IAPI._battery_percent
+        if (self._IAPI._battery_percent > self._battery_percent_max):
+            self._battery_percent_max = self._IAPI._battery_percent
+        if (self._IAPI._battery_percent < self._battery_percent_min):
+            self._battery_vpercent_min = self._IAPI._battery_percent
+        return self._IAPI._battery_percent_adjusted
     @property
     def icon(self):
         tmp_icon = 'mdi:battery-50'
@@ -206,7 +213,10 @@ class IndegoBattery(Entity):
             'Cycles': self._IAPI._battery_cycles,
             'Discharge': self._IAPI._battery_discharge,
             'Ambient temp': self._IAPI._battery_ambient_temp,
-            'Battery temp': self._IAPI._battery_temp
+            'Battery temp': self._IAPI._battery_temp,
+            '(Percent raw)': self._IAPI._battery_percent,
+            '(Percent max)': self._battery_percent_max,
+            '(Percent min)': self._battery_percent_min    
             }
 
 class IndegoBatt_Voltage(Entity):
@@ -214,6 +224,9 @@ class IndegoBatt_Voltage(Entity):
         self._IAPI         = IAPI
         self._state        = None
         self._device_label = device_label
+        self._battery_voltage_max   = self._IAPI._battery_voltage
+        self._battery_voltage_min   = self._IAPI._battery_voltage
+            
     @property
     def name(self):
         return self._device_label
@@ -222,6 +235,10 @@ class IndegoBatt_Voltage(Entity):
         return 'V'
     @property
     def state(self):
+        if (self._IAPI._battery_voltage > self._battery_voltage_max):
+            self._battery_voltage_max = self._IAPI._battery_voltage
+        if (self._IAPI._battery_voltage < self._battery_voltage_min):
+            self._battery_voltage_min = self._IAPI._battery_voltage
         return self._IAPI._battery_voltage
     @property
     def icon(self):
@@ -230,6 +247,12 @@ class IndegoBatt_Voltage(Entity):
 #    def update(self):
 #        """Request an update from the BloomSky API."""
 #        self._IAPI.refresh_devices()
+    @property
+    def device_state_attributes(self):
+        return {
+            'Voltage max': self._battery_voltage_max,
+            'Voltage min': self._battery_voltage_min
+        }
 
 class IndegoAlertSensor(Entity):
     def __init__(self, IAPI, device_label):
