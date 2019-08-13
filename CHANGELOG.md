@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.1 2019-08-12
+Tested with Hassio 0.97.1 and Bosch Indego 1000
+
+### Breaking changes
+
+### Changes
+- Fixed issue 8 and 9:
+    - 8: Indego mower state detail not updating
+    - 9: Service for indego mower disapperared after version 0.3
+    
 ## 0.6 2019-08-11
 Tested with Hassio 0.97.1 and Bosch Indego 1000
 
