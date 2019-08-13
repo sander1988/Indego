@@ -128,6 +128,7 @@ class Mower():
         #Get data for alerts
         IndegoAPI_Instance.getAlerts()
         IndegoAPI_Instance.AlertsCount()
+        IndegoAPI_Instance.AlertsDescription()
 
         ### show vars
         IndegoAPI_Instance.show_vars()
@@ -157,6 +158,11 @@ class Mower():
         IndegoAPI_Instance.BatteryAmbientTemp()
         IndegoAPI_Instance.BatteryTemp()
 
+        #Get data for alerts
+        IndegoAPI_Instance.getAlerts()
+        IndegoAPI_Instance.AlertsCount()
+        IndegoAPI_Instance.AlertsDescription()
+        
         _LOGGER.debug("  Refresh end")
         _LOGGER.debug("--------------------------------------------------------")
         return True
