@@ -108,13 +108,10 @@ class IndegoLawnMowedSensor(Entity):
     #    self._mower.update(self)
     @property
     def device_state_attributes(self):
-        operation_unit = str(self._IAPI._session_operation) + " min"
-        cut_unit       = str(self._IAPI._session_cut) + " min"
-        charge_unit    = str(self._IAPI._session_charge) + " min"
         return {
-            'Last session Operation': operation_unit,
-            'Last session Cut':       cut_unit,
-            'Last session Charge':    charge_unit
+            'Last session Operation': str(self._IAPI._session_operation) + " min",
+            'Last session Cut':       str(self._IAPI._session_cut) + " min",
+            'Last session Charge':    str(self._IAPI._session_charge) + " min"
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
@@ -146,20 +143,16 @@ class IndegoRuntimeTotal(Entity):
     #    self._mower.update(self)
     @property
     def device_state_attributes(self):
-        operation_unit = str(self._IAPI._total_operation) + " h"
-        cut_unit    = str(self._IAPI._total_cut) + " h"
-        charge_unit  = str(self._IAPI._total_charge) + " h"
         return {
-            'Total operation time': operation_unit,
-            'Total mowing time': cut_unit,
-            'Total charging time': charge_unit
+            'Total operation time': str(self._IAPI._total_operation) + " h",
+            'Total mowing time':    str(self._IAPI._total_cut) + " h",
+            'Total charging time':  str(self._IAPI._total_charge) + " h"
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
         False if entity pushes its state to HA.
         """
         return False
-
 
 class IndegoMowingMode(Entity):
     def __init__(self, IAPI, device_label):
@@ -215,22 +208,15 @@ class IndegoBattery(Entity):
 #        self._IAPI.refresh_devices()
     @property
     def device_state_attributes(self):
-        voltage_unit = str(self._IAPI._battery_voltage) + " V"
-        discharge_unit = str(self._IAPI._battery_discharge) + " Ah?"
-        ambient_unit = str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS
-        battery_unit = str(self._IAPI._battery_temp) + " " + TEMP_CELSIUS
-        raw_unit = str(self._IAPI._battery_percent) + " %"
-        max_unit = str(self._battery_percent_max) + " %"
-        min_unit = str(self._battery_percent_min) + " %"
         return {
-            'Voltage': voltage_unit,
-            'Cycles': self._IAPI._battery_cycles,
-            'Discharge': discharge_unit,
-            'Ambient temp': ambient_unit,
-            'Battery temp': battery_unit,
-            '(Percent raw)': raw_unit,
-            '(Percent max)': max_unit,
-            '(Percent min)': min_unit    
+            'Voltage':      str(self._IAPI._battery_voltage) + " V",
+            'Cycles':       str(self._IAPI._battery_cycles),
+            'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
+            'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
+            'Battery temp': str(self._IAPI._battery_temp) + " " + TEMP_CELSIUS,
+            '(Percent raw)': str(self._IAPI._battery_percent) + " %",
+            '(Percent max)': str(self._battery_percent_max) + " %",
+            '(Percent min)': str(self._battery_percent_min) + " %"
             }
 
 class IndegoBatt_Voltage(Entity):
@@ -263,11 +249,11 @@ class IndegoBatt_Voltage(Entity):
 #        self._IAPI.refresh_devices()
     @property
     def device_state_attributes(self):
-        max_unit = str(self._battery_voltage_max) + ' V'
-        min_unit = str(self._battery_voltage_min) + ' V'
+        #max_unit = str(self._battery_voltage_max) + ' V'
+        #min_unit = str(self._battery_voltage_min) + ' V'
         return {
-            'Voltage max': max_unit,
-            'Voltage min': min_unit
+            'Voltage max': str(self._battery_voltage_max) + ' V',
+            'Voltage min': str(self._battery_voltage_min) + ' V'
         }
 
 class IndegoAlertSensor(Entity):
