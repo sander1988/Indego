@@ -2,6 +2,7 @@ from homeassistant.const import TEMP_CELSIUS
 from homeassistant.helpers.entity import Entity
 from . import IndegoAPI_Instance as API, Mower as mower, GLOB_MOWER_NAME, DOMAIN
 import logging
+from datetime import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -293,12 +294,28 @@ class IndegoAlertSensor(Entity):
 #        self._state = API.getAlerts()
     @property
     def device_state_attributes(self):
-        alert_1 = 'Test'
-        alert_2 = 'Test2'
-        return {
-            self._IAPI._alert1_name: self._IAPI._alert1_error,
-            self._IAPI._alert2_name: self._IAPI._alert2_error,
-            self._IAPI._alert3_name: self._IAPI._alert3_error
-        }
-
+        if (self._IAPI._alert3_time != None ):
+            return {
+                self._IAPI._alert1_time: self._IAPI._alert1_error,
+                self._IAPI._alert1_friendly_description: " ",
+                self._IAPI._alert2_time: self._IAPI._alert2_error,
+                self._IAPI._alert2_friendly_description: " ",
+                self._IAPI._alert3_time: self._IAPI._alert3_error,
+                self._IAPI._alert3_friendly_description: " "
+            }
+        else:
+            if (self._IAPI._alert2_time != None ):
+                return {
+                    self._IAPI._alert1_time: self._IAPI._alert1_error,
+                    self._IAPI._alert1_friendly_description: " ",
+                    self._IAPI._alert2_time: self._IAPI._alert2_error,
+                    self._IAPI._alert2_friendly_description: " "
+                }
+            else:
+                if (self._IAPI._alert1_time != None ):
+                    return {
+                        self._IAPI._alert1_time: "# " + self._IAPI._alert1_error,
+                        self._IAPI._alert1_friendly_description: " "
+                    }
+    
 #End of sensor.py

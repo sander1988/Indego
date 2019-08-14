@@ -10,6 +10,7 @@ Tested with Hassio 0.97.1 and Bosch Indego 1000
 - Added max and min values on **Indego battery %** and **Indego Battery V**.
 - Corrected bug that prevented **Indego Mower state detail** to update status (Issue #8).
 - Indego mower percent now shows an adjusted value for Gen 1 mowers. For gen 2 mower it shows the reported value (as it is reported correctly).
+- Added list of alerts for alerts sensor. The sensor now shows the 3 latest non-cleared alerts.
 
 ## 0.6 2019-08-11
 Tested with Hassio 0.97.1 and Bosch Indego 1000
