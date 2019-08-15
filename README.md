@@ -77,7 +77,7 @@ logger:
 ```
 
 ## Contribution
-If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to contact me. I need your input in order to make this component as useful as possible. All suggestions are welcome.
+If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to write an issue. I need your input in order to make this component as useful as possible. All suggestions are welcome!
 
 ## Issues
 If you experience issues/bugs with this the best way to report them is to open an issue in **this** repo.
@@ -85,6 +85,8 @@ If you experience issues/bugs with this the best way to report them is to open a
 [Issue link](https://github.com/jm-73/Indego/issues)
 
 ## Credits
+
+@onkelfarmor
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
