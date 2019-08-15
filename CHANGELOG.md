@@ -10,10 +10,10 @@ Tested with Hassio 0.97.2 and Bosch Indego 1000
 - Indego mower percent now shows an adjusted value for Gen 1 mowers. For gen 2 mower it shows the reported value (as it is reported correctly).
 - Added units to all properties on sensors
 - Added alert descriptions for the three latest alerts on Alerts sensor
+- Added list of alerts for alerts sensor. The sensor now shows the 3 latest non-cleared alerts.
 
 ## Known issues
-- If mower is offline, one API call (OperationData) gets a timeout. This may crash the component setup.
-- Added list of alerts for alerts sensor. The sensor now shows the 3 latest non-cleared alerts.
+- Issue #12: If mower is offline, one API call (OperationData) gets a timeout. This may crash the component setup.
 
 ## 0.6.1 2019-08-12
 Tested with Hassio 0.97.1 and Bosch Indego 1000
@@ -39,8 +39,6 @@ Tested with Hassio 0.97.1 and Bosch Indego 1000
 
 ## 0.5 2019-08-11
 Tested with Hassio 0.96.5 and 0.97.1 and Bosch Indego 1000
-
-### Breaking changes
 
 ### Changes
 - Rewritten API to make less calls to Bosch API servers.
