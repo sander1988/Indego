@@ -30,8 +30,6 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-
-|--------------------------|----------------------------------------------------------------------------------|
 | ![Mower State](/doc/1-Indego_mower_state.png)        | ![Mower State](/doc/2-Indego_mower_state_detail.png) |
 | ![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          | ![Runtime Total](/doc/4-Indego_runtime_total.png)    |
 | ![Battery sensor percent](/doc/5-Indego_battery.png) | ![Battery sensor volt](/doc/6-Indego_battery_v.png)  |
