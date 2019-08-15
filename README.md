@@ -30,35 +30,12 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
+|Sensors                                               | Sensors                                              |
+|------------------------------------------------------|------------------------------------------------------|
 | ![Mower State](/doc/1-Indego_mower_state.png)        | ![Mower State](/doc/2-Indego_mower_state_detail.png) |
 | ![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          | ![Runtime Total](/doc/4-Indego_runtime_total.png)    |
 | ![Battery sensor percent](/doc/5-Indego_battery.png) | ![Battery sensor volt](/doc/6-Indego_battery_v.png)  |
 | ![Battery sensor](/doc/7-Indego_alert.png)           | Sum the total runtime of the mover                   |
-
-**Indego mover state** has properties for model name, serial and firmware.
-
-![Mower State](/doc/1-Indego_mower_state.png)
-
-**Indego mover state detail** has properties for model name, serial and firmware.
-
-![Mower State](/doc/2-Indego_mower_state_detail.png)
-
-**Indego lawn moved** has properties for session total, mowing and charging time.
-
-![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)
-
-**Indego runtime total** has properties for total, mowig and charging time.
-
-![Runtime Total](/doc/4-Indego_runtime_total.png)
-
-**Indego battery %** has properties for percentage, voltage, cycles, discharge and temperature.
-![Battery sensor percent](/doc/5-Indego_battery.png)
-
-**Indego battery V%** has properties for max and min percentage.
-![Battery sensor volt](/doc/6-Indego_battery_v.png)
-
-**Indego alert** shows the current alerts.
-![Battery sensor](/doc/7-Indego_alert.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
