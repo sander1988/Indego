@@ -13,6 +13,7 @@ Tested with Hassio 0.97.2 and Bosch Indego 1000
 
 ## Known issues
 - If mower is offline, one API call (OperationData) gets a timeout. This may crash the component setup.
+- Added list of alerts for alerts sensor. The sensor now shows the 3 latest non-cleared alerts.
 
 ## 0.6.1 2019-08-12
 Tested with Hassio 0.97.1 and Bosch Indego 1000
