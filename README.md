@@ -87,7 +87,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 ## Credits
 
 ### Thanks to
-onkelfarmor ltjessem nsimb 
+onkelfarmor ltjessem nsimb jjandersson shamshala
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
