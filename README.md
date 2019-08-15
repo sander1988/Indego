@@ -2,10 +2,10 @@
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 
-![Entities in Home Asistant](/doc/1-Indego_Sensors.png)
+![Entities in Home Asistant](/doc/0-Indego_sensors.png)
 
 ## Installation
-Copy the folder `indego` in your `config/custom_component` in your Home Assistant.
+Copy the folder `indego` into your `config/custom_components` in your Home Assistant.
     
 ## Configuration
 Add the domain to your configuration.yaml
@@ -30,31 +30,12 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-|Sensor                    | Description                                      |
-|--------------------------|--------------------------------------------------|
-|Indego mower state        | Current state                                    |
-|Indego lawn mowed         | Current percentage of the lawn that is mowed     |
-|Indego mowing mode        | The mowing mode set                              |
-|Indego runtime total      | Sum the total runtime of the mover               |
-|Indego alerts             | Number of alerts                                 |
-|Indego battery %          | Battery percentage (experimental)                |
-|Indego battery V          | Battery voltageNumber (experimental)             |
-|Indego mower state detail | Current state in detail                          |
-
-**Indego mover state** has properties for model name, serial and firmware.
-
-![Mower State](/doc/2-Indego_mower_state.png)
-
-**Indego lawn moved** has properties for session total, mowing and charging time.
-
-![Lawn Mowed](/doc/3-Indego_lawn_mowed2.png)
-
-**Indego runtime total** has properties for total, mowig and charging time.
-
-![Runtime Total](/doc/4-Indego_runtime_total.png)
-
-**Indego battery %** has properties for percentage, voltage, cycles, discharge and temperature.
-![Battery sensor](/doc/5-Indego_battery.png)
+|Sensors                                               | Sensors                                              |
+|------------------------------------------------------|------------------------------------------------------|
+| ![Mower State](/doc/1-Indego_mower_state.png)        | ![Mower State](/doc/2-Indego_mower_state_detail.png) |
+| ![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          | ![Runtime Total](/doc/4-Indego_runtime_total.png)    |
+| ![Battery sensor percent](/doc/5-Indego_battery.png) | ![Battery sensor volt](/doc/6-Indego_battery_v.png)  |
+| ![Battery sensor](/doc/7-Indego_alert.png)           |                                                      |
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
@@ -67,7 +48,7 @@ There are a service exposed to HA called **indego.mower_command**. It sends a sp
 
 Example creating automation in HA gui:
 
-![Services](/doc/6-Indego_Call_service.png)
+![Services](/doc/8-Indego_call_service.png)
 
 Example for automations.yaml:
 
@@ -95,13 +76,18 @@ logger:
     custom_components.indego: debug
 ```
 
-## Issues
+## Contribution
+If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to write an issue. I need your input in order to make this component as useful as possible. All suggestions are welcome!
 
+## Issues
 If you experience issues/bugs with this the best way to report them is to open an issue in **this** repo.
 
 [Issue link](https://github.com/jm-73/Indego/issues)
 
 ## Credits
+
+### Thanks to
+onkelfarmor ltjessem nsimb jjandersson shamshala
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 

@@ -2,6 +2,7 @@ from homeassistant.const import TEMP_CELSIUS
 from homeassistant.helpers.entity import Entity
 from . import IndegoAPI_Instance as API, Mower as mower, GLOB_MOWER_NAME, DOMAIN
 import logging
+from datetime import datetime
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -81,6 +82,7 @@ class IndegoStateSensorDetail(Entity):
     def device_state_attributes(self):
         return {
             'State #':  self._IAPI._mower_state,
+            'State description':  self._IAPI._mower_state_description_detailed
             }
             
 
@@ -107,9 +109,9 @@ class IndegoLawnMowedSensor(Entity):
     @property
     def device_state_attributes(self):
         return {
-            'Last session Operation': self._IAPI._session_operation,
-            'Last session Cut':       self._IAPI._session_cut,
-            'Last session Charge':    self._IAPI._session_charge
+            'Last session Operation': str(self._IAPI._session_operation) + " min",
+            'Last session Cut':       str(self._IAPI._session_cut) + " min",
+            'Last session Charge':    str(self._IAPI._session_charge) + " min"
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
@@ -142,16 +144,15 @@ class IndegoRuntimeTotal(Entity):
     @property
     def device_state_attributes(self):
         return {
-            'Total operation time': self._IAPI._total_operation,
-            'Total mowing time': self._IAPI._total_cut,
-            'Total charging time': self._IAPI._total_charge
+            'Total operation time': str(self._IAPI._total_operation) + " h",
+            'Total mowing time':    str(self._IAPI._total_cut) + " h",
+            'Total charging time':  str(self._IAPI._total_charge) + " h"
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
         False if entity pushes its state to HA.
         """
         return False
-
 
 class IndegoMowingMode(Entity):
     def __init__(self, IAPI, device_label):
@@ -181,9 +182,11 @@ class IndegoMowingMode(Entity):
 
 class IndegoBattery(Entity):
     def __init__(self, IAPI, device_label):
-        self._IAPI         = IAPI
-        self._state        = None
-        self._device_label = device_label
+        self._IAPI                  = IAPI
+        self._state                 = None
+        self._device_label          = device_label
+        self._battery_percent_max   = self._IAPI._battery_percent
+        self._battery_percent_min   = self._IAPI._battery_percent
     @property
     def name(self):
         return self._device_label
@@ -192,7 +195,11 @@ class IndegoBattery(Entity):
         return '%'
     @property
     def state(self):
-        return self._IAPI._battery_percent
+        if (self._IAPI._battery_percent > self._battery_percent_max):
+            self._battery_percent_max = self._IAPI._battery_percent
+        if (self._IAPI._battery_percent < self._battery_percent_min):
+            self._battery_vpercent_min = self._IAPI._battery_percent
+        return self._IAPI._battery_percent_adjusted
     @property
     def icon(self):
         tmp_icon = 'mdi:battery-50'
@@ -202,11 +209,14 @@ class IndegoBattery(Entity):
     @property
     def device_state_attributes(self):
         return {
-            'Voltage': self._IAPI._battery_voltage,
-            'Cycles': self._IAPI._battery_cycles,
-            'Discharge': self._IAPI._battery_discharge,
-            'Ambient temp': self._IAPI._battery_ambient_temp,
-            'Battery temp': self._IAPI._battery_temp
+            'Voltage':      str(self._IAPI._battery_voltage) + " V",
+            'Cycles':       str(self._IAPI._battery_cycles),
+            'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
+            'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
+            'Battery temp': str(self._IAPI._battery_temp) + " " + TEMP_CELSIUS,
+            '(Percent raw)': str(self._IAPI._battery_percent) + " %",
+            '(Percent max)': str(self._battery_percent_max) + " %",
+            '(Percent min)': str(self._battery_percent_min) + " %"
             }
 
 class IndegoBatt_Voltage(Entity):
@@ -214,6 +224,9 @@ class IndegoBatt_Voltage(Entity):
         self._IAPI         = IAPI
         self._state        = None
         self._device_label = device_label
+        self._battery_voltage_max   = self._IAPI._battery_voltage
+        self._battery_voltage_min   = self._IAPI._battery_voltage
+            
     @property
     def name(self):
         return self._device_label
@@ -222,6 +235,10 @@ class IndegoBatt_Voltage(Entity):
         return 'V'
     @property
     def state(self):
+        if (self._IAPI._battery_voltage > self._battery_voltage_max):
+            self._battery_voltage_max = self._IAPI._battery_voltage
+        if (self._IAPI._battery_voltage < self._battery_voltage_min):
+            self._battery_voltage_min = self._IAPI._battery_voltage
         return self._IAPI._battery_voltage
     @property
     def icon(self):
@@ -230,6 +247,14 @@ class IndegoBatt_Voltage(Entity):
 #    def update(self):
 #        """Request an update from the BloomSky API."""
 #        self._IAPI.refresh_devices()
+    @property
+    def device_state_attributes(self):
+        #max_unit = str(self._battery_voltage_max) + ' V'
+        #min_unit = str(self._battery_voltage_min) + ' V'
+        return {
+            'Voltage max': str(self._battery_voltage_max) + ' V',
+            'Voltage min': str(self._battery_voltage_min) + ' V'
+        }
 
 class IndegoAlertSensor(Entity):
     def __init__(self, IAPI, device_label):
@@ -253,5 +278,30 @@ class IndegoAlertSensor(Entity):
         return tmp_icon
 #    def update(self):
 #        self._state = API.getAlerts()
-
+    @property
+    def device_state_attributes(self):
+        if (self._IAPI._alert3_time != None ):
+            return {
+                self._IAPI._alert1_time: self._IAPI._alert1_error,
+                self._IAPI._alert1_friendly_description: " ",
+                self._IAPI._alert2_time: self._IAPI._alert2_error,
+                self._IAPI._alert2_friendly_description: " ",
+                self._IAPI._alert3_time: self._IAPI._alert3_error,
+                self._IAPI._alert3_friendly_description: " "
+            }
+        else:
+            if (self._IAPI._alert2_time != None ):
+                return {
+                    self._IAPI._alert1_time: self._IAPI._alert1_error,
+                    self._IAPI._alert1_friendly_description: " ",
+                    self._IAPI._alert2_time: self._IAPI._alert2_error,
+                    self._IAPI._alert2_friendly_description: " "
+                }
+            else:
+                if (self._IAPI._alert1_time != None ):
+                    return {
+                        self._IAPI._alert1_time: "# " + self._IAPI._alert1_error,
+                        self._IAPI._alert1_friendly_description: " "
+                    }
+    
 #End of sensor.py

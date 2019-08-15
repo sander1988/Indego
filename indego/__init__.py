@@ -105,15 +105,19 @@ class Mower():
         IndegoAPI_Instance.RuntimeTotal()
         IndegoAPI_Instance.RuntimeSession()
         
-        #Get data for MowingMode
+        #Get data for MowingMode, modeldata
         IndegoAPI_Instance.getGenericData()
         IndegoAPI_Instance.MowingModeDescription()
         IndegoAPI_Instance.ModelDescription() 
+        IndegoAPI_Instance.ModelVoltage() 
+        IndegoAPI_Instance.ModelVoltageMin()
+        IndegoAPI_Instance.ModelVoltageMax()  
 
         #Get data for battery, mowingmode
         IndegoAPI_Instance.getOperatingData()
         IndegoAPI_Instance.Battery()
         IndegoAPI_Instance.BatteryPercent()
+        IndegoAPI_Instance.BatteryPercentAdjusted()
         IndegoAPI_Instance.BatteryVoltage()
         IndegoAPI_Instance.BatteryCycles()
         IndegoAPI_Instance.BatteryDischarge()
@@ -123,6 +127,7 @@ class Mower():
         #Get data for alerts
         IndegoAPI_Instance.getAlerts()
         IndegoAPI_Instance.AlertsCount()
+        IndegoAPI_Instance.AlertsDescription()
 
         ### show vars
         IndegoAPI_Instance.show_vars()
@@ -140,17 +145,23 @@ class Mower():
         IndegoAPI_Instance.Runtime()
         IndegoAPI_Instance.RuntimeTotal()
         IndegoAPI_Instance.RuntimeSession()
-                
+        
         #Get data for battery, mowingmode
         IndegoAPI_Instance.getOperatingData()
         IndegoAPI_Instance.Battery()
         IndegoAPI_Instance.BatteryPercent()
+        IndegoAPI_Instance.BatteryPercentAdjusted()
         IndegoAPI_Instance.BatteryVoltage()
         IndegoAPI_Instance.BatteryCycles()
         IndegoAPI_Instance.BatteryDischarge()
         IndegoAPI_Instance.BatteryAmbientTemp()
         IndegoAPI_Instance.BatteryTemp()
 
+        #Get data for alerts
+        IndegoAPI_Instance.getAlerts()
+        IndegoAPI_Instance.AlertsCount()
+        IndegoAPI_Instance.AlertsDescription()
+        
         _LOGGER.debug("  Refresh end")
         _LOGGER.debug("--------------------------------------------------------")
         return True
@@ -159,11 +170,14 @@ class Mower():
         _LOGGER.debug("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
         _LOGGER.debug("  Refresh Indego sensors hourly")
         
-        #Get data for MowingMode
+        #Get data for MowingMode, modeldata
         IndegoAPI_Instance.getGenericData()
         IndegoAPI_Instance.MowingModeDescription()
-        IndegoAPI_Instance.ModelDescription()
-
+        IndegoAPI_Instance.ModelDescription() 
+        IndegoAPI_Instance.ModelVoltage() 
+        IndegoAPI_Instance.ModelVoltageMin()
+        IndegoAPI_Instance.ModelVoltageMax()  
+        
         #Get data for alerts
         IndegoAPI_Instance.getAlerts()
         IndegoAPI_Instance.AlertsCount()
