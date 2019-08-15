@@ -1,7 +1,7 @@
 # Changelog
 Tested with Hassio 0.97.2 and Bosch Indego 1000
 
-## 0.7b
+## 0.7 2019-08-15
 
 ### Changes
 - Bumped pyIndego to 0.7.4.
