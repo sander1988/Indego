@@ -86,7 +86,8 @@ If you experience issues/bugs with this the best way to report them is to open a
 
 ## Credits
 
-@onkelfarmor
+### Thanks to
+onkelfarmor ltjessem nsimb 
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
