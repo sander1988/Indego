@@ -1,16 +1,21 @@
 # Changelog
-Tested with Hassio 0.97.1 and Bosch Indego 1000
+Tested with Hassio 0.97.2 and Bosch Indego 1000
 
-## 0.7b 2019-08-12
-- Bumped pyIndego to 0.7.0.
+## 0.7b
+
+### Changes
+- Bumped pyIndego to 0.7.4.
+- Fixes 13 (Typo in README.md)
 - Added max and min values on **Indego battery %** and **Indego Battery V**.
-- Corrected bug that prevented **Indego Mower state detail** to update status (Issue #8).
 - Indego mower percent now shows an adjusted value for Gen 1 mowers. For gen 2 mower it shows the reported value (as it is reported correctly).
+- Added units to all properties on sensors
+- Added alert descriptions for the three latest alerts on Alerts sensor
+
+## Known issues
+- If mower is offline, one API call (OperationData) gets a timeout. This may crash the component setup.
 
 ## 0.6.1 2019-08-12
 Tested with Hassio 0.97.1 and Bosch Indego 1000
-
-### Breaking changes
 
 ### Changes
 - Fixed issue 8 and 9:
@@ -19,8 +24,6 @@ Tested with Hassio 0.97.1 and Bosch Indego 1000
     
 ## 0.6 2019-08-11
 Tested with Hassio 0.97.1 and Bosch Indego 1000
-
-### Breaking changes
 
 ### Changes
 - Added sensor **Indego State Detailed**
