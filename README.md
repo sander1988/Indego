@@ -1,4 +1,7 @@
 [![GitHub Release][releases-shield]][releases]
+https://img.shields.io/github/package-json/v/jm-73/Indego.svg
+[![GitHub release](https://img.shields.io/github/release/Naereen/StrapDown.js.svg)](https://GitHub.com/Naereen/StrapDown.js/releases/)
+
 # Indego
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
