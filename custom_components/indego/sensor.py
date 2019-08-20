@@ -191,6 +191,12 @@ class IndegoBattery(Entity):
     def name(self):
         return self._device_label
     @property
+    def _battery_temp(self):
+        return str(self._IAPI._battery_temp)
+    @property
+    def battery_temp(self):
+        return str(self._IAPI._battery_temp)
+    @property
     def unit_of_measurement(self):
         return '%'
     @property
@@ -213,7 +219,7 @@ class IndegoBattery(Entity):
             'Cycles':       str(self._IAPI._battery_cycles),
             'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
             'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
-            'Battery temp': str(self._IAPI._battery_temp) + " " + TEMP_CELSIUS,
+            'Battery temp': str(self._battery_temp) + " " + TEMP_CELSIUS,
             '(Percent raw)': str(self._IAPI._battery_percent) + " %",
             '(Percent max)': str(self._battery_percent_max) + " %",
             '(Percent min)': str(self._battery_percent_min) + " %"
