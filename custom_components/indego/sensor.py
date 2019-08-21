@@ -288,26 +288,26 @@ class IndegoAlertSensor(Entity):
     def device_state_attributes(self):
         if (self._IAPI._alert3_time != None ):
             return {
-                self._IAPI._alert1_time: self._IAPI._alert1_error,
-                self._IAPI._alert1_friendly_description: " ",
-                self._IAPI._alert2_time: self._IAPI._alert2_error,
-                self._IAPI._alert2_friendly_description: " ",
-                self._IAPI._alert3_time: self._IAPI._alert3_error,
-                self._IAPI._alert3_friendly_description: " "
+                "ID: " + self._IAPI._alert1_id: str(self._IAPI._alert1_error),
+                self._IAPI._alert1_time: str(self._IAPI._alert1_friendly_description),
+                "ID: " + self._IAPI._alert2_id: str(self._IAPI._alert2_error),
+                self._IAPI._alert2_time: str(self._IAPI._alert2_friendly_description),
+                "ID: " + self._IAPI._alert3_id: str(self._IAPI._alert3_error),
+                self._IAPI._alert3_time: str(self._IAPI._alert3_friendly_description)
             }
         else:
             if (self._IAPI._alert2_time != None ):
                 return {
-                    self._IAPI._alert1_time: self._IAPI._alert1_error,
-                    self._IAPI._alert1_friendly_description: " ",
-                    self._IAPI._alert2_time: self._IAPI._alert2_error,
-                    self._IAPI._alert2_friendly_description: " "
+                    "ID: " + self._IAPI._alert1_id: str(self._IAPI._alert1_error),
+                    self._IAPI._alert1_time: str(self._IAPI._alert1_friendly_description),
+                    "ID: " + self._IAPI._alert2_id: str(self._IAPI._alert2_error),
+                    self._IAPI._alert2_time: str(self._IAPI._alert2_friendly_description)
                 }
             else:
                 if (self._IAPI._alert1_time != None ):
                     return {
-                        self._IAPI._alert1_time: "# " + self._IAPI._alert1_error,
-                        self._IAPI._alert1_friendly_description: " "
+                        "ID: " + self._IAPI._alert1_id: str(self._IAPI._alert1_error),
+                        self._IAPI._alert1_time: str(self._IAPI._alert1_friendly_description),
                     }
     
 #End of sensor.py
