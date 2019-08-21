@@ -1,6 +1,11 @@
 # Changelog
 Tested with Hassio 0.97.2 and Bosch Indego 1000
 
+## 0.7.2
+
+### Changes
+- Fixed documentation bug for HACS
+
 ## 0.7.1
 
 ### Changes
