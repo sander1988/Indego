@@ -1,6 +1,14 @@
 # Changelog
 Tested with Hassio 0.97.2 and Bosch Indego 1000
 
+## 0.7.1
+
+### Changes
+- Bumped pyIndego to 0.7.6.
+- Fixes #19 (Better handling of Alert codes not i database)
+- Fixes #23 (Better handling of multiple alerts of same type)
+- Preparing to fix #2 (add component to HACS)
+
 ## 0.7 2019-08-15
 
 ### Changes

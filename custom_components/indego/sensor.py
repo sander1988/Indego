@@ -191,6 +191,12 @@ class IndegoBattery(Entity):
     def name(self):
         return self._device_label
     @property
+    def _battery_temp(self):
+        return str(self._IAPI._battery_temp)
+    @property
+    def battery_temp(self):
+        return str(self._IAPI._battery_temp)
+    @property
     def unit_of_measurement(self):
         return '%'
     @property
@@ -213,7 +219,7 @@ class IndegoBattery(Entity):
             'Cycles':       str(self._IAPI._battery_cycles),
             'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
             'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
-            'Battery temp': str(self._IAPI._battery_temp) + " " + TEMP_CELSIUS,
+            'Battery temp': str(self._battery_temp) + " " + TEMP_CELSIUS,
             '(Percent raw)': str(self._IAPI._battery_percent) + " %",
             '(Percent max)': str(self._battery_percent_max) + " %",
             '(Percent min)': str(self._battery_percent_min) + " %"
@@ -282,26 +288,26 @@ class IndegoAlertSensor(Entity):
     def device_state_attributes(self):
         if (self._IAPI._alert3_time != None ):
             return {
-                self._IAPI._alert1_time: self._IAPI._alert1_error,
-                self._IAPI._alert1_friendly_description: " ",
-                self._IAPI._alert2_time: self._IAPI._alert2_error,
-                self._IAPI._alert2_friendly_description: " ",
-                self._IAPI._alert3_time: self._IAPI._alert3_error,
-                self._IAPI._alert3_friendly_description: " "
+                "ID: " + self._IAPI._alert1_id: str(self._IAPI._alert1_error),
+                self._IAPI._alert1_time: str(self._IAPI._alert1_friendly_description),
+                "ID: " + self._IAPI._alert2_id: str(self._IAPI._alert2_error),
+                self._IAPI._alert2_time: str(self._IAPI._alert2_friendly_description),
+                "ID: " + self._IAPI._alert3_id: str(self._IAPI._alert3_error),
+                self._IAPI._alert3_time: str(self._IAPI._alert3_friendly_description)
             }
         else:
             if (self._IAPI._alert2_time != None ):
                 return {
-                    self._IAPI._alert1_time: self._IAPI._alert1_error,
-                    self._IAPI._alert1_friendly_description: " ",
-                    self._IAPI._alert2_time: self._IAPI._alert2_error,
-                    self._IAPI._alert2_friendly_description: " "
+                    "ID: " + self._IAPI._alert1_id: str(self._IAPI._alert1_error),
+                    self._IAPI._alert1_time: str(self._IAPI._alert1_friendly_description),
+                    "ID: " + self._IAPI._alert2_id: str(self._IAPI._alert2_error),
+                    self._IAPI._alert2_time: str(self._IAPI._alert2_friendly_description)
                 }
             else:
                 if (self._IAPI._alert1_time != None ):
                     return {
-                        self._IAPI._alert1_time: "# " + self._IAPI._alert1_error,
-                        self._IAPI._alert1_friendly_description: " "
+                        "ID: " + self._IAPI._alert1_id: str(self._IAPI._alert1_error),
+                        self._IAPI._alert1_time: str(self._IAPI._alert1_friendly_description),
                     }
     
 #End of sensor.py
