@@ -34,6 +34,8 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
+![Mower State](/doc/1-Indego_mower_state.png) ![Mower State](/doc/2-Indego_mower_state_detail.png)
+
 |Sensors                                               | Sensors                                              |
 |------------------------------------------------------|------------------------------------------------------|
 | ![Mower State](/doc/1-Indego_mower_state.png)        | ![Mower State](/doc/2-Indego_mower_state_detail.png) |
