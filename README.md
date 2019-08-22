@@ -6,6 +6,9 @@ Home Assistant Custom Component for Bosch Indego Lawn Mower.
 ![Entities in Home Asistant](/doc/0-Indego_sensors.png)
 
 ## Installation
+### Alternative 1
+Install via HACS Community Store: https://hacs.netlify.com/
+### Alternative 2
 Copy the folder `indego` in `custom_components` into your `custom_components` in your Home Assistant.
     
 ## Configuration
@@ -88,7 +91,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 ## Credits
 
 ### Thanks to
-onkelfarmor ltjessem nsimb jjandersson shamshala
+onkelfarmor ltjessem nsimb jjandersson shamshala nath
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
