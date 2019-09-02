@@ -1,12 +1,28 @@
 # Changelog
+
+## 0.7.4 2019-08-22
 Tested with Hassio 0.97.2 and Bosch Indego 1000
 
-## 0.7.2
+### Changes
+- Bumped pyIndego to 0.7.8
+- Fix #12 and #32: Able to handle a mower that is offline and show API values that can be fetched regardless
+- Added badge for HACS Default
+
+## 0.7.3 2019-08-21
+Tested with hassio 0.97.2 and Bosch Indego 1000
+
+### Changes
+- Renamed Integration in manifest to make it easier to find in HACS store
+
+### Known issues
+Issue #12: If mower is offline, one API call (OperationData) gets a timeout. Sometimes this crashes the component at setup and stops it from loading.
+
+## 0.7.2 2019-08-21
 
 ### Changes
 - Fixed documentation bug for HACS
 
-## 0.7.1
+## 0.7.1 2019-08-15
 
 ### Changes
 - Bumped pyIndego to 0.7.6.

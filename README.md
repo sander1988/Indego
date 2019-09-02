@@ -1,4 +1,4 @@
-[![GitHub release](https://img.shields.io/github/release/jm-73/Indego.svg)](https://GitHub.com/jm-73/Indego/releases/)
+[![GitHub release](https://img.shields.io/github/release/jm-73/Indego.svg)](https://GitHub.com/jm-73/Indego/releases/) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
 # Indego
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
@@ -6,6 +6,9 @@ Home Assistant Custom Component for Bosch Indego Lawn Mower.
 ![Entities in Home Asistant](/doc/0-Indego_sensors.png)
 
 ## Installation
+### Alternative 1
+Install via HACS Community Store: https://hacs.netlify.com/
+### Alternative 2
 Copy the folder `indego` in `custom_components` into your `custom_components` in your Home Assistant.
     
 ## Configuration
@@ -31,12 +34,10 @@ indego_id:       123456789
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-|Sensors                                               | Sensors                                              |
-|------------------------------------------------------|------------------------------------------------------|
-| ![Mower State](/doc/1-Indego_mower_state.png)        | ![Mower State](/doc/2-Indego_mower_state_detail.png) |
-| ![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          | ![Runtime Total](/doc/4-Indego_runtime_total.png)    |
-| ![Battery sensor percent](/doc/5-Indego_battery.png) | ![Battery sensor volt](/doc/6-Indego_battery_v.png)  |
-| ![Battery sensor](/doc/7-Indego_alert.png)           |                                                      |
+![Mower State](/doc/1-Indego_mower_state.png)        ![Mower State](/doc/2-Indego_mower_state_detail.png)
+![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          ![Runtime Total](/doc/4-Indego_runtime_total.png)
+![Battery sensor percent](/doc/5-Indego_battery.png) ![Battery sensor volt](/doc/6-Indego_battery_v.png)
+![Battery sensor](/doc/7-Indego_alert.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
@@ -88,7 +89,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 ## Credits
 
 ### Thanks to
-onkelfarmor ltjessem nsimb jjandersson shamshala
+onkelfarmor ltjessem nsimb jjandersson shamshala nath
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 

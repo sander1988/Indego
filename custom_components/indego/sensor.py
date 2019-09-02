@@ -201,11 +201,14 @@ class IndegoBattery(Entity):
         return '%'
     @property
     def state(self):
-        if (self._IAPI._battery_percent > self._battery_percent_max):
-            self._battery_percent_max = self._IAPI._battery_percent
-        if (self._IAPI._battery_percent < self._battery_percent_min):
-            self._battery_vpercent_min = self._IAPI._battery_percent
-        return self._IAPI._battery_percent_adjusted
+        if (self._IAPI._battery_percent):
+            if (self._IAPI._battery_percent > self._battery_percent_max):
+                self._battery_percent_max = self._IAPI._battery_percent
+            if (self._IAPI._battery_percent < self._battery_percent_min):
+                self._battery_vpercent_min = self._IAPI._battery_percent
+            return self._IAPI._battery_percent_adjusted
+        else:
+            return None
     @property
     def icon(self):
         tmp_icon = 'mdi:battery-50'
@@ -241,11 +244,14 @@ class IndegoBatt_Voltage(Entity):
         return 'V'
     @property
     def state(self):
-        if (self._IAPI._battery_voltage > self._battery_voltage_max):
-            self._battery_voltage_max = self._IAPI._battery_voltage
-        if (self._IAPI._battery_voltage < self._battery_voltage_min):
-            self._battery_voltage_min = self._IAPI._battery_voltage
-        return self._IAPI._battery_voltage
+        if (self._IAPI._battery_voltage):
+            if (self._IAPI._battery_voltage > self._battery_voltage_max):
+                self._battery_voltage_max = self._IAPI._battery_voltage
+            if (self._IAPI._battery_voltage < self._battery_voltage_min):
+                self._battery_voltage_min = self._IAPI._battery_voltage
+            return self._IAPI._battery_voltage
+        else:
+            return None
     @property
     def icon(self):
         tmp_icon = 'mdi:current-dc'
