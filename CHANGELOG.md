@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.8 2019-09-16
+## 0.8.0 2019-09-16
 Tested with Hassio 0.98.5 and Bosch Indego 1000
 
 ### Changes
