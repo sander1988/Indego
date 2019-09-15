@@ -111,7 +111,8 @@ class IndegoLawnMowedSensor(Entity):
         return {
             'Last session Operation': str(self._IAPI._session_operation) + " min",
             'Last session Cut':       str(self._IAPI._session_cut) + " min",
-            'Last session Charge':    str(self._IAPI._session_charge) + " min"
+            'Last session Charge':    str(self._IAPI._session_charge) + " min",
+            'Last completed cutting':    str(self._IAPI._lastcutting)
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
@@ -201,7 +202,7 @@ class IndegoBattery(Entity):
         return '%'
     @property
     def state(self):
-        if (self._IAPI._battery_percent):
+        if (self._IAPI._battery_percent) and (self._battery_percent_max):
             if (self._IAPI._battery_percent > self._battery_percent_max):
                 self._battery_percent_max = self._IAPI._battery_percent
             if (self._IAPI._battery_percent < self._battery_percent_min):
@@ -244,7 +245,7 @@ class IndegoBatt_Voltage(Entity):
         return 'V'
     @property
     def state(self):
-        if (self._IAPI._battery_voltage):
+        if (self._IAPI._battery_voltage) and (self._battery_voltage_max):
             if (self._IAPI._battery_voltage > self._battery_voltage_max):
                 self._battery_voltage_max = self._IAPI._battery_voltage
             if (self._IAPI._battery_voltage < self._battery_voltage_min):
