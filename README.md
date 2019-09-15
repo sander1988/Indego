@@ -78,6 +78,12 @@ logger:
     custom_components.indego: debug
 ```
 
+To get debug logs from the python API library in your log file, add this line to your configuration file in additon to the lines above:
+
+``` yaml
+    pyIndego: debug
+```
+
 ## Contribution
 If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to write an issue. I need your input in order to make this component as useful as possible. All suggestions are welcome!
 
