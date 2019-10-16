@@ -69,7 +69,7 @@ Example for automations.yaml:
 ```
 
 ## Debugging
-To get debug logs in your log file, specify theese options in your configuration file:
+To get debug logs from the component in your log file, specify theese options in your configuration file:
 
 ``` yaml
 #configuration.yaml
