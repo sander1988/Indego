@@ -1,11 +1,11 @@
 # Changelog
 
 ## 0.8.0 2020-06-02
-Tested with Hassio 0.98.5 and Bosch Indego 1000
+Tested with Hassio 0.110 and Bosch Indego 1000
 
 ### Changes
-- Bumped pyIndego to 0.8.8
-- Added sensor for next mow.
+- Bumped pyIndego to 0.8.10
+- Added sensor for next mow. (Fix #39 Next mowing time)
 - Component now handles offline mower. (Fix #32 component cant handle offline mower)
 - Mower state now shows if mower is online or offline. (Fix #36 Online/offline sensor) 
 - A new sensor added for last completed mow. Value also shown as a property to sensor for Lawn Mowed. (Fix #37 Add latest complete mowing)
