@@ -4,13 +4,14 @@
 Tested with Hassio 0.98.5 and Bosch Indego 1000
 
 ### Changes
-- Bumped pyIndego to 0.8.xx
+- Bumped pyIndego to 0.8.8
 - Added sensor for next mow.
 - Component now handles offline mower. (Fix #32 component cant handle offline mower)
 - Mower state now shows if mower is online or offline. (Fix #36 Online/offline sensor) 
 - A new sensor added for last completed mow. Value also shown as a property to sensor for Lawn Mowed. (Fix #37 Add latest complete mowing)
 - Sensors now updates after mower come back online. (Fix #38 Sensors not showing values when mower goes from offline to online)
 - This error is due to the component raising an error when timing out instead of handling the error. HA does not want an error raised, then it stops initiating the component. (Fix #39 Error during setup of component indego)
+- Added model Indego S+ 350 2019.
 
 ## 0.7.4 2019-08-22
 Tested with Hassio 0.97.2 and Bosch Indego 1000
