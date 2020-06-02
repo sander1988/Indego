@@ -45,7 +45,7 @@ indego_id:       123456789
 ![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          ![Runtime Total](/doc/4-Indego_runtime_total.png)
 ![Battery sensor percent](/doc/5-Indego_battery.png) ![Battery sensor volt](/doc/6-Indego_battery_v.png)
 ![Battery sensor](/doc/7-Indego_alert.png)           ![Last complete mow](/doc/9-Indego_complete.png)
-![Next planned mow](/doc/10-Indego_next.png)         !
+![Next planned mow](/doc/10-Indego_next.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
