@@ -1,16 +1,23 @@
 [![GitHub release](https://img.shields.io/github/release/jm-73/Indego.svg)](https://GitHub.com/jm-73/Indego/releases/) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
 # Indego
+Join the Discord channel to discuss around this integration and vote for your favourite change to happen!
+https://discord.gg/aD33GsP
+
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 ![Entities in Home Asistant](/doc/0-Indego_sensors.png)
 
 ## Installation
+
 ### Alternative 1
-Install via HACS Community Store: https://hacs.netlify.com/
+Install via HACS Community Store: https://hacs.xyz/
 ### Alternative 2
 Copy the folder `indego` in `custom_components` into your `custom_components` in your Home Assistant.
-    
+
+## Reboot
+Reboot HA in order to get HA to find the newly added files.
+
 ## Configuration
 Add the domain to your configuration.yaml
 ``` yaml
@@ -37,7 +44,8 @@ indego_id:       123456789
 ![Mower State](/doc/1-Indego_mower_state.png)        ![Mower State](/doc/2-Indego_mower_state_detail.png)
 ![Lawn Mowed](/doc/3-Indego_lawn_mowed.png)          ![Runtime Total](/doc/4-Indego_runtime_total.png)
 ![Battery sensor percent](/doc/5-Indego_battery.png) ![Battery sensor volt](/doc/6-Indego_battery_v.png)
-![Battery sensor](/doc/7-Indego_alert.png)
+![Battery sensor](/doc/7-Indego_alert.png)           ![Last complete mow](/doc/9-Indego_complete.png)
+![Next planned mow](/doc/7-Indego_next.png)
 
 ### Service
 There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
