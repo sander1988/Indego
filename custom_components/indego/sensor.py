@@ -34,6 +34,12 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     mower_alert_sensor_name = GLOB_MOWER_NAME + ' mower alert'
     add_devices([IndegoAlertSensor(API, mower_alert_sensor_name)])
 
+    last_cutting_sensor_name = GLOB_MOWER_NAME + ' last completed'
+    add_devices([IndegoLastCuttingSensor(API, last_cutting_sensor_name)])
+
+    next_cutting_sensor_name = GLOB_MOWER_NAME + ' next cutting'
+    add_devices([IndegoNextCuttingSensor(API, next_cutting_sensor_name)])
+
     _LOGGER.debug("Finished Sensor Platform setup!")    
 
 class IndegoStateSensor(Entity):
@@ -112,8 +118,61 @@ class IndegoLawnMowedSensor(Entity):
             'Last session Operation': str(self._IAPI._session_operation) + " min",
             'Last session Cut':       str(self._IAPI._session_cut) + " min",
             'Last session Charge':    str(self._IAPI._session_charge) + " min",
-            'Last completed cutting':    str(self._IAPI._lastcutting)
+            'Last completed':    str(self._IAPI._last_cutting),
+            'Next planned Mow':  str(self._IAPI._next_cutting)
             }
+    def should_poll(self):
+        """Return True if entity has to be polled for state.
+        False if entity pushes its state to HA.
+        """
+        return False
+
+class IndegoLastCuttingSensor(Entity):
+    def __init__(self, IAPI, device_label):
+        self._mower        = mower
+        self._IAPI         = IAPI
+        self._state        = None
+        self._device_label = device_label
+    @property
+    def name(self):
+        return self._device_label
+    #@property
+    #def unit_of_measurement(self):
+    #    return '%'
+    @property
+    def icon(self):
+        return 'mdi:cash-100'
+    @property
+    def state(self):
+        return self._IAPI._last_cutting
+    #def update(self):
+    #    self._mower.update(self)
+    def should_poll(self):
+        """Return True if entity has to be polled for state.
+        False if entity pushes its state to HA.
+        """
+        return False
+
+class IndegoNextCuttingSensor(Entity):
+    def __init__(self, IAPI, device_label):
+        self._mower        = mower
+        self._IAPI         = IAPI
+        self._state        = None
+        self._device_label = device_label
+    @property
+    def name(self):
+        return self._device_label
+    #@property
+    #def unit_of_measurement(self):
+    #    return '%'
+    @property
+    def icon(self):
+        return 'mdi:chevron-right'
+    @property
+    def state(self):
+        return self._IAPI._next_cutting
+    #def update(self):
+    #    self._mower.update(self)
     def should_poll(self):
         """Return True if entity has to be polled for state.
         False if entity pushes its state to HA.
@@ -202,14 +261,11 @@ class IndegoBattery(Entity):
         return '%'
     @property
     def state(self):
-        if (self._IAPI._battery_percent) and (self._battery_percent_max):
-            if (self._IAPI._battery_percent > self._battery_percent_max):
-                self._battery_percent_max = self._IAPI._battery_percent
-            if (self._IAPI._battery_percent < self._battery_percent_min):
-                self._battery_vpercent_min = self._IAPI._battery_percent
-            return self._IAPI._battery_percent_adjusted
-        else:
-            return None
+        if (self._IAPI._battery_percent > self._battery_percent_max):
+            self._battery_percent_max = self._IAPI._battery_percent
+        if (self._IAPI._battery_percent < self._battery_percent_min):
+            self._battery_vpercent_min = self._IAPI._battery_percent
+        return self._IAPI._battery_percent_adjusted
     @property
     def icon(self):
         tmp_icon = 'mdi:battery-50'
@@ -245,14 +301,11 @@ class IndegoBatt_Voltage(Entity):
         return 'V'
     @property
     def state(self):
-        if (self._IAPI._battery_voltage) and (self._battery_voltage_max):
-            if (self._IAPI._battery_voltage > self._battery_voltage_max):
-                self._battery_voltage_max = self._IAPI._battery_voltage
-            if (self._IAPI._battery_voltage < self._battery_voltage_min):
-                self._battery_voltage_min = self._IAPI._battery_voltage
-            return self._IAPI._battery_voltage
-        else:
-            return None
+        if (self._IAPI._battery_voltage > self._battery_voltage_max):
+            self._battery_voltage_max = self._IAPI._battery_voltage
+        if (self._IAPI._battery_voltage < self._battery_voltage_min):
+            self._battery_voltage_min = self._IAPI._battery_voltage
+        return self._IAPI._battery_voltage
     @property
     def icon(self):
         tmp_icon = 'mdi:current-dc'
