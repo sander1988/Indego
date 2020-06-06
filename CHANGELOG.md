@@ -1,20 +1,20 @@
 # Changelog
 
-## 0.8.2 2020-06-06
+## 0.8.2 "Zannah" 2020-06-06
 Tested with Hassio 0.110 and Bosch Indego 1000
 
 ### Changes
 - Bumped pyIndego to 0.8.11
 - Now the integration handles when mow mode is set to manual
-- Instructions in documentation to use "username", "password" and "serial" in secrets.yaml in order to avoid errors in config
+- Instructions in documentation to use "username", "password" and "serial" in secrets.yaml in order to avoid errors in integration setup
 
-## 0.8.1 2020-06-??
+## 0.8.1 "Bane-2" 2020-06-04
 Tested with Hassio 0.110 and Bosch Indego 1000
 
 ### Changes
 - Corrected an version dependency error in manifest file
 
-## 0.8.0 2020-06-02
+## 0.8.0 "Bane" 2020-06-02
 Tested with Hassio 0.110 and Bosch Indego 1000
 
 ### Changes
