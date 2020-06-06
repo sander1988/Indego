@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.2 2020-06-06
+Tested with Hassio 0.110 and Bosch Indego 1000
+
+### Changes
+- Bumped pyIndego to 0.8.11
+- Now the integration handles when mow mode is set to manual
+
+## 0.8.1 2020-06-??
+Tested with Hassio 0.110 and Bosch Indego 1000
+
+### Changes
+- Corrected an version dependency error in manifest file
+
 ## 0.8.0 2020-06-02
 Tested with Hassio 0.110 and Bosch Indego 1000
 
