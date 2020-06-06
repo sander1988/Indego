@@ -32,9 +32,9 @@ indego:
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
 ``` yaml
 #secrets.yaml
-indego_username: name@mail.com
-indego_password: mysecretpw
-indego_id:       123456789
+indego_username: "name@mail.com"
+indego_password: "mysecretpw"
+indego_id:       "123456789"
 ```
 ## Usage
 
