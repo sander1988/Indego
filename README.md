@@ -48,15 +48,31 @@ indego_id:       "123456789"
 ![Next planned mow](/doc/10-Indego_next.png)
 
 ### Service
-There are a service exposed to HA called **indego.mower_command**. It sends a specified command to the mower. Accepted commands are:
 
-|Command      |Description           |
+#### indego.mower_command ####
+Sends a command to the mower. Example code:
+command: mow
+
+Accepted values are:
+|Command       |Description           |
+|--------------|----------------------|
+| mow          | Start/continue mowing|
+| pause        | Pause mower          |
+| returnToDock | Return mower to dock |
+
+#### indego.smart_mow ####
+Changes mow mode. Example:
+enable: true
+
+Accepted values are:
+|value        |Description           |
 |-------------|----------------------|
-|mow          | Start/continue mowing|
-|pause        | Pause mower          |
-|returnToDock | Return mower to dock |
+| true        | SmartMow eabled      |
+| false       | SmartMow disabled    |
 
-Example creating automation in HA gui:
+
+### Examples
+Creating automation in HA gui:
 
 ![Services](/doc/8-Indego_call_service.png)
 
@@ -103,7 +119,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 ## Credits
 
 ### Thanks to
-onkelfarmor ltjessem nsimb jjandersson shamshala nath
+dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
