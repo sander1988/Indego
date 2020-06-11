@@ -118,8 +118,8 @@ class IndegoLawnMowedSensor(Entity):
             'Last session Operation': str(self._IAPI._session_operation) + " min",
             'Last session Cut':       str(self._IAPI._session_cut) + " min",
             'Last session Charge':    str(self._IAPI._session_charge) + " min",
-            'Last completed':    str(self._IAPI._last_completed_mow),
-            'Next planned Mow':  str(self._IAPI._next_mow)
+            'Last completed Mow':    str(self._IAPI._last_completed_mow),
+            'Next Mow':  str(self._IAPI._next_mow)
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
@@ -136,9 +136,6 @@ class IndegoLastCompletedMowSensor(Entity):
     @property
     def name(self):
         return self._device_label
-    #@property
-    #def unit_of_measurement(self):
-    #    return '%'
     @property
     def icon(self):
         return 'mdi:cash-100'
@@ -162,9 +159,6 @@ class IndegoNextMowSensor(Entity):
     @property
     def name(self):
         return self._device_label
-    #@property
-    #def unit_of_measurement(self):
-    #    return '%'
     @property
     def icon(self):
         return 'mdi:chevron-right'
@@ -224,7 +218,6 @@ class IndegoMowingMode(Entity):
         return self._device_label
     @property
     def state(self):
-        #return self._IAPI._alm_mode
         return self._IAPI._mowingmode_description
     @property
     def icon(self):
@@ -279,9 +272,6 @@ class IndegoBattery(Entity):
             'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
             'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
             'Battery temp': str(self._battery_temp) + " " + TEMP_CELSIUS
-#            '(Percent raw)': str(self._IAPI._battery_percent) + " %",
-#            '(Percent max)': str(self._battery_percent_max) + " %",
-#            '(Percent min)': str(self._battery_percent_min) + " %"
             }
 
 class IndegoBatt_Voltage(Entity):
@@ -289,8 +279,6 @@ class IndegoBatt_Voltage(Entity):
         self._IAPI         = IAPI
         self._state        = None
         self._device_label = device_label
-        self._battery_voltage_max   = self._IAPI._battery_voltage
-        self._battery_voltage_min   = self._IAPI._battery_voltage
             
     @property
     def name(self):
@@ -300,10 +288,6 @@ class IndegoBatt_Voltage(Entity):
         return 'V'
     @property
     def state(self):
-        if (self._IAPI._battery_voltage > self._battery_voltage_max):
-            self._battery_voltage_max = self._IAPI._battery_voltage
-        if (self._IAPI._battery_voltage < self._battery_voltage_min):
-            self._battery_voltage_min = self._IAPI._battery_voltage
         return self._IAPI._battery_voltage
     @property
     def icon(self):
@@ -312,14 +296,6 @@ class IndegoBatt_Voltage(Entity):
 #    def update(self):
 #        """Request an update from the BloomSky API."""
 #        self._IAPI.refresh_devices()
-    @property
-    def device_state_attributes(self):
-        #max_unit = str(self._battery_voltage_max) + ' V'
-        #min_unit = str(self._battery_voltage_min) + ' V'
-        return {
-            'Voltage max': str(self._battery_voltage_max) + ' V',
-            'Voltage min': str(self._battery_voltage_min) + ' V'
-        }
 
 class IndegoAlertSensor(Entity):
     def __init__(self, IAPI, device_label):
