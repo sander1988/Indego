@@ -34,11 +34,11 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     mower_alert_sensor_name = GLOB_MOWER_NAME + ' mower alert'
     add_devices([IndegoAlertSensor(API, mower_alert_sensor_name)])
 
-    last_cutting_sensor_name = GLOB_MOWER_NAME + ' last completed'
-    add_devices([IndegoLastCuttingSensor(API, last_cutting_sensor_name)])
+    last_completed_mow_sensor_name = GLOB_MOWER_NAME + ' last completed'
+    add_devices([IndegoLastCompletedMowSensor(API, last_completed_mow_sensor_name)])
 
-    next_cutting_sensor_name = GLOB_MOWER_NAME + ' next cutting'
-    add_devices([IndegoNextCuttingSensor(API, next_cutting_sensor_name)])
+    next_mow_sensor_name = GLOB_MOWER_NAME + ' next mow'
+    add_devices([IndegoNextMowSensor(API, next_mow_sensor_name)])
 
     _LOGGER.debug("Finished Sensor Platform setup!")    
 
@@ -118,8 +118,8 @@ class IndegoLawnMowedSensor(Entity):
             'Last session Operation': str(self._IAPI._session_operation) + " min",
             'Last session Cut':       str(self._IAPI._session_cut) + " min",
             'Last session Charge':    str(self._IAPI._session_charge) + " min",
-            'Last completed':    str(self._IAPI._last_cutting),
-            'Next planned Mow':  str(self._IAPI._next_cutting)
+            'Last completed':    str(self._IAPI._last_completed_mow),
+            'Next planned Mow':  str(self._IAPI._next_mow)
             }
     def should_poll(self):
         """Return True if entity has to be polled for state.
@@ -127,7 +127,7 @@ class IndegoLawnMowedSensor(Entity):
         """
         return False
 
-class IndegoLastCuttingSensor(Entity):
+class IndegoLastCompletedMowSensor(Entity):
     def __init__(self, IAPI, device_label):
         self._mower        = mower
         self._IAPI         = IAPI
@@ -144,7 +144,7 @@ class IndegoLastCuttingSensor(Entity):
         return 'mdi:cash-100'
     @property
     def state(self):
-        return self._IAPI._last_cutting
+        return self._IAPI._last_completed_mow
     #def update(self):
     #    self._mower.update(self)
     def should_poll(self):
@@ -153,7 +153,7 @@ class IndegoLastCuttingSensor(Entity):
         """
         return False
 
-class IndegoNextCuttingSensor(Entity):
+class IndegoNextMowSensor(Entity):
     def __init__(self, IAPI, device_label):
         self._mower        = mower
         self._IAPI         = IAPI
@@ -170,7 +170,7 @@ class IndegoNextCuttingSensor(Entity):
         return 'mdi:chevron-right'
     @property
     def state(self):
-        return self._IAPI._next_cutting
+        return self._IAPI._next_mow
     #def update(self):
     #    self._mower.update(self)
     def should_poll(self):
@@ -178,7 +178,6 @@ class IndegoNextCuttingSensor(Entity):
         False if entity pushes its state to HA.
         """
         return False
-
 
 class IndegoRuntimeTotal(Entity):
     def __init__(self, IAPI, device_label):
@@ -279,10 +278,10 @@ class IndegoBattery(Entity):
             'Cycles':       str(self._IAPI._battery_cycles),
             'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
             'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
-            'Battery temp': str(self._battery_temp) + " " + TEMP_CELSIUS,
-            '(Percent raw)': str(self._IAPI._battery_percent) + " %",
-            '(Percent max)': str(self._battery_percent_max) + " %",
-            '(Percent min)': str(self._battery_percent_min) + " %"
+            'Battery temp': str(self._battery_temp) + " " + TEMP_CELSIUS
+#            '(Percent raw)': str(self._IAPI._battery_percent) + " %",
+#            '(Percent max)': str(self._battery_percent_max) + " %",
+#            '(Percent min)': str(self._battery_percent_min) + " %"
             }
 
 class IndegoBatt_Voltage(Entity):
