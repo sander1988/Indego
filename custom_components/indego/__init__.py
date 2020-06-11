@@ -174,9 +174,9 @@ class Mower():
         IndegoAPI_Instance.AlertsCount()
         IndegoAPI_Instance.AlertsDescription()
 
-        #Get last cutting
-        IndegoAPI_Instance.getLastCutting()
-        IndegoAPI_Instance.getNextCutting()
+        #Get last and next mow
+        IndegoAPI_Instance.getLastCompletedMow()
+        IndegoAPI_Instance.getNextMow()
 
         ### show vars
         IndegoAPI_Instance.show_vars()
@@ -230,9 +230,9 @@ class Mower():
         IndegoAPI_Instance.AlertsCount()
         IndegoAPI_Instance.AlertsDescription()
 
-        #Get last cutting
-        IndegoAPI_Instance.getLastCutting()
-        IndegoAPI_Instance.getNextCutting()
+        #Get last and next mow
+        IndegoAPI_Instance.getLastCompletedMow()
+        IndegoAPI_Instance.getNextMow()
 
         _LOGGER.debug("  Refresh end")
         _LOGGER.debug("--------------------------------------------------------")
