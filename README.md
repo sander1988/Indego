@@ -72,7 +72,7 @@ Accepted values are:
 ![Services](/doc/S1-Command1.png)
 
 #### indego.smartmowing ####
-Changes mow mode. Example:<br>
+Changes mowing mode. Example:<br>
 `enable: true`
 
 Accepted values are:
