@@ -58,8 +58,8 @@ indego_id:       "123456789"
 ### Service
 
 #### indego.command ####
-Sends a command to the mower. Example code:
-command: mow
+Sends a command to the mower. Example code:<br>
+`<command: mow>`
 
 Accepted values are:
 |Command       |Description           |
