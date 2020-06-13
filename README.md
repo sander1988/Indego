@@ -44,7 +44,7 @@ indego_id:       "123456789"
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 | Description | Screenshot |
 :--------------------------------|:---------------------------------:
-**Mower state**<br>Shows what state the mower reports.<br>Possible values are: *Mowing, Docked, Charging*. | ![Mower state](/doc/1-State.png)
+**Mower state**<br>Shows what state the mower reports.<br>Possible values are: *Mowing, Docked, Charging*. | ![Mower state](/doc/1-State.png |width=100)
 **Mower state detail**<br>Show detailed state of the mower.<br>Possible values:                        | ![Mower state](/doc/2-StateDetail.png)
 **Lawn mowed**<br>Shows percentage of lawn mowed  <br> | ![Lawn mowed](/doc/3-LawnMowed.png)
 **Total runtime for mower**<br>Shows the operation time for the mower. Total time, charge time. | ![Runtime total](/doc/4-Runtime.png)
