@@ -59,7 +59,7 @@ indego_id:       "123456789"
 
 #### indego.command ####
 Sends a command to the mower. Example code:<br>
-`<command: mow>`
+`command: mow`
 
 Accepted values are:
 |Command       |Description           |
@@ -69,13 +69,13 @@ Accepted values are:
 | returnToDock | Return mower to dock |
 
 #### indego.smartmowing ####
-Changes mow mode. Example:
-enable: true
+Changes mow mode. Example:<br>
+`enable: true`
 
 Accepted values are:
 |value        |Description           |
 |-------------|----------------------|
-| true        | SmartMowing eabled   |
+| true        | SmartMowing enabled  |
 | false       | SmartMowing disabled |
 
 
