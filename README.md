@@ -44,16 +44,16 @@ indego_id:       "123456789"
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 | Description | Screenshot |
 :--------------------------------|:---------------------------------:
-**Mower state**<br>Shows what state the mower reports.<br>Possible values are: Mowing, Docked, Charging. | ![Mower state](/doc/1-State.png)
-Mower state Detail<br>Show detailed state of the mower.<br>Possible values:                        | ![Mower state](/doc/2-StateDetail.png)
-Lawn mowed:<br>Shows percentage of lawn mowed  <br> | ![Lawn mowed](/doc/3-LawnMowed.png)
-Total runtime for mower:<br>Shows the operation time for the mower. Total time, charge time. | ![Runtime total](/doc/4-Runtime.png)
-Battery percentage:<br>Shows the amount of battert left | ![Battery sensor percent](/doc/5-Battery.png)
-Battery voltage:<br>Shows voltage of battery | ![Battery sensor volt](/doc/6-BatteryV.png)
-Alerts:<br>Shows the last three alerts | ![Alerts sensor](/doc/7-Alerts.png)
-Last completed mow:<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
-Next mow time:<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
-Mowing mode:<br>Shows the mowing mode set. Possbiel values: manual, calendar, smartmowing | ![Next mow](/doc/10-MowingMode.png)
+**Mower state**<br>Shows what state the mower reports.<br>Possible values are: *Mowing, Docked, Charging*. | ![Mower state](/doc/1-State.png)
+**Mower state detail**<br>Show detailed state of the mower.<br>Possible values:                        | ![Mower state](/doc/2-StateDetail.png)
+**Lawn mowed**<br>Shows percentage of lawn mowed  <br> | ![Lawn mowed](/doc/3-LawnMowed.png)
+**Total runtime for mower**<br>Shows the operation time for the mower. Total time, charge time. | ![Runtime total](/doc/4-Runtime.png)
+**Battery percentage**<br>Shows the amount of battert left | ![Battery sensor percent](/doc/5-Battery.png)
+**Battery voltage**<br>Shows voltage of battery | ![Battery sensor volt](/doc/6-BatteryV.png)
+**Alerts**<br>Shows the last three alerts | ![Alerts sensor](/doc/7-Alerts.png)
+**Last completed mow**<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
+**Next mow time**<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
+**Mowing mode**<br>Shows the mowing mode set. Possble values: *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
 
 ### Service
 
