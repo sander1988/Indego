@@ -62,11 +62,11 @@ Sends a command to the mower. Example code:<br>
 `command: mow`
 
 Accepted values are:
-|Command       |Description           |
-|--------------|----------------------|
-| mow          | Start/continue mowing|
-| pause        | Pause mower          |
-| returnToDock | Return mower to dock |
+|Command         |Description           |
+|----------------|----------------------|
+| `mow`          | Start/continue mowing|
+| `pause`        | Pause mower          |
+| `returnToDock` | Return mower to dock |
 
 #### indego.smartmowing ####
 Changes mow mode. Example:<br>
@@ -75,14 +75,14 @@ Changes mow mode. Example:<br>
 Accepted values are:
 |value        |Description           |
 |-------------|----------------------|
-| true        | SmartMowing enabled  |
-| false       | SmartMowing disabled |
+| `true`      | SmartMowing enabled  |
+| `false`     | SmartMowing disabled |
 
 
 ### Examples
 Creating automation in HA gui:
 
-![Services](/doc/8-Indego_call_service.png)
+![Services](/doc/S1-Command.png)
 
 Example for automations.yaml:
 
