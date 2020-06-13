@@ -82,7 +82,7 @@ Accepted values are:
 ### Examples
 Creating automation in HA gui:
 
-![Services](/doc/S1-Command.png)
+![Services](/doc/S1-Command1.png)
 
 Example for automations.yaml:
 
