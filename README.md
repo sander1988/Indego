@@ -6,7 +6,7 @@ https://discord.gg/aD33GsP
 
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
-![Entities in Home Asistant](/doc/0-Indego_sensors.png)
+![Entities in Home Asistant](/doc/0-Sensors.png)
 
 ## Installation
 
@@ -19,7 +19,7 @@ Copy the folder `indego` in `custom_components` into your `custom_components` in
 Reboot HA in order to get HA to find the newly added files.
 
 ## Configuration
-Add the domain to your configuration.yaml
+Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name (default = Indego) and polling (default = true) is optional.
 ``` yaml
 #configuration.yaml
 indego:
@@ -27,7 +27,9 @@ indego:
   username: !secret indego_username
   password: !secret indego_password
   id:       !secret indego_id
+  polling:  True
 ```
+Polling the battery will make the mower to wake up for 10 minutes every hour. The operating hours will increase with 2,5 hours roughly for 24h. This also drains the battery. A typical drain for 24h will be around 50%. This makes your mower to charge one extra time every other day. 
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
 ``` yaml
@@ -41,15 +43,16 @@ indego_id:       "123456789"
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
 
-![Mower state](/doc/1-Indego_mower_state.png)        ![Mower state](/doc/2-Indego_mower_state_detail.png)
-![Lawn mowed](/doc/3-Indego_lawn_mowed.png)          ![Runtime total](/doc/4-Indego_runtime_total.png)
-![Battery sensor percent](/doc/5-Indego_battery.png) ![Battery sensor volt](/doc/6-Indego_battery_v.png)
-![Battery sensor](/doc/7-Indego_alert.png)           ![Last completed mow](/doc/9-Indego_complete.png)
-![Next mow](/doc/10-Indego_next_mow.png)
+!Mower State: Shows what state the mower reports. Possible values are: Mowing, Docked, Charging.![Mower state](/doc/1-State.png)
+!Mower State Detailed: Show detailed state of the mower. Possible values:         ![Mower state](/doc/2-StateDetail.png)
+![Lawn mowed](/doc/3-LawnMowed.png)          ![Runtime total](/doc/4-Runtime.png)
+![Battery sensor percent](/doc/5-Battery.png) ![Battery sensor volt](/doc/6-BatteryV.png)
+![Battery sensor](/doc/7-Alerts.png)           ![Last completed mow](/doc/8-LastCompleted.png)
+![Next mow](/doc/9-NextMow.png) ! ![Next mow](/doc/10-MowingMode.png)
 
 ### Service
 
-#### indego.mower_command ####
+#### indego.command ####
 Sends a command to the mower. Example code:
 command: mow
 
@@ -60,15 +63,15 @@ Accepted values are:
 | pause        | Pause mower          |
 | returnToDock | Return mower to dock |
 
-#### indego.smart_mow ####
+#### indego.smartmowing ####
 Changes mow mode. Example:
 enable: true
 
 Accepted values are:
 |value        |Description           |
 |-------------|----------------------|
-| true        | SmartMow eabled      |
-| false       | SmartMow disabled    |
+| true        | SmartMowing eabled   |
+| false       | SmartMowing disabled |
 
 
 ### Examples
