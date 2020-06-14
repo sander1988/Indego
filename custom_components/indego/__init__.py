@@ -36,7 +36,7 @@ CONFIG_SCHEMA = vol.Schema({
         vol.Required(CONF_USERNAME): cv.string,
         vol.Required(CONF_PASSWORD): cv.string,
         vol.Required(CONF_ID): cv.string,
-        vol.Optional(CONF_POLLING, default=True): cv.boolean
+        vol.Optional(CONF_POLLING, default=False): cv.boolean
     }),
 }, extra=vol.ALLOW_EXTRA)
 
