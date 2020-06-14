@@ -89,6 +89,9 @@ class IndegoStateSensorDetail(Entity):
         return {
             'State #':  self._IAPI._mower_state,
             'State description':  self._IAPI._mower_state_description_detailed
+            #'State description':  self._IAPI._mower_state_description_detailed,
+            #'Mower model':  self._IAPI._mower_state_description_detailed
+            #'Mower model':  self._IAPI._bareToolNumber
             }
             
 

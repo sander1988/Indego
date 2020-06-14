@@ -6,7 +6,7 @@ https://discord.gg/aD33GsP
 
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
-![Entities in Home Asistant](/doc/0-Indego_sensors.png)
+![Entities in Home Asistant](/doc/0-Sensors.png)
 
 ## Installation
 
@@ -16,10 +16,10 @@ Install via HACS Community Store: https://hacs.xyz/
 Copy the folder `indego` in `custom_components` into your `custom_components` in your Home Assistant.
 
 ## Reboot
-Reboot HA in order to get HA to find the newly added files.
+Reboot HA in order to get HA to find the newly added custom component.
 
 ## Configuration
-Add the domain to your configuration.yaml
+Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name (default = Indego) and polling (default = false) is optional.
 ``` yaml
 #configuration.yaml
 indego:
@@ -27,7 +27,10 @@ indego:
   username: !secret indego_username
   password: !secret indego_password
   id:       !secret indego_id
+  polling:  False
 ```
+### Polling
+The battery will make the mower to wake up for 10 minutes every hour. The operating hours will increase with 2,5 hours roughly for 24h. This also drains the battery. A typical drain for 24h will be around 50%. This makes your mower to charge one extra time every other day. 
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
 ``` yaml
@@ -39,42 +42,48 @@ indego_id:       "123456789"
 ## Usage
 
 ### Entities
- All sensors are auto discovered and should appear as "unused entities" after adding the component. List of available sensor entities:
-
-![Mower state](/doc/1-Indego_mower_state.png)        ![Mower state](/doc/2-Indego_mower_state_detail.png)
-![Lawn mowed](/doc/3-Indego_lawn_mowed.png)          ![Runtime total](/doc/4-Indego_runtime_total.png)
-![Battery sensor percent](/doc/5-Indego_battery.png) ![Battery sensor volt](/doc/6-Indego_battery_v.png)
-![Battery sensor](/doc/7-Indego_alert.png)           ![Last completed mow](/doc/9-Indego_complete.png)
-![Next mow](/doc/10-Indego_next_mow.png)
+ All sensors are auto discovered and should appear as "unused entities" after adding the component.
+| Description | Screenshot |
+:--------------------------------|:---------------------------------:
+**Mower state**<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State.png)
+**Mower state detail**<br>Shows detailed state of the mower.<br>Possible values:<br> *Reading status, Charging, Docked, Docked - Software update, Docked - Loading map, Docked - Saving map, Mowing, Relocalising, Loading map, Learning lawn, Paused, Border cut, Idle in lawn, Returning to Dock, Returning to Dock - Battery low, Returning to dock - Calendar timeslot ended, Returning to dock - Battery temp range, Returning to dock - requested by user/app, Returning to dock - Lawn complete, Returning to dock - Relocalising, Diagnostic mode, End of life, Software update, Stuck on lawn, help needed, Sleeping, Offline, None*. | ![Mower state](/doc/2-StateDetail.png)
+**Lawn mowed**<br>Shows percentage of lawn mowed | ![Lawn mowed](/doc/3-LawnMowed.png)
+**Total runtime for mower**<br>Shows the operation time for the mower. Total time, charge time, mowing time. | ![Runtime total](/doc/4-Runtime.png)
+**Battery percentage**<br>Shows the amount of battery left | ![Battery sensor percent](/doc/5-Battery.png)
+**Battery voltage**<br>Shows voltage of battery | ![Battery sensor volt](/doc/6-BatteryV.png)
+**Alerts**<br>Shows the last three alerts | ![Alerts sensor](/doc/7-Alerts.png)
+**Last completed mow**<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
+**Next mow time**<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
+**Mowing mode**<br>Shows the mowing mode set. Possble values:<br> *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
 
 ### Service
 
-#### indego.mower_command ####
-Sends a command to the mower. Example code:
-command: mow
+#### indego.command ####
+Sends a command to the mower. Example code:<br>
+`command: mow`
 
 Accepted values are:
-|Command       |Description           |
-|--------------|----------------------|
-| mow          | Start/continue mowing|
-| pause        | Pause mower          |
-| returnToDock | Return mower to dock |
+|Command         |Description           |
+|----------------|----------------------|
+| `mow`          | Start/continue mowing|
+| `pause`        | Pause mower          |
+| `returnToDock` | Return mower to dock |
 
-#### indego.smart_mow ####
-Changes mow mode. Example:
-enable: true
+![Services](/doc/S1-Command1.png)
+
+#### indego.smartmowing ####
+Changes mowing mode. Example:<br>
+`enable: true`
 
 Accepted values are:
 |value        |Description           |
 |-------------|----------------------|
-| true        | SmartMow eabled      |
-| false       | SmartMow disabled    |
+| `true`      | SmartMowing enabled  |
+| `false`     | SmartMowing disabled |
 
 
 ### Examples
 Creating automation in HA gui:
-
-![Services](/doc/8-Indego_call_service.png)
 
 Example for automations.yaml:
 
@@ -89,7 +98,7 @@ Example for automations.yaml:
   action:
   - data:
       command: mow
-    service: indego.mower_command
+    service: indego.command
 ```
 
 ## Debugging
@@ -97,9 +106,10 @@ To get debug logs from the component in your log file, specify theese options in
 
 ``` yaml
 #configuration.yaml
-logger:
-  logs:
-    custom_components.indego: debug
+logger: 
+  default: critical 
+  logs: 
+    custom_components.indego: debug 
 ```
 
 To get debug logs from the python API library in your log file, add this line to your configuration file in additon to the lines above:
@@ -119,7 +129,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 ## Credits
 
 ### Thanks to
-dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
+Jumper dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 

@@ -1,11 +1,10 @@
-mower_command:
+command:
   description: Send command to mower. Accepted values are mow, returnToDock and pause
   fields:
     command: 
       description: Command for mower
       example: mow
-
-smart_mow:
+smartmowing:
   description: Enable or disable Smart Mowing. Accepted values are true and false
   fields:
     enable: 
