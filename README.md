@@ -48,8 +48,8 @@ indego_id:       "123456789"
 | Description | Screenshot |
 | --- | --- |
 | <img width=400/> | <img width=400/> |
-Mower state<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State.png)
-Mower state detail<br>Shows detailed state of the mower.<br>Possible values:<br> <a lot...> | ![Mower state](/doc/2-StateDetail.png)
+Mower state<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State_1.png)
+Mower state detail<br>Shows detailed state of the mower.<br>Possible values:<br> A lot... | ![Mower state](/doc/2-StateDetail.png)
 Lawn mowed<br>Shows percentage of lawn mowed | ![Lawn mowed](/doc/3-LawnMowed.png)
 Total runtime for mower<br>Shows the operation time for the mower. Total time, charge time, mowing time. | ![Runtime total](/doc/4-Runtime.png)
 Battery<br>Shows the amount of battery left | ![Battery sensor percent](/doc/5-Battery.png)
