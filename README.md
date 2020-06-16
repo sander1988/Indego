@@ -47,7 +47,7 @@ indego_id:       "123456789"
  All sensors are auto discovered and should appear as "unused entities" after adding the component.
 | Description | Screenshot |
 |--|--|
-|<img width=200/>|<img width=200/>|
+|<img width=400/>|<img width=400/>|
 **Mower state**<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State.png)
 **Mower state detail**<br>Shows detailed state of the mower.<br>Possible values:<br> Reading status, Charging, Docked, Docked - Software update, Docked - Loading map, Docked - Saving map, Mowing, Relocalising, Loading map, Learning lawn, Paused, Border cut, Idle in lawn, Returning to Dock, Returning to Dock - Battery low, Returning to dock - Calendar timeslot ended, Returning to dock - Battery temp range, Returning to dock - requested by user/app, Returning to dock - Lawn complete, Returning to dock - Relocalising, Diagnostic mode, End of life, Software update, Stuck on lawn, help needed, Sleeping, Offline, None. | ![Mower state](/doc/2-StateDetail.png)
 **Lawn mowed**<br>Shows percentage of lawn mowed | ![Lawn mowed](/doc/3-LawnMowed.png)
