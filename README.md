@@ -48,19 +48,18 @@ indego_id:       "123456789"
 | Description | Screenshot |
 | --- | --- |
 | <img width=400/> | <img width=400/> |
-**Mower state**<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State.png)
-**Mower state detail**<br>Shows detailed state of the mower.<br>Possible values:<br> Reading status, Charging, Docked, Docked - Software update, Docked - Loading map, Docked - Saving map, Mowing, Relocalising, Loading map, Learning lawn, Paused, Border cut, Idle in lawn, Returning to Dock, Returning to Dock - Battery low, Returning to dock - Calendar timeslot ended, Returning to dock - Battery temp range, Returning to dock - requested by user/app, Returning to dock - Lawn complete, Returning to dock - Relocalising, Diagnostic mode, End of life, Software update, Stuck on lawn, help needed, Sleeping, Offline, None. | ![Mower state](/doc/2-StateDetail.png)
-**Lawn mowed**<br>Shows percentage of lawn mowed | ![Lawn mowed](/doc/3-LawnMowed.png)
-**Total runtime for mower**<br>Shows the operation time for the mower. Total time, charge time, mowing time. | ![Runtime total](/doc/4-Runtime.png)
-**Battery percentage**<br>Shows the amount of battery left | ![Battery sensor percent](/doc/5-Battery.png)
-**Battery voltage**<br>Shows voltage of battery | ![Battery sensor volt](/doc/6-BatteryV.png)
-**Alerts**<br>Shows the last three alerts | ![Alerts sensor](/doc/7-Alerts.png)
-**Last completed mow**<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
-**Next mow time**<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
-**Mowing mode**<br>Shows the mowing mode set. Possble values:<br> *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
-**Alert**<br>Shows if there are any alerts. Possble values:<br> *True, False* | ![Next mow](/doc/10-MowingMode.png)
-**Online**<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | ![Next mow](/doc/10-MowingMode.png)
-**Update available**<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | ![Next mow](/doc/10-MowingMode.png)
+Mower state<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State.png)
+Mower state detail<br>Shows detailed state of the mower.<br>Possible values:<br> Reading status, Charging, Docked, Docked - Software update, Docked - Loading map, Docked - Saving map, Mowing, Relocalising, Loading map, Learning lawn, Paused, Border cut, Idle in lawn, Returning to Dock, Returning to Dock - Battery low, Returning to dock - Calendar timeslot ended, Returning to dock - Battery temp range, Returning to dock - requested by user/app, Returning to dock - Lawn complete, Returning to dock - Relocalising, Diagnostic mode, End of life, Software update, Stuck on lawn, help needed, Sleeping, Offline, None. | ![Mower state](/doc/2-StateDetail.png)
+Lawn mowed<br>Shows percentage of lawn mowed | ![Lawn mowed](/doc/3-LawnMowed.png)
+Total runtime for mower<br>Shows the operation time for the mower. Total time, charge time, mowing time. | ![Runtime total](/doc/4-Runtime.png)
+Battery<br>Shows the amount of battery left | ![Battery sensor percent](/doc/5-Battery.png)
+Alerts<br>Shows the last three alerts | ![Alerts sensor](/doc/7-Alerts.png)
+Last completed mow<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
+Next mow time<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
+Mowing mode<br>Shows the mowing mode set. Possble values:<br> *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
+Alert<br>Shows if there are any alerts. Possble values:<br> *True, False* | ![Next mow](/doc/10-MowingMode.png)
+Online<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | ![Next mow](/doc/10-MowingMode.png)
+Update available<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | ![Next mow](/doc/10-MowingMode.png)
 ### Service
 
 #### indego.command ####
