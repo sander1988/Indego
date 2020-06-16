@@ -57,9 +57,9 @@ indego_id:       "123456789"
 ***Last completed mow***<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
 ***Next mow time***<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
 ***Mowing mode***<br>Shows the mowing mode set. Possble values:<br> *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
-***Alert***<br>Shows if there are any alerts. Possble values:<br> *True, False* | ![Alert]<img width=200/>
-***Online***<br>Shows if the mower is online/offline/sleeping (WIP). Possble values:<br> *True, False* | ![Online]<img width=200/>
-***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | ![Update Available]<img width=200/>
+***Alert***<br>Shows if there are any alerts. Possble values:<br> *True, False* |
+***Online***<br>Shows if the mower is online/offline/sleeping (WIP). Possble values:<br> *True, False* |
+***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | 
 ### Service
 
 #### indego.command ####
