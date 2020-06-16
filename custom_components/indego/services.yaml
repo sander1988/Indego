@@ -3,7 +3,7 @@ command:
   fields:
     command: 
       description: Command for mower
-      example: mow
+      example: "mow"
 smartmowing:
   description: Enable or disable Smart Mowing. Accepted values are true and false
   fields:

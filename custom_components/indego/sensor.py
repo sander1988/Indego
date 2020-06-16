@@ -28,8 +28,8 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     battery_sensor_name = GLOB_MOWER_NAME + ' battery %'
     add_devices([IndegoBattery(API, battery_sensor_name)])
 
-    batt_voltage_sensor_name = GLOB_MOWER_NAME + ' battery V'
-    add_devices([IndegoBatt_Voltage(API, batt_voltage_sensor_name)])
+    #batt_voltage_sensor_name = GLOB_MOWER_NAME + ' battery V'
+    #add_devices([IndegoBatt_Voltage(API, batt_voltage_sensor_name)])
 
     mower_alert_sensor_name = GLOB_MOWER_NAME + ' mower alert'
     add_devices([IndegoAlertSensor(API, mower_alert_sensor_name)])
@@ -226,9 +226,8 @@ class IndegoMowingMode(Entity):
     def icon(self):
         tmp_icon = 'mdi:alpha-m-circle-outline'
         return tmp_icon
-    #def update(self):
-    #    #self._IAPI.refresh_devices()
-    #    self._mower.update(self)
+    def update(self):
+        self._state = self._IAPI._mowingmode_description
     def should_poll(self):
         """Return True if entity has to be polled for state.
         False if entity pushes its state to HA.
@@ -256,10 +255,6 @@ class IndegoBattery(Entity):
         return '%'
     @property
     def state(self):
-        if (self._IAPI._battery_percent > self._battery_percent_max):
-            self._battery_percent_max = self._IAPI._battery_percent
-        if (self._IAPI._battery_percent < self._battery_percent_min):
-            self._battery_vpercent_min = self._IAPI._battery_percent
         return self._IAPI._battery_percent_adjusted
     @property
     def icon(self):
@@ -273,32 +268,32 @@ class IndegoBattery(Entity):
             'Voltage':      str(self._IAPI._battery_voltage) + " V",
             'Cycles':       str(self._IAPI._battery_cycles),
             'Discharge':    str(self._IAPI._battery_discharge) + " Ah?",
-            'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
+#            'Ambient temp': str(self._IAPI._battery_ambient_temp) + " " + TEMP_CELSIUS,
             'Battery temp': str(self._battery_temp) + " " + TEMP_CELSIUS
             }
 
-class IndegoBatt_Voltage(Entity):
-    def __init__(self, IAPI, device_label):
-        self._IAPI         = IAPI
-        self._state        = None
-        self._device_label = device_label
-            
-    @property
-    def name(self):
-        return self._device_label
-    @property
-    def unit_of_measurement(self):
-        return 'V'
-    @property
-    def state(self):
-        return self._IAPI._battery_voltage
-    @property
-    def icon(self):
-        tmp_icon = 'mdi:current-dc'
-        return tmp_icon
-#    def update(self):
-#        """Request an update from the BloomSky API."""
-#        self._IAPI.refresh_devices()
+#class IndegoBatt_Voltage(Entity):
+#    def __init__(self, IAPI, device_label):
+#        self._IAPI         = IAPI
+#        self._state        = None
+#        self._device_label = device_label
+#            
+#    @property
+#    def name(self):
+#        return self._device_label
+#    @property
+#    def unit_of_measurement(self):
+#        return 'V'
+#    @property
+#    def state(self):
+#        return self._IAPI._battery_voltage
+#    @property
+#    def icon(self):
+#        tmp_icon = 'mdi:current-dc'
+#        return tmp_icon
+##    def update(self):
+##        """Request an update from the BloomSky API."""
+##        self._IAPI.refresh_devices()
 
 class IndegoAlertSensor(Entity):
     def __init__(self, IAPI, device_label):
