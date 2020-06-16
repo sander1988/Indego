@@ -23,10 +23,12 @@ Add the domain to your configuration.yaml. Username, password and id (serial) is
 ``` yaml
 #configuration.yaml
 indego:
-  name:     Indego
+#Required
   username: !secret indego_username
   password: !secret indego_password
   id:       !secret indego_id
+#Optional
+  name:     Indego
   polling:  False
 ```
 ### Polling

@@ -24,8 +24,8 @@ CONF_SMARTMOWING = 'enable'
 CONF_POLLING = 'polling'
 DEFAULT_NAME = 'Indego'
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=60)
-#INDEGO_COMPONENTS = ['sensor', 'binary_sensor']
-INDEGO_COMPONENTS = ['sensor']
+INDEGO_COMPONENTS = ['sensor', 'binary_sensor']
+#INDEGO_COMPONENTS = ['sensor']
 #UPDATE_INTERVAL = 5  # in minutes
 DEFAULT_URL = 'https://api.indego.iot.bosch-si.com:443/api/v1/'
 IndegoAPI_Instance = None
@@ -107,7 +107,13 @@ def setup(hass, config: dict):
         _LOGGER.info("Indego.send_smartmowing service called")
         _LOGGER.debug("Command: %s", str(name))
         IndegoAPI_Instance.putMowMode(name)
+        #Update SmartMowing sensor
+        IndegoAPI_Instance.getGenericData()
+        IndegoAPI_Instance.MowingModeDescription()  
     hass.services.register(DOMAIN, SERVICE_NAME, send_smartmowing, schema=SERVICE_SCHEMA_SMARTMOWING)
+
+        
+
     _LOGGER.info("Setup Bosch Indego Mower Integration END")    
     return True    
 
@@ -178,6 +184,8 @@ class Mower():
         #Get last and next mow
         IndegoAPI_Instance.getLastCompletedMow()
         IndegoAPI_Instance.getNextMow()
+        #Get updates available
+        IndegoAPI_Instance.getUpdates()
         ### show vars
         IndegoAPI_Instance.show_vars()
         _LOGGER.info("Mower init end __init__")
