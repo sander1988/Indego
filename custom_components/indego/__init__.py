@@ -203,7 +203,7 @@ class Mower():
         StateValue = IndegoAPI_Instance._mower_state
         _LOGGER.debug("  Mower StateValue: " + str(StateValue))
         if ((StateValue >= 500) and (StateValue <= 799)) or (StateValue ==257):
-            _LOGGER.debug("  StateValue between (500 and 799) or (257): time to call getOperatingData!!!")
+            _LOGGER.debug("  StateValue between (500 and 799) or (257) or (260): time to call getOperatingData!!!")
             #Get data for battery, mowingmode
             IndegoAPI_Instance.getOperatingData()
             IndegoAPI_Instance.Battery()
