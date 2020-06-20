@@ -102,26 +102,26 @@ class IndegoAlert(Entity):
     @property
     def name(self):
         """Return the name of the sensor."""
-        _LOGGER.debug("IndegoAlert name")
+        #_LOGGER.debug("IndegoAlert name")
         return self._device_label
 
     @property
     def state(self):
-        _LOGGER.debug("IndegoAlert state")
-        _LOGGER.debug(f"_alerts_count {self._IAPI._alerts_count}")
+        #_LOGGER.debug("IndegoAlert state")
+        #_LOGGER.debug(f"_alerts_count {self._IAPI._alerts_count}")
         #return self._state
         if (self._IAPI._alerts_count > 0):
-            _LOGGER.debug("Alerts exists, True")
+            #_LOGGER.debug("Alerts exists, True")
             return True
         else:
-            _LOGGER.debug("No alerts, Sensor false!")
+            #_LOGGER.debug("No alerts, Sensor false!")
             return False
         #return self._IAPI._alerts_count
 
     @property
     def is_on(self):
         """Return if entity is on."""
-        _LOGGER.debug("IndegoAlert is_on")
+        #_LOGGER.debug("IndegoAlert is_on")
         return self._state
 
     @property

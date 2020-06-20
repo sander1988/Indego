@@ -25,8 +25,6 @@ CONF_POLLING = 'polling'
 DEFAULT_NAME = 'Indego'
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=60)
 INDEGO_COMPONENTS = ['sensor', 'binary_sensor']
-#INDEGO_COMPONENTS = ['sensor']
-#UPDATE_INTERVAL = 5  # in minutes
 DEFAULT_URL = 'https://api.indego.iot.bosch-si.com:443/api/v1/'
 IndegoAPI_Instance = None
 
@@ -74,6 +72,11 @@ def setup(hass, config: dict):
     _LOGGER.info("Setup 5m update")
     now = datetime.datetime.now()
     track_utc_time_change(hass, Mower.refresh_5m, minute=range(0, 60, 5), second=0)
+
+    # Update every 10 minutes
+    _LOGGER.info("Setup 10m update")
+    now = datetime.datetime.now()
+    track_utc_time_change(hass, Mower.refresh_10m, minute=range(0, 60, 10), second=0)
 
     # Update every hour
     _LOGGER.info("Setup 60m update")
@@ -187,7 +190,7 @@ class Mower():
         #Get updates available
         IndegoAPI_Instance.getUpdates()
         ### show vars
-        IndegoAPI_Instance.show_vars()
+        #IndegoAPI_Instance.show_vars()
         _LOGGER.info("Mower init end __init__")
 
     def refresh_1m(self):
@@ -234,6 +237,36 @@ class Mower():
         IndegoAPI_Instance.getLastCompletedMow()
         IndegoAPI_Instance.getNextMow()
 
+        _LOGGER.debug("  Refresh end")
+        return True
+
+    def refresh_10m(self):
+        _LOGGER.info("  Refresh Indego online sensor every 10m")
+
+        OnlineValue = IndegoAPI_Instance._online
+        if (OnlineValue == False):
+            _LOGGER.debug("  Mower offline, control status!")
+            IndegoAPI_Instance.getOperatingData()
+            OnlineValue = IndegoAPI_Instance._online
+            if (OnlineValue == True):
+                #IndegoAPI_Instance.getOperatingData()
+                _LOGGER.debug("  Mower came online!")
+                #Update all OperatingData variables
+                IndegoAPI_Instance.Battery()
+                IndegoAPI_Instance.BatteryPercent()
+                IndegoAPI_Instance.BatteryPercentAdjusted()
+                IndegoAPI_Instance.BatteryVoltage()
+                IndegoAPI_Instance.BatteryCycles()
+                IndegoAPI_Instance.BatteryDischarge()
+                IndegoAPI_Instance.BatteryAmbientTemp()
+                IndegoAPI_Instance.BatteryTemp()
+                # Update the update sensor
+                IndegoAPI_Instance.getUpdates()
+
+            else: 
+                _LOGGER.debug("  Mower still offline!")
+        else:
+            _LOGGER.debug("  Mower online, no control!")
         _LOGGER.debug("  Refresh end")
         return True
 

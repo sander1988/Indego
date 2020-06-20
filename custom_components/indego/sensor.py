@@ -8,7 +8,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the sensor platform."""
-    _LOGGER.debug("Setup Sensor Platform with all sensors")    
+    _LOGGER.debug("Setup Indego Sensor Platform with all sensors")    
 
     mower_state_sensor_name = GLOB_MOWER_NAME + ' mower state'
     add_devices([IndegoStateSensor(API, mower_state_sensor_name)])
