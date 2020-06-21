@@ -191,6 +191,12 @@ class Mower():
         IndegoAPI_Instance.getUpdates()
         ### show vars
         #IndegoAPI_Instance.show_vars()
+
+        #Get compability logs for getConfig and getNetwork
+        IndegoAPI_Instance.getConfig()
+        IndegoAPI_Instance.getNetwork()
+        
+
         _LOGGER.info("Mower init end __init__")
 
     def refresh_1m(self):
