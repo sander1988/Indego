@@ -25,8 +25,9 @@ CONF_POLLING = 'polling'
 DEFAULT_NAME = 'Indego'
 MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=60)
 INDEGO_COMPONENTS = ['sensor', 'binary_sensor']
+#INDEGO_COMPONENTS = ['sensor']
 DEFAULT_URL = 'https://api.indego.iot.bosch-si.com:443/api/v1/'
-IndegoAPI_Instance = None
+Indego = None
 
 CONFIG_SCHEMA = vol.Schema({
     DOMAIN: vol.Schema({
@@ -99,7 +100,8 @@ def setup(hass, config: dict):
         name = call.data.get(CONF_SEND_COMMAND, DEFAULT_NAME)
         _LOGGER.info("Indego.send_command service called")
         _LOGGER.debug("Command: %s", name)
-        IndegoAPI_Instance.putCommand(name)
+        Indego.put_command(name)
+        Indego.update_state()
     hass.services.register(DOMAIN, SERVICE_NAME, send_command, schema=SERVICE_SCHEMA_COMMAND)
     
     DEFAULT_NAME = None
@@ -109,10 +111,8 @@ def setup(hass, config: dict):
         name = call.data.get(CONF_SMARTMOWING, DEFAULT_NAME)
         _LOGGER.info("Indego.send_smartmowing service called")
         _LOGGER.debug("Command: %s", str(name))
-        IndegoAPI_Instance.putMowMode(name)
-        #Update SmartMowing sensor
-        IndegoAPI_Instance.getGenericData()
-        IndegoAPI_Instance.MowingModeDescription()  
+        Indego.put_mow_mode(name)
+        Indego.update_generic_data()
     hass.services.register(DOMAIN, SERVICE_NAME, send_smartmowing, schema=SERVICE_SCHEMA_SMARTMOWING)
 
         
@@ -123,7 +123,7 @@ def setup(hass, config: dict):
 class Mower():
     def __init__(self):
         _LOGGER.info("Mower init start __init__")
-        global IndegoAPI_Instance
+        global Indego
         _LOGGER.debug(f"API URL = {DEFAULT_URL}")    
         _LOGGER.debug(f"GLOB_MOWER_NAME = {GLOB_MOWER_NAME}")
         #Mask username
@@ -149,80 +149,38 @@ class Mower():
         _LOGGER.debug(f"GLOB_MOWER_POLLING = {GLOB_MOWER_POLLING}")
 
         ### Creating API Instance and Login
-        IndegoAPI_Instance = IndegoAPI(GLOB_MOWER_USERNAME, GLOB_MOWER_PASSWORD, GLOB_MOWER_SERIAL)
-
-        ### show vars
-        #IndegoAPI_Instance.show_vars()
+        Indego = IndegoClient(GLOB_MOWER_USERNAME, GLOB_MOWER_PASSWORD, GLOB_MOWER_SERIAL)
+        #Indego = IndegoAsyncClient(GLOB_MOWER_USERNAME, GLOB_MOWER_PASSWORD, GLOB_MOWER_SERIAL)
         
         ### Initial update of variables
-        #Get data for State, 
-        IndegoAPI_Instance.getState()
-        IndegoAPI_Instance.MowerStateDescription()
-        IndegoAPI_Instance.MowerStateDescriptionDetailed()
-        IndegoAPI_Instance.Runtime()
-        IndegoAPI_Instance.RuntimeTotal()
-        IndegoAPI_Instance.RuntimeSession()
-        #Get data for MowingMode, modeldata
-        IndegoAPI_Instance.getGenericData()
-        IndegoAPI_Instance.MowingModeDescription()
-        IndegoAPI_Instance.ModelDescription() 
-        IndegoAPI_Instance.ModelVoltage() 
-        IndegoAPI_Instance.ModelVoltageMin()
-        IndegoAPI_Instance.ModelVoltageMax()  
-        IndegoAPI_Instance.BareToolNumber()  
-        #Get data for battery, mowingmode
-        IndegoAPI_Instance.getOperatingData()
-        IndegoAPI_Instance.Battery()
-        IndegoAPI_Instance.BatteryPercent()
-        IndegoAPI_Instance.BatteryPercentAdjusted()
-        IndegoAPI_Instance.BatteryVoltage()
-        IndegoAPI_Instance.BatteryCycles()
-        IndegoAPI_Instance.BatteryDischarge()
-        IndegoAPI_Instance.BatteryAmbientTemp()
-        IndegoAPI_Instance.BatteryTemp()
-        #Get data for alerts
-        IndegoAPI_Instance.getAlerts()
-        IndegoAPI_Instance.AlertsCount()
-        IndegoAPI_Instance.AlertsDescription()
-        #Get last and next mow
-        IndegoAPI_Instance.getLastCompletedMow()
-        IndegoAPI_Instance.getNextMow()
-        #Get updates available
-        IndegoAPI_Instance.getUpdates()
-        ### show vars
-        #IndegoAPI_Instance.show_vars()
-
-        #Get compability logs for getConfig and getNetwork
-        IndegoAPI_Instance.getConfig()
-        IndegoAPI_Instance.getNetwork()
         
+        Indego.login()
+        Indego.update_generic_data()
+        
+        #Get data for State, 
+        Indego.update_state()
+        
+        Indego.update_operating_data()
+
+        Indego.update_last_completed_mow()
+        Indego.update_next_mow()
+
+        Indego.update_alerts()
+
+        Indego.update_updates_available()
 
         _LOGGER.info("Mower init end __init__")
 
     def refresh_1m(self):
         _LOGGER.info("  Refresh Indego sensors every 1m")
         #Get data for State, 
-        IndegoAPI_Instance.getState()
-        IndegoAPI_Instance.MowerStateDescription()
-        IndegoAPI_Instance.MowerStateDescriptionDetailed()
-        IndegoAPI_Instance.Runtime()
-        IndegoAPI_Instance.RuntimeTotal()
-        IndegoAPI_Instance.RuntimeSession()
-
-        StateValue = IndegoAPI_Instance._mower_state
+        Indego.update_state()
+        StateValue = Indego.state.state
         _LOGGER.debug("  Mower StateValue: " + str(StateValue))
         if ((StateValue >= 500) and (StateValue <= 799)) or (StateValue ==257):
             _LOGGER.debug("  StateValue between (500 and 799) or (257) or (260): time to call getOperatingData!!!")
             #Get data for battery, mowingmode
-            IndegoAPI_Instance.getOperatingData()
-            IndegoAPI_Instance.Battery()
-            IndegoAPI_Instance.BatteryPercent()
-            IndegoAPI_Instance.BatteryPercentAdjusted()
-            IndegoAPI_Instance.BatteryVoltage()
-            IndegoAPI_Instance.BatteryCycles()
-            IndegoAPI_Instance.BatteryDischarge()
-            IndegoAPI_Instance.BatteryAmbientTemp()
-            IndegoAPI_Instance.BatteryTemp()
+            Indego.update_operating_data()
         else:
             _LOGGER.debug("  Mower docked. Do not call getOperatingData!!!")
         return True
@@ -231,17 +189,12 @@ class Mower():
         _LOGGER.info("  Refresh Indego sensors every 5m")
 
         #Get data for MowingMode, modeldata
-        IndegoAPI_Instance.getGenericData()
-        IndegoAPI_Instance.MowingModeDescription()
-
+        Indego.update_generic_data()
         #Get data for alerts
-        IndegoAPI_Instance.getAlerts()
-        IndegoAPI_Instance.AlertsCount()
-        IndegoAPI_Instance.AlertsDescription()
-
+        Indego.update_alerts()
         #Get last and next mow
-        IndegoAPI_Instance.getLastCompletedMow()
-        IndegoAPI_Instance.getNextMow()
+        Indego.update_last_completed_mow()
+        Indego.update_next_mow()
 
         _LOGGER.debug("  Refresh end")
         return True
@@ -249,26 +202,17 @@ class Mower():
     def refresh_10m(self):
         _LOGGER.info("  Refresh Indego online sensor every 10m")
 
-        OnlineValue = IndegoAPI_Instance._online
+        OnlineValue = Indego._online
         if (OnlineValue == False):
             _LOGGER.debug("  Mower offline, control status!")
-            IndegoAPI_Instance.getOperatingData()
-            OnlineValue = IndegoAPI_Instance._online
+            OnlineValue = Indego._online
             if (OnlineValue == True):
-                #IndegoAPI_Instance.getOperatingData()
                 _LOGGER.debug("  Mower came online!")
                 #Update all OperatingData variables
-                IndegoAPI_Instance.Battery()
-                IndegoAPI_Instance.BatteryPercent()
-                IndegoAPI_Instance.BatteryPercentAdjusted()
-                IndegoAPI_Instance.BatteryVoltage()
-                IndegoAPI_Instance.BatteryCycles()
-                IndegoAPI_Instance.BatteryDischarge()
-                IndegoAPI_Instance.BatteryAmbientTemp()
-                IndegoAPI_Instance.BatteryTemp()
+                Indego.update_operating_data()
                 # Update the update sensor
-                IndegoAPI_Instance.getUpdates()
-
+                Indego.update_updates_available()
+                #Update all
             else: 
                 _LOGGER.debug("  Mower still offline!")
         else:
@@ -279,26 +223,13 @@ class Mower():
     def refresh_60m(self):
         _LOGGER.info("Refresh Indego sensors every 60m")
         #Get data for MowingMode, modeldata
-        IndegoAPI_Instance.getGenericData()
-        IndegoAPI_Instance.MowingModeDescription()
-        IndegoAPI_Instance.ModelDescription() 
-        IndegoAPI_Instance.ModelVoltage() 
-        IndegoAPI_Instance.ModelVoltageMin()
-        IndegoAPI_Instance.ModelVoltageMax()  
+        Indego.update_generic_data()
         _LOGGER.debug("  Refresh end")
         return True
 
     def refresh_battery(self):
         _LOGGER.info("Refresh Indego battery sensor")
         #Get data for battery
-        IndegoAPI_Instance.getOperatingData()
-        IndegoAPI_Instance.Battery()
-        IndegoAPI_Instance.BatteryPercent()
-        IndegoAPI_Instance.BatteryPercentAdjusted()
-        IndegoAPI_Instance.BatteryVoltage()
-        IndegoAPI_Instance.BatteryCycles()
-        IndegoAPI_Instance.BatteryDischarge()
-        IndegoAPI_Instance.BatteryAmbientTemp()
-        IndegoAPI_Instance.BatteryTemp()
+        Indego.update_operating_data()
         _LOGGER.debug("  Refresh end")
         return True
