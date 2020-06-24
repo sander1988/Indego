@@ -38,7 +38,7 @@ async def async_setup_platform(hass, config, async_add_devices, discovery_info=N
 class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
     """Class for Indego Binary Sensors."""
 
-    def __init__(self, serial, entity_id, name, icon, device_class):
+    def __init__(self, serial, entity_id, name, icon, device_class, attributes):
         """Initialize a binary sensor.
 
         Args:
@@ -53,9 +53,14 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
         self.entity_id = BINARY_SENSOR_FORMAT.format(entity_id)
         self._unique_id = entity_id
         self._name = name
-        self._icon = icon
+        self._updateble_icon = callable(icon)
+        if self._updateble_icon:
+            self._icon_func = icon
+            self._icon = icon(None)
+        else:
+            self._icon = icon
         self._device_class = device_class
-        self._attr = {}
+        self._attr = {key: None for key in attributes}
         self._should_poll = False
         self._state = None
         self._is_on = None
@@ -96,14 +101,16 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
     @property
     def icon(self):
         """Return the icon for the frontend based on the status."""
-        if isinstance(self._icon, str):
-            return self._icon
-        return self._icon(self.state)
+        return self._icon
 
     @property
     def device_state_attributes(self) -> dict:
         """Return attributes."""
         return self._attr
+
+    def add_attribute(self, attr: dict):
+        """Update attributes."""
+        self._attr.update(attr)
 
     @property
     def device_class(self) -> str:
@@ -125,8 +132,11 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
     @state.setter
     def state(self, new_on: bool):
         """Set state."""
-        self._is_on = new_on
-        self.async_schedule_update_ha_state()
+        if self._is_on != new_on:
+            self._is_on = new_on
+            if self._updateble_icon:
+                self._icon = self._icon_func(self._state)
+            self.async_schedule_update_ha_state()
 
 
 # class IndegoOnline(Entity):
