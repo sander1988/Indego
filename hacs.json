@@ -5,5 +5,5 @@
     "sensor",
     "binary_sensor"
   ],
-  "homeassistant": "1.110.0"
+  "homeassistant": "0.110.0"
 }
