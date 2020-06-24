@@ -1,6 +1,9 @@
 {
   "name": "Bosch Indego Mower",
   "country": "SE",
-  "domains": ["sensor"],
+  "domains": [
+    "sensor",
+    "binary_sensor"
+  ],
   "homeassistant": "1.110.0"
 }
