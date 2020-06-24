@@ -133,7 +133,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 ## Credits
 
 ### Thanks to
-Jumper dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
+Eduard Jumper dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
