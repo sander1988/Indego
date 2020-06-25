@@ -30,7 +30,7 @@ class IndegoSensor(RestoreEntity):
     """Class for Indego Sensors."""
 
     def __init__(
-        self, serial, entity_id, name, icon, device_class, unit_of_measurement
+        self, serial, entity_id, name, icon, device_class, unit_of_measurement, attributes
     ):
         """Initialize a sensor.
 
@@ -55,8 +55,8 @@ class IndegoSensor(RestoreEntity):
             self._icon = icon
         self._device_class = device_class
         self._unit = unit_of_measurement
+        self._attr = {key: None for key in attributes}
         self._state = None
-        self._attr = {}
         self._should_poll = False
 
     async def async_added_to_hass(self):

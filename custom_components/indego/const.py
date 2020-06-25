@@ -4,6 +4,7 @@ from datetime import timedelta
 DOMAIN = "indego"
 DATA_UPDATED = f"{DOMAIN}_data_updated"
 DATA_KEY = DOMAIN
+CONF_ATTR = "attributes"
 CONF_SEND_COMMAND = "command"
 CONF_SMARTMOWING = "enable"
 CONF_POLLING = "polling"
