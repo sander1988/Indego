@@ -387,8 +387,8 @@ class IndegoHub:
             return
         state = self.indego.state.state
         next_refresh = 300
-        if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
-            _LOGGER.debug("Mower online YES, refreshing operating data.")
+        if (500 <= state <= 799) or (state in (257, 266)):
+            _LOGGER.debug("Mower awake, DO refreshing operating data.")
             _LOGGER.debug(f"Mower state: {state}")
             try:
                 await self._update_operating_data()
@@ -397,7 +397,7 @@ class IndegoHub:
                 _LOGGER.warning("Error when calling API, will retry later.")
                 next_refresh = 60 + random.randint(0, 30)
         else:
-            _LOGGER.debug("Mower online NO, sleeping and NO refresh of operating data.")
+            _LOGGER.debug("Mower docked/sleeping, DO NO refresh of operating data.")
         self.refresh_state_remover = async_call_later(
             self.hass, next_refresh, self.refresh_state
         )
