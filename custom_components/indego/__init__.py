@@ -10,6 +10,7 @@ import logging
 import random
 import voluptuous as vol
 from pyIndego import IndegoAsyncClient
+import homeassistant.util.dt
 
 import homeassistant.helpers.config_validation as cv
 from homeassistant.components.binary_sensor import (
@@ -173,7 +174,8 @@ entity_definitions = {
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:cash-100",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
+        # CONF_UNIT_OF_MEASUREMENT: "ISO8601",
+        CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
     ENTITY_NEXT_MOW: {
@@ -181,7 +183,8 @@ entity_definitions = {
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:chevron-right",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
+        # CONF_UNIT_OF_MEASUREMENT: "ISO8601",
+        CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
     ENTITY_MOWING_MODE: {
@@ -569,7 +572,10 @@ class IndegoHub:
         await self.indego.update_last_completed_mow()
         _LOGGER.debug("Last completed: %s", self.indego.last_completed_mow)
         _LOGGER.debug("Last completed type: %s", type(self.indego.last_completed_mow))
-        self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
+        # self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
+        self.entities[
+            ENTITY_LAST_COMPLETED
+        ].state = self.indego.last_completed_mow.strftime("%Y-%m-%d %H:%M:%S")
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {"last_completed_mow": self.indego.last_completed_mow.isoformat()}
         )
@@ -578,7 +584,14 @@ class IndegoHub:
         await self.indego.update_next_mow()
         _LOGGER.debug("Next: %s", self.indego.next_mow)
         _LOGGER.debug("Next type: %s", type(self.indego.next_mow))
-        self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
+        # self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
+        self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow.strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        self.entities[ENTITY_NEXT_MOW].add_attribute(
+            {"next_mow": self.indego.next_mow.isoformat()}
+        )
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {"next_mow": self.indego.next_mow.isoformat()}
         )
+

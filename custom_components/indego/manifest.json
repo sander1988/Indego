@@ -3,11 +3,6 @@
   "name": "Bosch Indego Mower",
   "documentation": "https://github.com/jm-73/Indego",
   "dependencies": [],
-  "codeowners": [
-    "@jm-73",
-    "@eavanvalkenburg"
-  ],
-  "requirements": [
-    "pyIndego>=2.0.13"
-  ]
+  "codeowners": ["@jm-73", "@eavanvalkenburg"],
+  "requirements": ["pyIndego==2.0.13"]
 }
