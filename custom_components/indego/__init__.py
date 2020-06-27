@@ -194,7 +194,8 @@ entity_definitions = {
     },
     ENTITY_RUNTIME: {
         CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime total",
+        # CONF_NAME: "runtime total",
+        CONF_NAME: "mowtime total",
         CONF_ICON: "mdi:information-outline",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "h",
@@ -381,12 +382,15 @@ class IndegoHub:
         state = self.indego.state.state
         next_refresh = 300
         if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
+            _LOGGER.debug("Mower online, YES refreshing operating data.")
             try:
                 await self._update_operating_data()
                 next_refresh = 30
             except (ServerTimeoutError, TooManyRedirects):
                 _LOGGER.warning("Error when calling API, will retry later.")
                 next_refresh = 60 + random.randint(0, 30)
+        else:
+            _LOGGER.debug("Mower sleeping, NO refresh of operating data.")
         self.refresh_state_remover = async_call_later(
             self.hass, next_refresh, self.refresh_state
         )
@@ -465,6 +469,8 @@ class IndegoHub:
             ENTITY_BATTERY
         ].state = self.indego.operating_data.battery.percent_adjusted
 
+        _LOGGER.debug("Call _update_operationg_data")
+
         # dependent attribute updates
         self.entities[ENTITY_BATTERY].add_attribute(
             {
@@ -484,7 +490,8 @@ class IndegoHub:
             ENTITY_MOWER_STATE_DETAIL
         ].state = self.indego.state_description_detail
         self.entities[ENTITY_LAWN_MOWED].state = self.indego.state.mowed
-        self.entities[ENTITY_RUNTIME].state = self.indego.state.runtime.total.operate
+        # self.entities[ENTITY_RUNTIME].state = self.indego.state.runtime.total.operate
+        self.entities[ENTITY_RUNTIME].state = self.indego.state.runtime.total.cut
 
         # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE_DETAIL].add_attribute(
@@ -549,9 +556,7 @@ class IndegoHub:
         await self.indego.update_last_completed_mow()
         _LOGGER.debug("Last completed: %s", self.indego.last_completed_mow)
         _LOGGER.debug("Last completed type: %s", type(self.indego.last_completed_mow))
-        self.entities[
-            ENTITY_LAST_COMPLETED
-        ].state = self.indego.last_completed_mow
+        self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {"last_completed_mow": self.indego.last_completed_mow.isoformat()}
         )
