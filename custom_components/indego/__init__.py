@@ -352,7 +352,13 @@ class IndegoHub:
         """Do the initial update of all entities."""
         _LOGGER.debug("Starting initial update.")
         await asyncio.gather(
-            *[self.refresh_state(_), self.refresh_5m(_), self.refresh_60m(_)]
+            *[
+                self.refresh_state(_),
+                self.refresh_5m(_),
+                self.refresh_60m(_),
+                self._update_operating_data(),
+                self._update_updates_available(),
+            ]
         )
 
     async def async_shutdown(self, _):
@@ -382,7 +388,8 @@ class IndegoHub:
         state = self.indego.state.state
         next_refresh = 300
         if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
-            _LOGGER.debug("Mower online, YES refreshing operating data.")
+            _LOGGER.debug("Mower online YES, refreshing operating data.")
+            _LOGGER.debug(f"Mower state: {state}")
             try:
                 await self._update_operating_data()
                 next_refresh = 30
@@ -390,7 +397,7 @@ class IndegoHub:
                 _LOGGER.warning("Error when calling API, will retry later.")
                 next_refresh = 60 + random.randint(0, 30)
         else:
-            _LOGGER.debug("Mower sleeping, NO refresh of operating data.")
+            _LOGGER.debug("Mower online NO, sleeping and NO refresh of operating data.")
         self.refresh_state_remover = async_call_later(
             self.hass, next_refresh, self.refresh_state
         )
@@ -469,7 +476,7 @@ class IndegoHub:
             ENTITY_BATTERY
         ].state = self.indego.operating_data.battery.percent_adjusted
 
-        _LOGGER.debug("Call _update_operationg_data")
+        _LOGGER.debug("Call _update_operating_data")
 
         # dependent attribute updates
         self.entities[ENTITY_BATTERY].add_attribute(
@@ -550,7 +557,13 @@ class IndegoHub:
     async def _update_updates_available(self):
         await self.indego.update_updates_available()
         # dependent state updates
+        _LOGGER.debug("Call _update_updates_available")
         self.entities[ENTITY_UPDATE_AVAILABLE].state = self.indego.update_available
+        if self.indego.update_available == None:
+            self.entities[ENTITY_UPDATE_AVAILABLE].state = False
+        else:
+            self.entities[ENTITY_UPDATE_AVAILABLE].state = True
+        _LOGGER.debug(f"self.indego.update_available = {self.indego.update_available}")
 
     async def _update_last_completed_mow(self):
         await self.indego.update_last_completed_mow()
