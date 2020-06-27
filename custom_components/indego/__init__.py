@@ -159,7 +159,7 @@ entity_definitions = {
         CONF_NAME: "lawn mowed",
         CONF_ICON: "mdi:percent",
         CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_UNIT_OF_MEASUREMENT: "%",
         CONF_ATTR: [
             "last_completed_mow",
             "next_mow",
