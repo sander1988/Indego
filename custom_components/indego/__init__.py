@@ -575,7 +575,7 @@ class IndegoHub:
         # self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
         self.entities[
             ENTITY_LAST_COMPLETED
-        ].state = self.indego.last_completed_mow.strftime("%Y-%m-%d %H:%M:%S")
+        ].state = self.indego.last_completed_mow.strftime("%Y-%m-%d %H:%M")
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {"last_completed_mow": self.indego.last_completed_mow.isoformat()}
         )
@@ -586,7 +586,7 @@ class IndegoHub:
         _LOGGER.debug("Next type: %s", type(self.indego.next_mow))
         # self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
         self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow.strftime(
-            "%Y-%m-%d %H:%M:%S"
+            "%Y-%m-%d %H:%M"
         )
         self.entities[ENTITY_NEXT_MOW].add_attribute(
             {"next_mow": self.indego.next_mow.isoformat()}
