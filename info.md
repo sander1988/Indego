@@ -2,7 +2,7 @@
 ### NB!: This is a Beta version!
 {% endif %}
 # Bosch Indego Mower
-![Screenshot](https://github.com/jm-73/Indego/blob/master/doc/0-Indego_sensors.png?raw=true)
+![Screenshot](https://github.com/jm-73/Indego/blob/master/doc/0-Sensors.png)
 
 You can add this component to Home Assistant via `configuration.yaml` file.
 
