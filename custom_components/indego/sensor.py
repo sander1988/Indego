@@ -31,7 +31,6 @@ class IndegoSensor(RestoreEntity):
 
     def __init__(
         self,
-        serial,
         entity_id,
         name,
         icon,
@@ -50,7 +49,6 @@ class IndegoSensor(RestoreEntity):
             unit_of_measurement (str): unit of measurement of the sensor
 
         """
-        self._serial = serial
         self.entity_id = SENSOR_FORMAT.format(entity_id)
         self._unique_id = entity_id
         self._name = name
