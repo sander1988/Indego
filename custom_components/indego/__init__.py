@@ -78,7 +78,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
                 vol.Required(CONF_USERNAME): cv.string,
                 vol.Required(CONF_PASSWORD): cv.string,
-                vol.Required(CONF_ID): cv.string,
+                vol.Optional(CONF_ID, default=None): cv.string,
                 vol.Optional(CONF_POLLING, default=False): cv.boolean,
             }
         )
@@ -109,7 +109,7 @@ def FUNC_ICON_MOWER_ALERT(state):
     return "mdi:check-circle-outline"
 
 
-entity_definitions = {
+ENTITY_DEFINITIONS = {
     ENTITY_ONLINE: {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "online",
@@ -187,7 +187,6 @@ entity_definitions = {
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:cash-100",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        # CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -196,7 +195,6 @@ entity_definitions = {
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:chevron-right",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        # CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -235,30 +233,16 @@ entity_definitions = {
 async def async_setup(hass, config: dict):
     """Set up the integration."""
     conf = config[DOMAIN]
-    mower_serial = conf[CONF_ID]
     component = hass.data[DOMAIN] = IndegoHub(
         conf[CONF_NAME],
         conf[CONF_USERNAME],
         conf[CONF_PASSWORD],
-        mower_serial,
+        conf[CONF_ID],
         conf[CONF_POLLING],
         hass,
     )
 
-    try:
-        await component.indego.login()
-        retry_login = False
-    except ClientResponseError as e:
-        _LOGGER.error("Credentials for Indego are invalid: %s", e)
-        return False
-    except (ServerTimeoutError, TooManyRedirects):
-        _LOGGER.warning("Call to Bosch timed out, retrying later, will setup.")
-        retry_login = True
-    await component.async_schedule_updates(retry_login)
-    for comp in INDEGO_COMPONENTS:
-        hass.async_create_task(
-            discovery.async_load_platform(hass, comp, DOMAIN, {}, config)
-        )
+    await component.login_and_schedule()
 
     async def async_send_command(call):
         """Handle the service call."""
@@ -309,21 +293,17 @@ class IndegoHub:
         self.hass = hass
 
         self.indego = IndegoAsyncClient(self.username, self.password, self._serial)
+        self.entities = {}
         self.refresh_state_task = None
         self.refresh_5m_remover = None
         self.refresh_60m_remover = None
         self._shutdown = False
-        # self.refresh_60m_remover = None
-        # self.polling_remover = None
 
-        self.entities = self.create_entities()
-
-    def create_entities(self):
-        entities = {}
-        for entity_key, entity in entity_definitions.items():
+    async def _create_entities(self):
+        """Create sub-entities and add them to Hass."""
+        for entity_key, entity in ENTITY_DEFINITIONS.items():
             if entity[CONF_TYPE] == SENSOR_TYPE:
-                entities[entity_key] = IndegoSensor(
-                    self._serial,
+                self.entities[entity_key] = IndegoSensor(
                     f"indego_{self._serial}_{entity_key}",
                     f"{self.mower_name} {entity[CONF_NAME]}",
                     entity[CONF_ICON],
@@ -332,49 +312,40 @@ class IndegoHub:
                     entity[CONF_ATTR],
                 )
             elif entity[CONF_TYPE] == BINARY_SENSOR_TYPE:
-                entities[entity_key] = IndegoBinarySensor(
-                    self._serial,
+                self.entities[entity_key] = IndegoBinarySensor(
                     f"indego_{self._serial}_{entity_key}",
                     f"{self.mower_name} {entity[CONF_NAME]}",
                     entity[CONF_ICON],
                     entity[CONF_DEVICE_CLASS],
                     entity[CONF_ATTR],
                 )
-        return entities
+        await asyncio.gather(
+            *[
+                self.hass.async_create_task(
+                    discovery.async_load_platform(self.hass, comp, DOMAIN, {}, {})
+                )
+                for comp in INDEGO_COMPONENTS
+            ]
+        )
 
-    async def async_schedule_updates(self, retry_login):
-        """Schedule future updates."""
-        if retry_login:
-            self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, self._login)
-        else:
-            self.hass.bus.async_listen_once(
-                EVENT_HOMEASSISTANT_STARTED, self._initial_update
-            )
-        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self.async_shutdown)
-
-    async def _login(self, _):
+    async def login_and_schedule(self):
         """Login to the api."""
-        try:
-            await self.indego.login()
-            retry_login = False
-        except ClientResponseError as e:
-            _LOGGER.error("Credentials for Indego are invalid: %s", e)
-            retry_login = False
-        except (ServerTimeoutError, TooManyRedirects) as e:
-            _LOGGER.warning("Call to Bosch timed out, retrying later, %s", e)
-            retry_login = True
-        finally:
-            if retry_login:
-                async_call_later(self.hass, 60, self._login)
-            else:
-                self.hass.async_create_task(self._initial_update)
+        login_success = await self.indego.login()
+        if not login_success:
+            _LOGGER.error("Unable to login, please check your credentials")
+            return
+        if not self._serial:
+            self._serial = self.indego.serial
+        await self._create_entities()
+        self.hass.bus.async_listen_once(
+            EVENT_HOMEASSISTANT_STARTED, self._initial_update
+        )
+        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self.async_shutdown)
 
     async def _initial_update(self, _):
         """Do the initial update of all entities."""
         _LOGGER.debug("Starting initial update.")
-        self.refresh_state_task = self.hass.async_create_task(
-            self.async_refresh_state()
-        )
+        self.refresh_state_task = self.hass.async_create_task(self.refresh_state())
         await asyncio.gather(*[self.refresh_5m(_), self.refresh_60m(_)])
 
     async def async_shutdown(self, _):
@@ -389,7 +360,7 @@ class IndegoHub:
             self.refresh_60m_remover()
         await self.indego.close()
 
-    async def async_refresh_state(self):
+    async def refresh_state(self):
         """Update the state, if necessary update operating data and recall itself."""
         _LOGGER.debug("Refreshing state.")
         await self._update_state()
@@ -398,9 +369,7 @@ class IndegoHub:
         state = self.indego.state.state
         if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
             await self._update_operating_data()
-        self.refresh_state_task = self.hass.async_create_task(
-            self.async_refresh_state()
-        )
+        self.refresh_state_task = self.hass.async_create_task(self.refresh_state())
 
     async def refresh_5m(self, _):
         """Refresh Indego sensors every 5m."""
@@ -420,9 +389,6 @@ class IndegoHub:
             if res:
                 try:
                     raise res
-                except (ServerTimeoutError, TooManyRedirects):
-                    _LOGGER.warning("Error when calling API, will retry later.")
-                    next_refresh = 60 + random.randint(0, 30)
                 except Exception as e:
                     _LOGGER.warning("Uncaught error: %s on index: %s", e, index)
             index += 1

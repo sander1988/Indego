@@ -38,7 +38,7 @@ async def async_setup_platform(hass, config, async_add_devices, discovery_info=N
 class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
     """Class for Indego Binary Sensors."""
 
-    def __init__(self, serial, entity_id, name, icon, device_class, attributes):
+    def __init__(self, entity_id, name, icon, device_class, attributes):
         """Initialize a binary sensor.
 
         Args:
@@ -49,7 +49,6 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
             device_class (str): device class of the sensor
 
         """
-        self._serial = serial
         self.entity_id = BINARY_SENSOR_FORMAT.format(entity_id)
         self._unique_id = entity_id
         self._name = name
