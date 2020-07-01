@@ -322,7 +322,9 @@ class IndegoHub:
         await asyncio.gather(
             *[
                 self.hass.async_create_task(
-                    discovery.async_load_platform(self.hass, comp, DOMAIN, {}, {})
+                    discovery.async_load_platform(
+                        self.hass, comp, DOMAIN, {}, self.hass.config
+                    )
                 )
                 for comp in INDEGO_COMPONENTS
             ]
