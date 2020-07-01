@@ -32,9 +32,11 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_STOP,
     TEMP_CELSIUS,
     STATE_UNKNOWN,
+    STATE_ON,
 )
 from homeassistant.helpers import discovery
 from homeassistant.helpers.event import async_call_later
+from homeassistant.util.dt import utcnow
 
 from .binary_sensor import IndegoBinarySensor
 from .const import (
@@ -76,7 +78,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
                 vol.Required(CONF_USERNAME): cv.string,
                 vol.Required(CONF_PASSWORD): cv.string,
-                vol.Required(CONF_ID): cv.string,
+                vol.Optional(CONF_ID, default=None): cv.string,
                 vol.Optional(CONF_POLLING, default=False): cv.boolean,
             }
         )
@@ -102,14 +104,12 @@ def FUNC_ICON_BATTERY(state):
 
 def FUNC_ICON_MOWER_ALERT(state):
     if state:
-        if state == STATE_UNKNOWN:
-            return "mdi:check-circle-outline"
-        if int(state) > 0:
+        if int(state) > 0 or state == STATE_ON:
             return "mdi:alert-outline"
     return "mdi:check-circle-outline"
 
 
-entity_definitions = {
+ENTITY_DEFINITIONS = {
     ENTITY_ONLINE: {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "online",
@@ -137,7 +137,7 @@ entity_definitions = {
         CONF_ICON: "mdi:robot",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: ["model", "serial", "firmware"],
+        CONF_ATTR: ["last_updated", "model", "serial", "firmware"],
     },
     ENTITY_MOWER_STATE_DETAIL: {
         CONF_TYPE: SENSOR_TYPE,
@@ -145,7 +145,12 @@ entity_definitions = {
         CONF_ICON: "mdi:robot",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: ["state_number", "state_description", "model_number"],
+        CONF_ATTR: [
+            "last_updated",
+            "state_number",
+            "state_description",
+            "model_number",
+        ],
     },
     ENTITY_BATTERY: {
         CONF_TYPE: SENSOR_TYPE,
@@ -153,7 +158,14 @@ entity_definitions = {
         CONF_ICON: FUNC_ICON_BATTERY,
         CONF_DEVICE_CLASS: DEVICE_CLASS_BATTERY,
         CONF_UNIT_OF_MEASUREMENT: "%",
-        CONF_ATTR: [],
+        CONF_ATTR: [
+            "last_updated",
+            "voltage_V",
+            "discharge_Ah",
+            "cycles",
+            f"battery_temp_{TEMP_CELSIUS}",
+            f"ambient_temp_{TEMP_CELSIUS}",
+        ],
     },
     ENTITY_LAWN_MOWED: {
         CONF_TYPE: SENSOR_TYPE,
@@ -162,11 +174,12 @@ entity_definitions = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "%",
         CONF_ATTR: [
+            "last_updated",
             "last_completed_mow",
             "next_mow",
-            "last_session_operation",
-            "last_session_cut",
-            "last_session_charge",
+            "last_session_operation_min",
+            "last_session_cut_min",
+            "last_session_charge_min",
         ],
     },
     ENTITY_LAST_COMPLETED: {
@@ -174,7 +187,6 @@ entity_definitions = {
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:cash-100",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        # CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -183,7 +195,6 @@ entity_definitions = {
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:chevron-right",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        # CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -202,7 +213,11 @@ entity_definitions = {
         CONF_ICON: "mdi:information-outline",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "h",
-        CONF_ATTR: [],
+        CONF_ATTR: [
+            "total_operation_time_h",
+            "total_mowing_time_h",
+            "total_charging_time_h",
+        ],
     },
     ENTITY_MOWER_ALERT: {
         CONF_TYPE: SENSOR_TYPE,
@@ -210,7 +225,7 @@ entity_definitions = {
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: ["total_operation_time", "total_mowing_time", "total_charging_time"],
+        CONF_ATTR: [],
     },
 }
 
@@ -218,30 +233,16 @@ entity_definitions = {
 async def async_setup(hass, config: dict):
     """Set up the integration."""
     conf = config[DOMAIN]
-    mower_serial = conf[CONF_ID]
     component = hass.data[DOMAIN] = IndegoHub(
         conf[CONF_NAME],
         conf[CONF_USERNAME],
         conf[CONF_PASSWORD],
-        mower_serial,
+        conf[CONF_ID],
         conf[CONF_POLLING],
         hass,
     )
 
-    try:
-        await component.indego.login()
-        retry_login = False
-    except ClientResponseError as e:
-        _LOGGER.error("Credentials for Indego are invalid: %s", e)
-        return False
-    except (ServerTimeoutError, TooManyRedirects):
-        _LOGGER.warning("Call to Bosch timed out, retrying later, will setup.")
-        retry_login = True
-    await component.async_schedule_updates(retry_login)
-    for comp in INDEGO_COMPONENTS:
-        hass.async_create_task(
-            discovery.async_load_platform(hass, comp, DOMAIN, {}, config)
-        )
+    await component.login_and_schedule()
 
     async def async_send_command(call):
         """Handle the service call."""
@@ -292,20 +293,17 @@ class IndegoHub:
         self.hass = hass
 
         self.indego = IndegoAsyncClient(self.username, self.password, self._serial)
-        self.refresh_state_remover = None
+        self.entities = {}
+        self.refresh_state_task = None
         self.refresh_5m_remover = None
         self.refresh_60m_remover = None
-        # self.refresh_60m_remover = None
-        # self.polling_remover = None
+        self._shutdown = False
 
-        self.entities = self.create_entities()
-
-    def create_entities(self):
-        entities = {}
-        for entity_key, entity in entity_definitions.items():
+    async def _create_entities(self):
+        """Create sub-entities and add them to Hass."""
+        for entity_key, entity in ENTITY_DEFINITIONS.items():
             if entity[CONF_TYPE] == SENSOR_TYPE:
-                entities[entity_key] = IndegoSensor(
-                    self._serial,
+                self.entities[entity_key] = IndegoSensor(
                     f"indego_{self._serial}_{entity_key}",
                     f"{self.mower_name} {entity[CONF_NAME]}",
                     entity[CONF_ICON],
@@ -314,96 +312,66 @@ class IndegoHub:
                     entity[CONF_ATTR],
                 )
             elif entity[CONF_TYPE] == BINARY_SENSOR_TYPE:
-                entities[entity_key] = IndegoBinarySensor(
-                    self._serial,
+                self.entities[entity_key] = IndegoBinarySensor(
                     f"indego_{self._serial}_{entity_key}",
                     f"{self.mower_name} {entity[CONF_NAME]}",
                     entity[CONF_ICON],
                     entity[CONF_DEVICE_CLASS],
                     entity[CONF_ATTR],
                 )
-        return entities
+        await asyncio.gather(
+            *[
+                self.hass.async_create_task(
+                    discovery.async_load_platform(
+                        self.hass, comp, DOMAIN, {}, self.hass.config
+                    )
+                )
+                for comp in INDEGO_COMPONENTS
+            ]
+        )
 
-    async def async_schedule_updates(self, retry_login):
-        """Schedule future updates."""
-        if retry_login:
-            self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, self._login)
-        else:
-            self.hass.bus.async_listen_once(
-                EVENT_HOMEASSISTANT_STARTED, self._initial_update
-            )
-        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self.async_shutdown)
-
-    async def _login(self, _):
+    async def login_and_schedule(self):
         """Login to the api."""
-        try:
-            await self.indego.login()
-            retry_login = False
-        except ClientResponseError as e:
-            _LOGGER.error("Credentials for Indego are invalid: %s", e)
-            retry_login = False
-        except (ServerTimeoutError, TooManyRedirects) as e:
-            _LOGGER.warning("Call to Bosch timed out, retrying later, %s", e)
-            retry_login = True
-        finally:
-            if retry_login:
-                async_call_later(self.hass, 60, self._login)
-            else:
-                self.hass.bus.async_create_task(self._initial_update)
+        login_success = await self.indego.login()
+        if not login_success:
+            _LOGGER.error("Unable to login, please check your credentials")
+            return
+        if not self._serial:
+            self._serial = self.indego.serial
+        await self._create_entities()
+        self.hass.bus.async_listen_once(
+            EVENT_HOMEASSISTANT_STARTED, self._initial_update
+        )
+        self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, self.async_shutdown)
 
     async def _initial_update(self, _):
         """Do the initial update of all entities."""
         _LOGGER.debug("Starting initial update.")
-        await asyncio.gather(
-            *[
-                self.refresh_state(_),
-                self.refresh_5m(_),
-                self.refresh_60m(_),
-                self._update_operating_data(),
-                self._update_updates_available(),
-            ]
-        )
+        self.refresh_state_task = self.hass.async_create_task(self.refresh_state())
+        await asyncio.gather(*[self.refresh_5m(_), self.refresh_60m(_)])
 
     async def async_shutdown(self, _):
         """Remove all future updates and close the client."""
-        if self.refresh_state_remover:
-            self.refresh_state_remover()
+        self._shutdown = True
+        if self.refresh_state_task:
+            self.refresh_state_task.cancel()
+            await self.refresh_state_task
         if self.refresh_5m_remover:
             self.refresh_5m_remover()
         if self.refresh_60m_remover:
             self.refresh_60m_remover()
-        # self.refresh_60m_remover()
-        # if self._polling:
-        #     self.polling_remover()
         await self.indego.close()
 
-    async def refresh_state(self, _):
-        """Refresh Indego sensors every 30 seconds when mowing, 5 minutes otherwise."""
+    async def refresh_state(self):
+        """Update the state, if necessary update operating data and recall itself."""
         _LOGGER.debug("Refreshing state.")
-        try:
-            await self._update_state()
-        except (ServerTimeoutError, TooManyRedirects):
-            _LOGGER.warning("Error when calling API, will retry later.")
-            self.refresh_state_remover = async_call_later(
-                self.hass, 60 + random.randint(0, 30), self.refresh_state
-            )
+        await self._update_state()
+        if self._shutdown:
             return
         state = self.indego.state.state
-        next_refresh = 300
-        if (500 <= state <= 799) or (state in (257, 266)):
-            _LOGGER.debug("Mower awake, DO refreshing operating data.")
-            _LOGGER.debug(f"Mower state: {state}")
-            try:
-                await self._update_operating_data()
-                next_refresh = 30
-            except (ServerTimeoutError, TooManyRedirects):
-                _LOGGER.warning("Error when calling API, will retry later.")
-                next_refresh = 60 + random.randint(0, 30)
-        else:
-            _LOGGER.debug("Mower docked/sleeping, DO NO refresh of operating data.")
-        self.refresh_state_remover = async_call_later(
-            self.hass, next_refresh, self.refresh_state
-        )
+        if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
+            await self._update_operating_data()
+        self.refresh_state_task = self.hass.async_create_task(self.refresh_state())
 
     async def refresh_5m(self, _):
         """Refresh Indego sensors every 5m."""
@@ -417,16 +385,12 @@ class IndegoHub:
             ],
             return_exceptions=True,
         )
-        _LOGGER.debug("refresh5 results: %s", results)
         next_refresh = 300
         index = 0
         for res in results:
             if res:
                 try:
                     raise res
-                except (ServerTimeoutError, TooManyRedirects):
-                    _LOGGER.warning("Error when calling API, will retry later.")
-                    next_refresh = 60 + random.randint(0, 30)
                 except Exception as e:
                     _LOGGER.warning("Uncaught error: %s on index: %s", e, index)
             index += 1
@@ -437,39 +401,8 @@ class IndegoHub:
     async def refresh_60m(self, _):
         """Refresh Indego sensors every 60m."""
         _LOGGER.debug("Refreshing 60m.")
-        try:
-            await self._update_updates_available()
-        except (ServerTimeoutError, TooManyRedirects):
-            _LOGGER.warning("Error when calling API, will retry later.")
-            self.refresh_6m_remover = async_call_later(
-                self.hass, 60 + random.randint(0, 30), self.refresh_60m
-            )
-            return
-        self.refresh_6m_remover = async_call_later(self.hass, 3600, self.refresh_60m)
-
-    # async def refresh_10m(self, _):
-    #     """Refresh Indego sensors every 10m."""
-    #     online = self.indego._online
-    #     if online:
-    #         await asyncio.gather(
-    #             *[self._update_operating_data(), self._update_updates_available()]
-    #         )
-    #     self.refresh_10m_remover = async_call_later(self.hass, 600, self.refresh_10m)
-
-    # TODO: Look at the logic for these refreshes, this one is called less often then the 5m one and does the same.
-    # async def refresh_60m(self, _):
-    #     """Refresh Indego sensors every 60m."""
-    #     await self._update_generic_data()
-    #     self.refresh_60m_remover = async_call_later(self.hass, 3600, self.refresh_60m)
-
-    # TODO: Look at the logic for these refreshes, this one is called less often then the 10m one and does the same.
-    # async def refresh_battery(self, _):
-    #     """Refresh self.indego battery sensor."""
-    #     await self._update_operating_data()
-    #     if self._polling:
-    #         self.polling_remover = async_call_later(
-    #             self.hass, 3600, self.refresh_battery
-    #         )
+        await self._update_updates_available()
+        self.refresh_60m_remover = async_call_later(self.hass, 3600, self.refresh_60m)
 
     async def _update_operating_data(self):
         await self.indego.update_operating_data()
@@ -484,17 +417,20 @@ class IndegoHub:
         # dependent attribute updates
         self.entities[ENTITY_BATTERY].add_attribute(
             {
-                "Voltage": f"{self.indego.operating_data.battery.voltage} V",
-                "Discharge": f"{self.indego.operating_data.battery.discharge} Ah",
-                "Cycles": f"{self.indego.operating_data.battery.cycles}",
-                "Battery temp": f"{self.indego.operating_data.battery.battery_temp} {TEMP_CELSIUS}",
-                "Ambient temp": f"{self.indego.operating_data.battery.ambient_temp} {TEMP_CELSIUS}",
+                "last_updated": utcnow(),
+                "voltage_V": self.indego.operating_data.battery.voltage,
+                "discharge_Ah": self.indego.operating_data.battery.discharge,
+                "cycles": self.indego.operating_data.battery.cycles,
+                f"battery_temp_{TEMP_CELSIUS}": self.indego.operating_data.battery.battery_temp,
+                f"ambient_temp_{TEMP_CELSIUS}": self.indego.operating_data.battery.ambient_temp,
             }
         )
 
     async def _update_state(self):
-        await self.indego.update_state()
+        await self.indego.update_state(longpoll=True, longpoll_timeout=300)
         # dependent state updates
+        if self._shutdown:
+            return
         self.entities[ENTITY_MOWER_STATE].state = self.indego.state_description
         self.entities[
             ENTITY_MOWER_STATE_DETAIL
@@ -504,24 +440,27 @@ class IndegoHub:
         self.entities[ENTITY_RUNTIME].state = self.indego.state.runtime.total.cut
 
         # dependent attribute updates
+        self.entities[ENTITY_MOWER_STATE].add_attribute({"last_updated": utcnow()})
         self.entities[ENTITY_MOWER_STATE_DETAIL].add_attribute(
             {
+                "last_updated": utcnow(),
                 "state_number": self.indego.state.state,
                 "state_description": self.indego.state_description_detail,
             }
         )
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {
-                "last_session_operation": f"{self.indego.state.runtime.session.operate} min",
-                "last_session_cut": f"{self.indego.state.runtime.session.cut} min",
-                "last_session_charge": f"{self.indego.state.runtime.session.charge} min",
+                "last_updated": utcnow(),
+                "last_session_operation_min": self.indego.state.runtime.session.operate,
+                "last_session_cut_min": self.indego.state.runtime.session.cut,
+                "last_session_charge_min": self.indego.state.runtime.session.charge,
             }
         )
         self.entities[ENTITY_RUNTIME].add_attribute(
             {
-                "total_operation_time": f"{self.indego.state.runtime.total.operate} h",
-                "total_mowing_time": f"{self.indego.state.runtime.total.cut} h",
-                "total_charging_time": f"{self.indego.state.runtime.total.charge} h",
+                "total_operation_time_h": self.indego.state.runtime.total.operate,
+                "total_mowing_time_h": self.indego.state.runtime.total.cut,
+                "total_charging_time_h": self.indego.state.runtime.total.charge,
             }
         )
 
@@ -570,28 +509,15 @@ class IndegoHub:
 
     async def _update_last_completed_mow(self):
         await self.indego.update_last_completed_mow()
-        _LOGGER.debug("Last completed: %s", self.indego.last_completed_mow)
-        _LOGGER.debug("Last completed type: %s", type(self.indego.last_completed_mow))
-        # self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
-        self.entities[
-            ENTITY_LAST_COMPLETED
-        ].state = self.indego.last_completed_mow.strftime("%Y-%m-%d %H:%M")
+        self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
-            {"last_completed_mow": self.indego.last_completed_mow.isoformat()}
+            {"last_completed_mow": self.indego.last_completed_mow}
         )
 
     async def _update_next_mow(self):
         await self.indego.update_next_mow()
-        _LOGGER.debug("Next: %s", self.indego.next_mow)
-        _LOGGER.debug("Next type: %s", type(self.indego.next_mow))
-        # self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
-        self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow.strftime(
-            "%Y-%m-%d %H:%M"
-        )
-        self.entities[ENTITY_NEXT_MOW].add_attribute(
-            {"next_mow": self.indego.next_mow.isoformat()}
-        )
+        self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
-            {"next_mow": self.indego.next_mow.isoformat()}
+            {"next_mow": self.indego.next_mow}
         )
 
