@@ -38,7 +38,7 @@ async def async_setup_platform(hass, config, async_add_devices, discovery_info=N
 class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
     """Class for Indego Binary Sensors."""
 
-    def __init__(self, serial, entity_id, name, icon, device_class, attributes):
+    def __init__(self, entity_id, name, icon, device_class, attributes):
         """Initialize a binary sensor.
 
         Args:
@@ -49,7 +49,6 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
             device_class (str): device class of the sensor
 
         """
-        self._serial = serial
         self.entity_id = BINARY_SENSOR_FORMAT.format(entity_id)
         self._unique_id = entity_id
         self._name = name
@@ -137,86 +136,3 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
             if self._updateble_icon:
                 self._icon = self._icon_func(self._state)
             self.async_schedule_update_ha_state()
-
-
-# class IndegoOnline(Entity):
-#     """Indego Online Sensor."""
-
-#     def __init__(self, IAPI, device_label):
-#         """Initialize Online sensor"""
-#         self._IAPI = IAPI
-#         self._state = None
-#         self._device_label = device_label
-
-#     @property
-#     def name(self):
-#         """Return the name of the sensor."""
-#         # _LOGGER.debug("Online_name")
-#         return self._device_label
-
-#     @property
-#     def state(self):
-#         return self._IAPI._online
-
-#     @property
-#     def is_on(self):
-#         """Return if entity is on."""
-#         # _LOGGER.debug("Online_is_on")
-#         return self._state
-
-#     @property
-#     def icon(self):
-#         """Return the icon for the frontend based on the status."""
-#         tmp_icon = "mdi:cloud-check"
-#         return tmp_icon
-
-
-# class IndegoUpdateAvailable(Entity):
-#     def __init__(self, IAPI, device_label):
-#         self._IAPI = IAPI
-#         self._state = None
-#         self._device_label = device_label
-
-#     @property
-#     def name(self):
-#         return self._device_label
-
-#     @property
-#     def state(self):
-#         return self._IAPI.update_available
-
-#     @property
-#     def is_on(self):
-#         return self.state
-
-#     @property
-#     def icon(self):
-#         tmp_icon = "mdi:chip"
-#         return tmp_icon
-
-
-# class IndegoAlert(Entity):
-#     def __init__(self, IAPI, device_label):
-#         self._IAPI = IAPI
-#         self._state = None
-#         self._device_label = device_label
-
-#     @property
-#     def name(self):
-#         return self._device_label
-
-#     @property
-#     def state(self):
-#         if self._IAPI.alerts_count > 0:
-#             return True
-#         else:
-#             return False
-
-#     @property
-#     def is_on(self):
-#         return self.state
-
-#     @property
-#     def icon(self):
-#         tmp_icon = "mdi:alert-octagram-outline"
-#         return tmp_icon
