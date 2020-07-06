@@ -429,8 +429,6 @@ class IndegoHub:
                 ENTITY_BATTERY
             ].state = self.indego.operating_data.battery.percent_adjusted
 
-            _LOGGER.debug("Call _update_operating_data")
-
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
                 {
@@ -518,15 +516,7 @@ class IndegoHub:
     async def _update_updates_available(self):
         await self.indego.update_updates_available()
         # dependent state updates
-        if self.indego.update_available is not None:
-            self.entities[ENTITY_UPDATE_AVAILABLE].state = self.indego.update_available
-            if self.indego.update_available == None:
-                self.entities[ENTITY_UPDATE_AVAILABLE].state = False
-            else:
-                self.entities[ENTITY_UPDATE_AVAILABLE].state = True
-            _LOGGER.debug(
-                f"self.indego.update_available = {self.indego.update_available}"
-            )
+        self.entities[ENTITY_UPDATE_AVAILABLE].state = self.indego.update_available
 
     async def _update_last_completed_mow(self):
         await self.indego.update_last_completed_mow()
