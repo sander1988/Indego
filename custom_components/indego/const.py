@@ -1,9 +1,6 @@
 """Constants for Indego integration."""
-from datetime import timedelta
-
 DOMAIN = "indego"
 DATA_UPDATED = f"{DOMAIN}_data_updated"
-DATA_KEY = DOMAIN
 CONF_ATTR = "attributes"
 CONF_SEND_COMMAND = "command"
 CONF_SMARTMOWING = "enable"
@@ -12,7 +9,6 @@ DEFAULT_NAME = "Indego"
 DEFAULT_NAME_COMMANDS = None
 SERVICE_NAME_COMMAND = "command"
 SERVICE_NAME_SMARTMOW = "smartmowing"
-MIN_TIME_BETWEEN_UPDATES = timedelta(seconds=60)
 SENSOR_TYPE = "sensor"
 BINARY_SENSOR_TYPE = "binary_sensor"
 INDEGO_COMPONENTS = [SENSOR_TYPE, BINARY_SENSOR_TYPE]

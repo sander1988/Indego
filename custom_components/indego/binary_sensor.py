@@ -133,6 +133,6 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
         """Set state."""
         if self._is_on != new_on:
             self._is_on = new_on
-            if self._updateble_icon:
-                self._icon = self._icon_func(self._state)
+            # if self._updateble_icon:
+            #     self._icon = self._icon_func(self._state)
             self.async_schedule_update_ha_state()
