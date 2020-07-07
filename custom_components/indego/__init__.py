@@ -308,6 +308,7 @@ class IndegoHub:
         self.refresh_10m_remover = None
         self.refresh_60m_remover = None
         self._shutdown = False
+        self._latest_alert = None
 
     def _create_entities(self):
         """Create sub-entities and add them to Hass."""
@@ -379,9 +380,10 @@ class IndegoHub:
                     await self._update_operating_data()
                 except Exception as e:
                     _LOGGER.info("Update operating data got an exception: %s", e)
-            if self.indego.state.error:
+            if self.indego.state.error != self._latest_alert:
+                self._latest_alert = self.indego.state.error
                 try:
-                    _LOGGER.debug("Refreshing alerts.")
+                    _LOGGER.debug("Refreshing alerts, to get new alert.")
                     await self._update_alerts()
                 except Exception as e:
                     _LOGGER.info("Update alert got an exception: %s", e)
@@ -399,7 +401,7 @@ class IndegoHub:
             ],
             return_exceptions=True,
         )
-        next_refresh = 300
+        next_refresh = 600
         index = 0
         for res in results:
             if res:
