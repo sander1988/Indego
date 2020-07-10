@@ -7,6 +7,7 @@ from homeassistant.const import CONF_ID, TEMP_CELSIUS
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
 from homeassistant.helpers.entity import Entity
+from homeassistant.helpers.icon import icon_for_battery_level
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from .const import DATA_UPDATED, DOMAIN
@@ -30,13 +31,7 @@ class IndegoSensor(RestoreEntity):
     """Class for Indego Sensors."""
 
     def __init__(
-        self,
-        entity_id,
-        name,
-        icon,
-        device_class,
-        unit_of_measurement,
-        attributes,
+        self, entity_id, name, icon, device_class, unit_of_measurement, attributes
     ):
         """Initialize a sensor.
 
@@ -55,7 +50,7 @@ class IndegoSensor(RestoreEntity):
         self._updateble_icon = callable(icon)
         if self._updateble_icon:
             self._icon_func = icon
-            self._icon = icon(None)
+            self._icon = None
         else:
             self._icon = icon
         self._device_class = device_class
@@ -63,6 +58,7 @@ class IndegoSensor(RestoreEntity):
         self._attr = {key: None for key in attributes}
         self._state = None
         self._should_poll = False
+        self.charging = False
 
     async def async_added_to_hass(self):
         """Once the sensor is added, see if it was there before and pull in that state."""
@@ -96,8 +92,8 @@ class IndegoSensor(RestoreEntity):
         """Set the state to new."""
         if self._state != new:
             self._state = new
-            if self._updateble_icon:
-                self._icon = self._icon_func(self._state)
+            # if self._updateble_icon:
+            #     self._icon = self._icon_func(self._state)
             self.async_schedule_update_ha_state()
 
     @property
@@ -122,6 +118,12 @@ class IndegoSensor(RestoreEntity):
     @property
     def icon(self) -> str:
         """Return the icon to use in the frontend, if any."""
+        if self._updateble_icon:
+            return self._icon_func(self._state)
+        if self._icon == "battery":
+            return icon_for_battery_level(
+                int(self._state) if self._state is not None else None, self.charging
+            )
         return self._icon
 
     @property

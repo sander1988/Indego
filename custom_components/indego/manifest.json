@@ -8,6 +8,6 @@
     "@eavanvalkenburg"
   ],
   "requirements": [
-    "pyIndego==2.0.20"
+    "git+https://github.com/eavanvalkenburg/pyIndego.git@master#pyIndego==3.0.0"
   ]
 }
