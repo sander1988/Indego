@@ -50,7 +50,6 @@ from .const import (
     ENTITY_BATTERY,
     ENTITY_LAST_COMPLETED,
     ENTITY_LAWN_MOWED,
-    ENTITY_MOWER_ALERT,
     ENTITY_MOWER_STATE,
     ENTITY_MOWER_STATE_DETAIL,
     ENTITY_MOWING_MODE,
@@ -215,14 +214,6 @@ ENTITY_DEFINITIONS = {
             "total_charging_time_h",
         ],
     },
-    ENTITY_MOWER_ALERT: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "mower alert",
-        CONF_ICON: FUNC_ICON_MOWER_ALERT,
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
 }
 
 
@@ -350,6 +341,11 @@ class IndegoHub:
         _LOGGER.debug("Starting initial update.")
         self.refresh_state_task = self._hass.async_create_task(self.refresh_state())
         await asyncio.gather(*[self.refresh_10m(_), self.refresh_60m(_)])
+        try:
+            _LOGGER.debug("Refreshing operating data.")
+            await self._update_operating_data()
+        except Exception as e:
+            _LOGGER.info("Update operating data got an exception: %s", e)
 
     async def async_shutdown(self, _):
         """Remove all future updates, cancel tasks and close the client."""
@@ -426,6 +422,7 @@ class IndegoHub:
     async def _update_operating_data(self):
         await self.indego.update_operating_data()
         # dependent state updates
+        _LOGGER.info(f"Updating operating data")
         if self.indego.operating_data:
             self.entities[ENTITY_ONLINE].state = self.indego._online
             self.entities[
@@ -435,7 +432,7 @@ class IndegoHub:
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
                 {
-                    "last_updated": utcnow(),
+                    "last_updated": utcnow().strftime("%Y-%m-%d %H:%M"),
                     "voltage_V": self.indego.operating_data.battery.voltage,
                     "discharge_Ah": self.indego.operating_data.battery.discharge,
                     "cycles": self.indego.operating_data.battery.cycles,
@@ -511,14 +508,13 @@ class IndegoHub:
         await self.indego.update_alerts()
         # dependent state updates
         if self.indego.alerts:
-            self.entities[ENTITY_MOWER_ALERT].state = self.indego.alerts_count
             self.entities[ENTITY_ALERT].state = self.indego.alerts_count > 0
 
             self.entities[ENTITY_ALERT].add_attribute(
                 {"alerts_count": self.indego.alerts_count,}
             )
         j = len(self.indego.alerts)
-        _LOGGER.info(f"Structuring ALERTS.{j}")
+        # _LOGGER.info(f"Structuring ALERTS.{j}")
         for i in range(j):
             self.entities[ENTITY_ALERT].add_attribute(
                 {
@@ -536,7 +532,6 @@ class IndegoHub:
     async def _update_last_completed_mow(self):
         await self.indego.update_last_completed_mow()
         if self.indego.last_completed_mow:
-            # self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
             self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
             self.entities[ENTITY_LAST_COMPLETED].add_attribute(
                 {
