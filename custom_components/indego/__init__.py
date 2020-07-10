@@ -125,7 +125,7 @@ ENTITY_DEFINITIONS = {
         CONF_NAME: "alert",
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
         CONF_DEVICE_CLASS: DEVICE_CLASS_PROBLEM,
-        CONF_ATTR: ["alerts_count", "alert_details"],
+        CONF_ATTR: ["alerts_count"],
     },
     ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
@@ -515,7 +515,16 @@ class IndegoHub:
             self.entities[ENTITY_ALERT].add_attribute(
                 {
                     "alerts_count": self.indego.alerts_count,
-                    "alert_details": str(self.indego.alerts),
+                }
+            )
+        j = len(self.indego.alerts)
+        _LOGGER.info(f"Structuring ALERTS.{j}")
+        for i in range(j):
+            self.entities[ENTITY_ALERT].add_attribute(
+                {
+                    self.indego.alerts[i].date.strftime("%Y-%m-%d %H:%M"): str(
+                        self.indego.alerts[i].alert_description
+                    ),
                 }
             )
 
