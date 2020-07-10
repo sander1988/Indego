@@ -461,17 +461,19 @@ class IndegoHub:
                 True if self.indego.state_description_detail == "Charging" else False
             )
             # dependent attribute updates
-            self.entities[ENTITY_MOWER_STATE].add_attribute({"last_updated": utcnow()})
+            self.entities[ENTITY_MOWER_STATE].add_attribute(
+                {"last_updated": utcnow().strftime("%Y-%m-%d %H:%M")}
+            )
             self.entities[ENTITY_MOWER_STATE_DETAIL].add_attribute(
                 {
-                    "last_updated": utcnow(),
+                    "last_updated": utcnow().strftime("%Y-%m-%d %H:%M"),
                     "state_number": self.indego.state.state,
                     "state_description": self.indego.state_description_detail,
                 }
             )
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
                 {
-                    "last_updated": utcnow(),
+                    "last_updated": utcnow().strftime("%Y-%m-%d %H:%M"),
                     "last_session_operation_min": self.indego.state.runtime.session.operate,
                     "last_session_cut_min": self.indego.state.runtime.session.cut,
                     "last_session_charge_min": self.indego.state.runtime.session.charge,
@@ -513,9 +515,7 @@ class IndegoHub:
             self.entities[ENTITY_ALERT].state = self.indego.alerts_count > 0
 
             self.entities[ENTITY_ALERT].add_attribute(
-                {
-                    "alerts_count": self.indego.alerts_count,
-                }
+                {"alerts_count": self.indego.alerts_count,}
             )
         j = len(self.indego.alerts)
         _LOGGER.info(f"Structuring ALERTS.{j}")
@@ -536,9 +536,21 @@ class IndegoHub:
     async def _update_last_completed_mow(self):
         await self.indego.update_last_completed_mow()
         if self.indego.last_completed_mow:
+            # self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
             self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
+            self.entities[ENTITY_LAST_COMPLETED].add_attribute(
+                {
+                    "last_completed_mow": self.indego.last_completed_mow.strftime(
+                        "%Y-%m-%d %H:%M"
+                    )
+                }
+            )
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
-                {"last_completed_mow": self.indego.last_completed_mow}
+                {
+                    "last_completed_mow": self.indego.last_completed_mow.strftime(
+                        "%Y-%m-%d %H:%M"
+                    )
+                }
             )
 
     async def _update_next_mow(self):
