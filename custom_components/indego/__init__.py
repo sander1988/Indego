@@ -370,7 +370,7 @@ class IndegoHub:
             return
         if self.indego.state:
             state = self.indego.state.state
-            if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
+            if (500 <= state <= 799) or (state in (257, 266)):
                 try:
                     _LOGGER.debug("Refreshing operating data.")
                     await self._update_operating_data()
