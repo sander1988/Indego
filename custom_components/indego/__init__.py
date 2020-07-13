@@ -562,7 +562,10 @@ class IndegoHub:
         await self.indego.update_next_mow()
         if self.indego.next_mow:
             self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
+            self.entities[ENTITY_NEXT_MOW].add_attribute(
+                {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
+            )
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
-                {"next_mow": self.indego.next_mow}
+                {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
 
