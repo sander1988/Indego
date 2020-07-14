@@ -370,7 +370,7 @@ class IndegoHub:
             return
         if self.indego.state:
             state = self.indego.state.state
-            if (500 <= state <= 799) or (state in (257, 266)) or self.indego._online:
+            if (500 <= state <= 799) or (state in (257, 266)):
                 try:
                     _LOGGER.debug("Refreshing operating data.")
                     await self._update_operating_data()
@@ -432,7 +432,9 @@ class IndegoHub:
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
                 {
-                    "last_updated": utcnow().strftime("%Y-%m-%d %H:%M"),
+                    "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
+                        "%Y-%m-%d %H:%M"
+                    ),
                     "voltage_V": self.indego.operating_data.battery.voltage,
                     "discharge_Ah": self.indego.operating_data.battery.discharge,
                     "cycles": self.indego.operating_data.battery.cycles,
@@ -459,18 +461,26 @@ class IndegoHub:
             )
             # dependent attribute updates
             self.entities[ENTITY_MOWER_STATE].add_attribute(
-                {"last_updated": utcnow().strftime("%Y-%m-%d %H:%M")}
+                {
+                    "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
+                        "%Y-%m-%d %H:%M"
+                    )
+                }
             )
             self.entities[ENTITY_MOWER_STATE_DETAIL].add_attribute(
                 {
-                    "last_updated": utcnow().strftime("%Y-%m-%d %H:%M"),
+                    "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
+                        "%Y-%m-%d %H:%M"
+                    ),
                     "state_number": self.indego.state.state,
                     "state_description": self.indego.state_description_detail,
                 }
             )
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
                 {
-                    "last_updated": utcnow().strftime("%Y-%m-%d %H:%M"),
+                    "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
+                        "%Y-%m-%d %H:%M"
+                    ),
                     "last_session_operation_min": self.indego.state.runtime.session.operate,
                     "last_session_cut_min": self.indego.state.runtime.session.cut,
                     "last_session_charge_min": self.indego.state.runtime.session.charge,
@@ -552,7 +562,10 @@ class IndegoHub:
         await self.indego.update_next_mow()
         if self.indego.next_mow:
             self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
+            self.entities[ENTITY_NEXT_MOW].add_attribute(
+                {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
+            )
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
-                {"next_mow": self.indego.next_mow}
+                {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
 
