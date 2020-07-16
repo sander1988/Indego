@@ -209,9 +209,9 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "h",
         CONF_ATTR: [
-            "total_operation_time_h",
             "total_mowing_time_h",
             "total_charging_time_h",
+            "total_operation_time_h",
         ],
     },
 }
