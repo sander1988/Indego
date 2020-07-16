@@ -86,17 +86,6 @@ SERVICE_SCHEMA_COMMAND = vol.Schema({vol.Required(CONF_SEND_COMMAND): cv.string}
 SERVICE_SCHEMA_SMARTMOWING = vol.Schema({vol.Required(CONF_SMARTMOWING): cv.string})
 
 
-# def FUNC_ICON_BATTERY(state):
-#     if state and not state == STATE_UNKNOWN:
-#         state = int(state)
-#         if state == 0:
-#             return "mdi:battery-outline"
-#         elif state == 100:
-#             return "mdi:battery"
-#         return f"mdi:battery-{state - (state%10)}"
-#     return "mdi:battery-50"
-
-
 def FUNC_ICON_MOWER_ALERT(state):
     if state:
         if int(state) > 0 or state == STATE_ON:
@@ -203,7 +192,6 @@ ENTITY_DEFINITIONS = {
     },
     ENTITY_RUNTIME: {
         CONF_TYPE: SENSOR_TYPE,
-        # CONF_NAME: "runtime total",
         CONF_NAME: "mowtime total",
         CONF_ICON: "mdi:information-outline",
         CONF_DEVICE_CLASS: None,
@@ -544,7 +532,9 @@ class IndegoHub:
     async def _update_last_completed_mow(self):
         await self.indego.update_last_completed_mow()
         if self.indego.last_completed_mow:
-            self.entities[ENTITY_LAST_COMPLETED].state = self.indego.last_completed_mow
+            self.entities[
+                ENTITY_LAST_COMPLETED
+            ].state = self.indego.last_completed_mow.isoformat()
             self.entities[ENTITY_LAST_COMPLETED].add_attribute(
                 {
                     "last_completed_mow": self.indego.last_completed_mow.strftime(
@@ -563,7 +553,7 @@ class IndegoHub:
     async def _update_next_mow(self):
         await self.indego.update_next_mow()
         if self.indego.next_mow:
-            self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow
+            self.entities[ENTITY_NEXT_MOW].state = self.indego.next_mow.isoformat()
             self.entities[ENTITY_NEXT_MOW].add_attribute(
                 {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
