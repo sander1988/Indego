@@ -342,7 +342,7 @@ class IndegoHub:
         self.refresh_state_task = self._hass.async_create_task(self.refresh_state())
         await asyncio.gather(*[self.refresh_10m(_), self.refresh_60m(_)])
         try:
-            _LOGGER.debug("Refreshing operating data.")
+            _LOGGER.debug("Refreshing initial operating data.")
             await self._update_operating_data()
         except Exception as e:
             _LOGGER.info("Update operating data got an exception: %s", e)
@@ -442,6 +442,8 @@ class IndegoHub:
                     f"ambient_temp_{TEMP_CELSIUS}": self.indego.operating_data.battery.ambient_temp,
                 }
             )
+        else:
+            self.entities[ENTITY_ONLINE].state = self.indego._online
 
     async def _update_state(self):
         await self.indego.update_state(longpoll=True, longpoll_timeout=300)
