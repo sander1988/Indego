@@ -6,7 +6,7 @@ https://discord.gg/aD33GsP
 
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
-![Entities in Home Asistant](/doc/0-Sensors_1.png)
+![Entities in Home Asistant](/doc/0-Sensors_2.png)
 
 ## Installation
 
@@ -46,14 +46,14 @@ indego_id:       "123456789"
 | Description | Screenshot |
 |-------------|------------|
 | <img width=400/> | <img width=325/> |
-***Mower state***<br>Shows state of the mower. | pic|
-***Mower state detail***<br>Shows detailed state of the mower. | pic
+***Mower state***<br>Shows state of the mower. | ![State](/doc/1-State_2.png)
+***Mower state detail***<br>Shows detailed state of the mower. | ![State Detail](/doc/2-StateDetail_1.png)
 ***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_3.png)
 ***Total mowing time***<br>Shows the total mowing time for the mower. | ![Mowtime total](/doc/4-MowTime_3.png)
 ***Battery***<br>Shows the status of the battery. | ![Battery sensor percent](/doc/5-Battery_3.png)
 ***Alerts***<br>Shows all alerts | ![Alerts sensor](/doc/7-Alerts_3.png)
-***Last completed mow***<br>Shows when the lawn was completed last time. | pic
-***Next mow time***<br>Show the next planned mow. | pic
+***Last completed mow***<br>Shows when the lawn was completed last time. | ![Last mow](/doc/8-LastCompleted_2.png)
+***Next mow time***<br>Show the next planned mow. | ![Next mow](/doc/9-NextNow_2.png)
 ***Mowing mode***<br>Shows the mowing mode set. | ![Mowing mode](/doc/10-MowingMode_2.png)
 ***Online***<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | ![Online status](/doc/11-Online_3.png)
 ***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *On, Off* | ![Update available](/doc/12-Update_4.png)
