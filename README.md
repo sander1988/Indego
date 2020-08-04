@@ -46,15 +46,15 @@ indego_id:       "123456789"
 | <img width=600/> | <img width=200/> |
 ***Mower state***<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State_1.png)
 ***Mower state detail***<br>Shows detailed state of the mower.<br>Possible values:<br> A lot... | ![Mower state](/doc/2-StateDetail.png)
-***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_1.png)
+***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_2.png)
 ***Total mowing time***<br>Shows the total mowing time for the mower. Mow time, chargin time and total operating time shows as attruibutes. | ![Runtime total](/doc/4-Runtime.png)
-***Battery***<br>Shows the status of the battery. | ![Battery sensor percent](/doc/5-Battery_1.png)
-***Alerts***<br>Shows all alerts | ![Alerts sensor](/doc/7-Alerts_1.png)
+***Battery***<br>Shows the status of the battery. | ![Battery sensor percent](/doc/5-Battery_2.png)
+***Alerts***<br>Shows all alerts | ![Alerts sensor](/doc/7-Alerts_2.png)
 ***Last completed mow***<br>Shows when the lawn was completed last time. | ![Last completed mow](/doc/8-LastCompleted.png)
 ***Next mow time***<br>Show the next planned mow. | ![Next mow](/doc/9-NextMow.png)
 ***Mowing mode***<br>Shows the mowing mode set. Possble values:<br> *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
-***Online***<br>Shows if the mower is online/offline/sleeping (WIP). Possble values:<br> *True, False* | [Next mow](/doc/11-Online_1.png)
-***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | [Update available](/doc/12-Update_1.png)
+***Online***<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | [Next mow](/doc/11-Online_2.png)
+***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | [Update available](/doc/12-Update_2.png)
 
 ## Service
 
