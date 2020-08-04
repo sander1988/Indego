@@ -46,7 +46,7 @@ indego_id:       "123456789"
 | Description | Screenshot |
 |-------------|------------|
 | <img width=400/> | <img width=325/> |
-***Mower state***<br>Shows state of the mower. | ![State](/doc/1-State_2.png)
+***Mower state***<br>Shows state of the mower. | ![State](/doc/1-State_3.png)
 ***Mower state detail***<br>Shows detailed state of the mower. | ![State Detail](/doc/2-StateDetail_1.png)
 ***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_3.png)
 ***Total mowing time***<br>Shows the total mowing time for the mower. | ![Mowtime total](/doc/4-MowTime_3.png)
