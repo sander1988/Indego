@@ -118,7 +118,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "mower state",
-        CONF_ICON: "mdi:robot-mower-outline",
+        CONF_ICON: "mdi:robot",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: ["last_updated", "model", "serial", "firmware"],
@@ -126,7 +126,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_MOWER_STATE_DETAIL: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "mower state detail",
-        CONF_ICON: "mdi:robot-mower-outline",
+        CONF_ICON: "mdi:robot",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [
