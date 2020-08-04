@@ -45,7 +45,7 @@ indego_id:       "123456789"
 
 | Description | Screenshot |
 |-------------|------------|
-| <img width=600/> | <img width=200/> |
+| <img width=400/> | <img width=200/> |
 ***Mower state***<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | pic|
 
 
