@@ -42,9 +42,13 @@ indego_id:       "123456789"
 
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component.
+
 | Description | Screenshot |
+|-------------|------------|
 | <img width=600/> | <img width=200/> |
 ***Mower state***<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | pic|
+
+
 ***Mower state detail***<br>Shows detailed state of the mower.<br>Possible values:<br> A lot... | pic
 ***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_3.png)
 ***Total mowing time***<br>Shows the total mowing time for the mower. Mow time, chargin time and total operating time shows as attruibutes. | ![Runtime total](/doc/4-Mowtime_3.png)
