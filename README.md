@@ -6,7 +6,7 @@ https://discord.gg/aD33GsP
 
 Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
-![Entities in Home Asistant](/doc/0-Sensors.png)
+![Entities in Home Asistant](/doc/0-Sensors_3.png)
 
 ## Installation
 
@@ -29,10 +29,7 @@ indego:
   id:       !secret indego_id
 #Optional
   name:     Indego
-  polling:  False
 ```
-### Polling
-The battery will make the mower to wake up for 10 minutes every hour. The operating hours will increase with 2,5 hours roughly for 24h. This also drains the battery. A typical drain for 24h will be around 50%. This makes your mower to charge one extra time every other day. 
 
 Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
 ``` yaml
@@ -45,24 +42,27 @@ indego_id:       "123456789"
 
 ### Entities
  All sensors are auto discovered and should appear as "unused entities" after adding the component.
-| Description | Screenshot |
-| --- | --- |
-| <img width=600/> | <img width=200/> |
-***Mower state***<br>Shows state of the mower.<br>Possible values:<br> *Mowing, Docked*. | ![Mower state](/doc/1-State_1.png)
-***Mower state detail***<br>Shows detailed state of the mower.<br>Possible values:<br> A lot... | ![Mower state](/doc/2-StateDetail.png)
-***Lawn mowed***<br>Shows percentage of lawn mowed | ![Lawn mowed](/doc/3-LawnMowed.png)
-***Total runtime*** for mower<br>Shows the operation time for the mower. Total time, charge time, mowing time. | ![Runtime total](/doc/4-Runtime.png)
-***Battery***<br>Shows the amount of battery left | ![Battery sensor percent](/doc/5-Battery.png)
-***Alerts***<br>Shows the last three alerts | ![Alerts sensor](/doc/7-Alerts.png)
-***Last completed mow***<br>Shows when the lawn was completely mowed last time | ![Last completed mow](/doc/8-LastCompleted.png)
-***Next mow time***<br>Show the next planned mow | ![Next mow](/doc/9-NextMow.png)
-***Mowing mode***<br>Shows the mowing mode set. Possble values:<br> *manual, calendar, smartmowing* | ![Next mow](/doc/10-MowingMode.png)
-***Alert***<br>Shows if there are any alerts. Possble values:<br> *True, False* |
-***Online***<br>Shows if the mower is online/offline/sleeping (WIP). Possble values:<br> *True, False* |
-***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *True, False* | 
-### Service
 
-#### indego.command ####
+| Description | Screenshot |
+|-------------|------------|
+| <img width=400/> | <img width=325/> |
+***Mower state***<br>Shows state of the mower. | ![State](/doc/1-State_2.png)
+***Mower state detail***<br>Shows detailed state of the mower. | ![State Detail](/doc/2-StateDetail_1.png)
+***Lawn mowed***<br>Shows percentage of lawn mowed. | ![Lawn mowed](/doc/3-LawnMowed_3.png)
+***Total mowing time***<br>Shows the total mowing time for the mower. | ![Mowtime total](/doc/4-MowTime_3.png)
+***Battery***<br>Shows the status of the battery. | ![Battery sensor percent](/doc/5-Battery_3.png)
+***Alerts***<br>Shows all alerts | ![Alerts sensor](/doc/7-Alerts_3.png)
+***Last completed mow***<br>Shows when the lawn was completed last time. | ![Last mow](/doc/8-LastCompleted_3.png)
+***Next mow time***<br>Show the next planned mow. | ![Next mow](/doc/9-NextMow_3.png)
+***Mowing mode***<br>Shows the mowing mode set. | ![Mowing mode](/doc/10-MowingMode_2.png)
+***Online***<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | ![Online status](/doc/11-Online_3.png)
+***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *On, Off* | ![Update available](/doc/12-Update_4.png)
+
+
+
+## Service
+
+### indego.command ####
 Sends a command to the mower. Example code:<br>
 `command: mow`
 
@@ -75,7 +75,7 @@ Accepted values are:
 
 ![Services](/doc/S1-Command1.png)
 
-#### indego.smartmowing ####
+### indego.smartmowing ####
 Changes mowing mode. Example:<br>
 `enable: true`
 
@@ -86,7 +86,7 @@ Accepted values are:
 | `false`     | SmartMowing disabled |
 
 
-### Examples
+## Examples
 Creating automation in HA gui:
 
 Example for automations.yaml:
@@ -130,13 +130,25 @@ If you experience issues/bugs with this the best way to report them is to open a
 
 [Issue link](https://github.com/jm-73/Indego/issues)
 
+
 ## Credits
 
 ### Thanks to
-Eduard Jumper dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
+[Eduard](https://github.com/eavanvalkenburg)
+[Jumper78](https://github.com/Jumper78)
+[dykandDK](https://github.com/dykandDK)
+[ultrasub](https://github.com/UltraSub)
+[Gnol86](https://github.com/Gnol86)
+naethan bekkm onkelfarmor ltjessem nsimb jjandersson
+[Shamshala](https://github.com/Shamshala)
+nath
+[bekkm](https://github.com/bekkm)
+[urbatecte](https://github.com/urbatecte)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
 Inspiration from http://grauonline.de/wordpress/?page_id=219
 
 Inspiration from https://github.com/jofleck/iot-device-bosch-indego-controller
+
+<a href="https://www.buymeacoffee.com/jm73" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>

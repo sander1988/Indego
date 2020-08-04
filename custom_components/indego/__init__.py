@@ -40,7 +40,7 @@ from .binary_sensor import IndegoBinarySensor
 from .const import (
     BINARY_SENSOR_TYPE,
     CONF_ATTR,
-    CONF_POLLING,
+    # CONF_POLLING,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
     DEFAULT_NAME,
@@ -74,7 +74,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required(CONF_USERNAME): cv.string,
                 vol.Required(CONF_PASSWORD): cv.string,
                 vol.Optional(CONF_ID, default=None): cv.string,
-                vol.Optional(CONF_POLLING, default=False): cv.boolean,
+                # vol.Optional(CONF_POLLING, default=False): cv.boolean,
             }
         )
     },
@@ -118,7 +118,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "mower state",
-        CONF_ICON: "mdi:robot",
+        CONF_ICON: "mdi:robot-mower-outline",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: ["last_updated", "model", "serial", "firmware"],
@@ -126,7 +126,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_MOWER_STATE_DETAIL: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "mower state detail",
-        CONF_ICON: "mdi:robot",
+        CONF_ICON: "mdi:robot-mower-outline",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [
@@ -213,7 +213,7 @@ async def async_setup(hass, config: dict):
         conf[CONF_USERNAME],
         conf[CONF_PASSWORD],
         conf[CONF_ID],
-        conf[CONF_POLLING],
+        # conf[CONF_POLLING],
         hass,
     )
 
@@ -262,7 +262,8 @@ async def async_setup(hass, config: dict):
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name, username, password, serial, polling, hass):
+    def __init__(self, name, username, password, serial, hass):
+        # def __init__(self, name, username, password, serial, polling, hass):
         """Initialize the IndegoHub.
 
         Args:
@@ -278,14 +279,14 @@ class IndegoHub:
         self._username = username
         self._password = password
         self._serial = serial
-        self._polling = polling
+        # self._polling = polling
         self._hass = hass
 
         self.indego = IndegoAsyncClient(self._username, self._password, self._serial)
         self.entities = {}
         self.refresh_state_task = None
         self.refresh_10m_remover = None
-        self.refresh_60m_remover = None
+        self.refresh_24h_remover = None
         self._shutdown = False
         self._latest_alert = None
 
@@ -328,7 +329,7 @@ class IndegoHub:
         """Do the initial update of all entities."""
         _LOGGER.debug("Starting initial update.")
         self.refresh_state_task = self._hass.async_create_task(self.refresh_state())
-        await asyncio.gather(*[self.refresh_10m(_), self.refresh_60m(_)])
+        await asyncio.gather(*[self.refresh_10m(_), self.refresh_24h(_)])
         try:
             _LOGGER.debug("Refreshing initial operating data.")
             await self._update_operating_data()
@@ -343,8 +344,8 @@ class IndegoHub:
             await self.refresh_state_task
         if self.refresh_10m_remover:
             self.refresh_10m_remover()
-        if self.refresh_60m_remover:
-            self.refresh_60m_remover()
+        if self.refresh_24h_remover:
+            self.refresh_24h_remover()
         await self.indego.close()
 
     async def refresh_state(self):
@@ -358,7 +359,7 @@ class IndegoHub:
             return
         if self.indego.state:
             state = self.indego.state.state
-            if (500 <= state <= 799) or (state in (257, 266)):
+            if (500 <= state <= 799) or (state in (257, 260)):
                 try:
                     _LOGGER.debug("Refreshing operating data.")
                     await self._update_operating_data()
@@ -398,14 +399,14 @@ class IndegoHub:
             self._hass, next_refresh, self.refresh_10m
         )
 
-    async def refresh_60m(self, _):
-        """Refresh Indego sensors every 60m."""
-        _LOGGER.debug("Refreshing 60m.")
+    async def refresh_24h(self, _):
+        """Refresh Indego sensors every 24h."""
+        _LOGGER.debug("Refreshing 24h.")
         try:
             await self._update_updates_available()
         except Exception as e:
             _LOGGER.info("Update updates available got an exception: %s", e)
-        self.refresh_60m_remover = async_call_later(self._hass, 3600, self.refresh_60m)
+        self.refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
     async def _update_operating_data(self):
         await self.indego.update_operating_data()
