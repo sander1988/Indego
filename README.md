@@ -135,7 +135,14 @@ If you experience issues/bugs with this the best way to report them is to open a
 
 ### Thanks to
 [Eduard](https://github.com/eavanvalkenburg)
-Eduard Jumper dykandDK ultrasub Gnol86 naethan bekkm onkelfarmor ltjessem nsimb jjandersson shamshala nath
+[Jumper78](https://github.com/Jumper78)
+[dykandDK](https://github.com/dykandDK)
+[ultrasub](https://github.com/UltraSub)
+[Gnol86](https://github.com/Gnol86)
+naethan bekkm onkelfarmor ltjessem nsimb jjandersson
+[Shamshala](https://github.com/Shamshala)
+nath
+[urbatecte](https://github.com/urbatecte)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
