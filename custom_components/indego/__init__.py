@@ -40,7 +40,7 @@ from .binary_sensor import IndegoBinarySensor
 from .const import (
     BINARY_SENSOR_TYPE,
     CONF_ATTR,
-    CONF_POLLING,
+    # CONF_POLLING,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
     DEFAULT_NAME,
@@ -74,7 +74,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required(CONF_USERNAME): cv.string,
                 vol.Required(CONF_PASSWORD): cv.string,
                 vol.Optional(CONF_ID, default=None): cv.string,
-                vol.Optional(CONF_POLLING, default=False): cv.boolean,
+                # vol.Optional(CONF_POLLING, default=False): cv.boolean,
             }
         )
     },
@@ -213,7 +213,7 @@ async def async_setup(hass, config: dict):
         conf[CONF_USERNAME],
         conf[CONF_PASSWORD],
         conf[CONF_ID],
-        conf[CONF_POLLING],
+        # conf[CONF_POLLING],
         hass,
     )
 
@@ -262,7 +262,8 @@ async def async_setup(hass, config: dict):
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name, username, password, serial, polling, hass):
+    def __init__(self, name, username, password, serial, hass):
+        # def __init__(self, name, username, password, serial, polling, hass):
         """Initialize the IndegoHub.
 
         Args:
@@ -278,7 +279,7 @@ class IndegoHub:
         self._username = username
         self._password = password
         self._serial = serial
-        self._polling = polling
+        # self._polling = polling
         self._hass = hass
 
         self.indego = IndegoAsyncClient(self._username, self._password, self._serial)
