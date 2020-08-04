@@ -142,6 +142,7 @@ If you experience issues/bugs with this the best way to report them is to open a
 naethan bekkm onkelfarmor ltjessem nsimb jjandersson
 [Shamshala](https://github.com/Shamshala)
 nath
+[bekkm](https://github.com/bekkm)
 [urbatecte](https://github.com/urbatecte)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
