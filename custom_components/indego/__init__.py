@@ -285,7 +285,7 @@ class IndegoHub:
         self.entities = {}
         self.refresh_state_task = None
         self.refresh_10m_remover = None
-        self.refresh_60m_remover = None
+        self.refresh_24h_remover = None
         self._shutdown = False
         self._latest_alert = None
 
@@ -328,7 +328,7 @@ class IndegoHub:
         """Do the initial update of all entities."""
         _LOGGER.debug("Starting initial update.")
         self.refresh_state_task = self._hass.async_create_task(self.refresh_state())
-        await asyncio.gather(*[self.refresh_10m(_), self.refresh_60m(_)])
+        await asyncio.gather(*[self.refresh_10m(_), self.refresh_24h(_)])
         try:
             _LOGGER.debug("Refreshing initial operating data.")
             await self._update_operating_data()
@@ -343,8 +343,8 @@ class IndegoHub:
             await self.refresh_state_task
         if self.refresh_10m_remover:
             self.refresh_10m_remover()
-        if self.refresh_60m_remover:
-            self.refresh_60m_remover()
+        if self.refresh_24h_remover:
+            self.refresh_24h_remover()
         await self.indego.close()
 
     async def refresh_state(self):
@@ -398,14 +398,14 @@ class IndegoHub:
             self._hass, next_refresh, self.refresh_10m
         )
 
-    async def refresh_60m(self, _):
-        """Refresh Indego sensors every 60m."""
-        _LOGGER.debug("Refreshing 60m.")
+    async def refresh_24h(self, _):
+        """Refresh Indego sensors every 24h."""
+        _LOGGER.debug("Refreshing 24h.")
         try:
             await self._update_updates_available()
         except Exception as e:
             _LOGGER.info("Update updates available got an exception: %s", e)
-        self.refresh_60m_remover = async_call_later(self._hass, 3600, self.refresh_60m)
+        self.refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
     async def _update_operating_data(self):
         await self.indego.update_operating_data()
