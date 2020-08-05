@@ -73,7 +73,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
                 vol.Required(CONF_USERNAME): cv.string,
                 vol.Required(CONF_PASSWORD): cv.string,
-                vol.Optional(CONF_ID, default=None): cv.string,
+                # vol.Optional(CONF_ID, default=None): cv.string,
                 # vol.Optional(CONF_POLLING, default=False): cv.boolean,
             }
         )
@@ -212,7 +212,7 @@ async def async_setup(hass, config: dict):
         conf[CONF_NAME],
         conf[CONF_USERNAME],
         conf[CONF_PASSWORD],
-        conf[CONF_ID],
+        # conf[CONF_ID],
         # conf[CONF_POLLING],
         hass,
     )
@@ -262,7 +262,7 @@ async def async_setup(hass, config: dict):
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name, username, password, serial, hass):
+    def __init__(self, name, username, password, hass):
         # def __init__(self, name, username, password, serial, polling, hass):
         """Initialize the IndegoHub.
 
@@ -278,11 +278,11 @@ class IndegoHub:
         self.mower_name = name
         self._username = username
         self._password = password
-        self._serial = serial
+        self._serial = None
         # self._polling = polling
         self._hass = hass
 
-        self.indego = IndegoAsyncClient(self._username, self._password, self._serial)
+        self.indego = IndegoAsyncClient(self._username, self._password)
         self.entities = {}
         self.refresh_state_task = None
         self.refresh_10m_remover = None
