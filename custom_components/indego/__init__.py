@@ -561,4 +561,6 @@ class IndegoHub:
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
                 {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
+        else:
+            self.entities[ENTITY_NEXT_MOW].state = None
 
