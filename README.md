@@ -19,24 +19,22 @@ Copy the folder `indego` in `custom_components` into your `custom_components` in
 Reboot HA in order to get HA to find the newly added custom component.
 
 ## Configuration
-Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name (default = Indego) and polling (default = false) is optional.
+Add the domain to your configuration.yaml. Username and password is mandatory. Name (default = Indego) is optional.
 ``` yaml
 #configuration.yaml
 indego:
 #Required
   username: !secret indego_username
   password: !secret indego_password
-  id:       !secret indego_id
 #Optional
   name:     Indego
 ```
 
-Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
+Add your credentials used with Bosch Mower app (mail address and password) to your secrets.yaml: 
 ``` yaml
 #secrets.yaml
 indego_username: "name@mail.com"
 indego_password: "mysecretpw"
-indego_id:       "123456789"
 ```
 ## Usage
 
