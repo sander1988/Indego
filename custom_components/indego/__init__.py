@@ -104,7 +104,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_UPDATE_AVAILABLE: {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "update available",
-        CONF_ICON: "mdi:chip",
+        CONF_ICON: "mdi:download-outline",
         CONF_DEVICE_CLASS: None,
         CONF_ATTR: [],
     },
@@ -169,7 +169,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_LAST_COMPLETED: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "last completed",
-        CONF_ICON: "mdi:cash-100",
+        CONF_ICON: "mdi:calendar-check",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_ATTR: [],
@@ -177,7 +177,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_NEXT_MOW: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "next mow",
-        CONF_ICON: "mdi:chevron-right",
+        CONF_ICON: "mdi:calendar-clock",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_ATTR: [],
