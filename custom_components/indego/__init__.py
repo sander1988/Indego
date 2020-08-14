@@ -154,7 +154,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_LAWN_MOWED: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "lawn mowed",
-        CONF_ICON: "mdi:percent",
+        CONF_ICON: "mdi:grass",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "%",
         CONF_ATTR: [
