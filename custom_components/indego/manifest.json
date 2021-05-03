@@ -1,6 +1,7 @@
 {
   "domain": "indego",
   "name": "Bosch Indego Mower",
+  "version": "3.7",
   "documentation": "https://github.com/jm-73/Indego",
   "dependencies": [],
   "codeowners": ["@jm-73", "@eavanvalkenburg"],
