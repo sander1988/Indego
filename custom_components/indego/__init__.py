@@ -73,7 +73,7 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
                 vol.Required(CONF_USERNAME): cv.string,
                 vol.Required(CONF_PASSWORD): cv.string,
-                vol.Optional(CONF_ID, default=None): cv.string,
+                # vol.Optional(CONF_ID, default=None): cv.string,
                 # vol.Optional(CONF_POLLING, default=False): cv.boolean,
             }
         )
@@ -104,7 +104,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_UPDATE_AVAILABLE: {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "update available",
-        CONF_ICON: "mdi:chip",
+        CONF_ICON: "mdi:download-outline",
         CONF_DEVICE_CLASS: None,
         CONF_ATTR: [],
     },
@@ -154,7 +154,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_LAWN_MOWED: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "lawn mowed",
-        CONF_ICON: "mdi:percent",
+        CONF_ICON: "mdi:grass",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "%",
         CONF_ATTR: [
@@ -169,7 +169,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_LAST_COMPLETED: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "last completed",
-        CONF_ICON: "mdi:cash-100",
+        CONF_ICON: "mdi:calendar-check",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_ATTR: [],
@@ -177,7 +177,7 @@ ENTITY_DEFINITIONS = {
     ENTITY_NEXT_MOW: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "next mow",
-        CONF_ICON: "mdi:chevron-right",
+        CONF_ICON: "mdi:calendar-clock",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_ATTR: [],
@@ -212,7 +212,7 @@ async def async_setup(hass, config: dict):
         conf[CONF_NAME],
         conf[CONF_USERNAME],
         conf[CONF_PASSWORD],
-        conf[CONF_ID],
+        # conf[CONF_ID],
         # conf[CONF_POLLING],
         hass,
     )
@@ -262,7 +262,7 @@ async def async_setup(hass, config: dict):
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name, username, password, serial, hass):
+    def __init__(self, name, username, password, hass):
         # def __init__(self, name, username, password, serial, polling, hass):
         """Initialize the IndegoHub.
 
@@ -278,11 +278,11 @@ class IndegoHub:
         self.mower_name = name
         self._username = username
         self._password = password
-        self._serial = serial
+        self._serial = None
         # self._polling = polling
         self._hass = hass
 
-        self.indego = IndegoAsyncClient(self._username, self._password, self._serial)
+        self.indego = IndegoAsyncClient(self._username, self._password)
         self.entities = {}
         self.refresh_state_task = None
         self.refresh_10m_remover = None
@@ -561,4 +561,6 @@ class IndegoHub:
             self.entities[ENTITY_LAWN_MOWED].add_attribute(
                 {"next_mow": self.indego.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
+        else:
+            self.entities[ENTITY_NEXT_MOW].state = None
 
