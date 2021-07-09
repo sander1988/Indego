@@ -122,6 +122,23 @@ To get debug logs from the python API library in your log file, add this line to
     pyIndego: debug
 ```
 
+## Supported models
+As known today the following models are supported:
+* Indego 1000
+* Indego 1100
+* Indego 1200
+* Indego 10C
+* Indego 13C
+* Indego 350
+* Indego 400
+* Indego S+ 350 1gen
+* Indego S+ 350 2gen
+* Indego S+ 400 1gen
+* Indego S+ 400 2gen
+* Indego S+ 500
+* Indego M+ 700 1gen
+* Indego M+ 700 2gen
+
 ## Contribution
 If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to write an issue. I need your input in order to make this component as useful as possible. All suggestions are welcome!
 
