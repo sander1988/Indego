@@ -161,6 +161,9 @@ naethan bekkm onkelfarmor ltjessem nsimb jjandersson
 nath
 [bekkm](https://github.com/bekkm)
 [urbatecte](https://github.com/urbatecte)
+[Windmelodie](https://github.com/Windmelodie)
+[Fuempel](https://github.com/Fuempel)
+[MagaliDB](https://github.com/MagaliDB)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
