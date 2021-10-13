@@ -19,7 +19,7 @@ Copy the folder `indego` in `custom_components` into your `custom_components` in
 Reboot HA in order to get HA to find the newly added custom component.
 
 ## Configuration
-Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name (default = Indego) and polling (default = false) is optional.
+Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name is optional (default = Indego).
 ``` yaml
 #configuration.yaml
 indego:
@@ -41,7 +41,7 @@ indego_id:       "123456789"
 ## Usage
 
 ### Entities
- All sensors are auto discovered and should appear as "unused entities" after adding the component.
+ All sensors are autodiscovered and should appear as "unused entities" after adding the component.
 
 | Description | Screenshot |
 |-------------|------------|
