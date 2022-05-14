@@ -107,7 +107,7 @@ class IndegoSensor(RestoreEntity):
         return self._device_class
 
     @property
-    def device_state_attributes(self) -> dict:
+    def extra_state_attributes(self) -> dict:
         """Return attributes."""
         return self._attr
 
