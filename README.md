@@ -164,6 +164,7 @@ nath
 [Windmelodie](https://github.com/Windmelodie)
 [Fuempel](https://github.com/Fuempel)
 [MagaliDB](https://github.com/MagaliDB)
+[mhosse](https://github.com/mhosse)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
