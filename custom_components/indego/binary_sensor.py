@@ -103,7 +103,7 @@ class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
         return self._icon
 
     @property
-    def device_state_attributes(self) -> dict:
+    def extra_state_attributes(self) -> dict:
         """Return attributes."""
         return self._attr
 
