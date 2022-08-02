@@ -5,5 +5,5 @@
   "dependencies": [],
   "codeowners": ["@jm-73", "@eavanvalkenburg"],
   "requirements": ["pyIndego==2.0.31"],
-  "version": "3.8.1"
+  "version": "4.0.1"
 }

@@ -514,6 +514,8 @@ class IndegoHub:
             self.entities[ENTITY_ALERT].add_attribute(
                 {"alerts_count": self.indego.alerts_count,}
             )
+        else:
+            self.entities[ENTITY_ALERT].state = 0
         j = len(self.indego.alerts)
         # _LOGGER.info(f"Structuring ALERTS.{j}")
         for i in range(j):
