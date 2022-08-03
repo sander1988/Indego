@@ -165,6 +165,7 @@ nath
 [Fuempel](https://github.com/Fuempel)
 [MagaliDB](https://github.com/MagaliDB)
 [mhosse](https://github.com/mhosse)
+[Promises](https://github.com/Pr0mises)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
