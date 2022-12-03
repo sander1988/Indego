@@ -1,7 +1,6 @@
 """Binary sensors for Indego."""
 import logging
 
-from homeassistant.components.binary_sensor import DEVICE_CLASS_CONNECTIVITY
 from homeassistant.components.binary_sensor import (
     ENTITY_ID_FORMAT as BINARY_SENSOR_FORMAT,
 )
@@ -14,8 +13,9 @@ from homeassistant.const import (
     TEMP_CELSIUS,
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.dispatcher import async_dispatcher_connect
-from homeassistant.helpers.entity import Entity
 from homeassistant.helpers.restore_state import RestoreEntity
 
 from .const import DATA_UPDATED, DOMAIN
@@ -23,16 +23,19 @@ from .const import DATA_UPDATED, DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_platform(hass, config, async_add_devices, discovery_info=None):
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
+) -> None:
     """Set up the binary sensor platform."""
-    async_add_devices(
+    async_add_entities(
         [
-            device
-            for device in hass.data[DOMAIN].entities.values()
-            if isinstance(device, IndegoBinarySensor)
+            entity
+            for entity in hass.data[DOMAIN][config_entry.entry_id].entities.values()
+            if isinstance(entity, IndegoBinarySensor)
         ]
     )
-    return True
 
 
 class IndegoBinarySensor(BinarySensorEntity, RestoreEntity):
