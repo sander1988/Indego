@@ -35,6 +35,8 @@ from pyIndego import IndegoAsyncClient
 from .binary_sensor import IndegoBinarySensor
 from .const import (
     BINARY_SENSOR_TYPE,
+    CONF_MOWER_SERIAL,
+    CONF_MOWER_NAME,
     CONF_ATTR,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
@@ -189,10 +191,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     indego_hub = hass.data[DOMAIN][entry.entry_id] = IndegoHub(
-        entry.data[CONF_USERNAME],
+        entry.data[CONF_MOWER_NAME],
         entry.data[CONF_USERNAME],
         entry.data[CONF_PASSWORD],
-        None,  # TODO: Remove this? Should be auto configured from account info.
+        entry.data[CONF_MOWER_SERIAL],
         hass,
     )
 

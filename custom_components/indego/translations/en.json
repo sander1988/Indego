@@ -1,7 +1,7 @@
 {
     "config": {
         "abort": {
-            "already_configured": "This Bosch Indego account is already configured"
+            "already_configured": "This Bosch Indego mower has already been configured"
         },
         "error": {
             "connection_failed": "The connection to the Bosch Indego failed! Please check your credentials"
@@ -13,6 +13,13 @@
                     "password": "Password"
                 },
                 "description": "Please enter the credentials we should use to access your Bosch Indego account"
+            },
+            "mower": {
+                "data": {
+                    "mower_serial": "Mower serial",
+                    "mower_name": "Mower name"
+                },
+                "description": "Please select the serial of the Bosch Mower your would like to add"
             }
         }
     }
