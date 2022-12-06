@@ -7,6 +7,7 @@ DATA_UPDATED: Final = f"{DOMAIN}_data_updated"
 
 CONF_MOWER_SERIAL: Final = "mower_serial"
 CONF_MOWER_NAME: Final = "mower_name"
+CONF_SERVICES_REGISTERED: Final = "services_registered"
 
 CONF_ATTR: Final = "attributes"
 CONF_SEND_COMMAND: Final = "command"
