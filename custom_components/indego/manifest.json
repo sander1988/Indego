@@ -8,5 +8,5 @@
   "requirements": ["git+https://github.com/sander1988/pyIndego.git#pyIndego==2.0.33"],
   "iot_class": "cloud_push",
   "version": "5.0.0",
-  "loggers": ["custom_components.indego"]
+  "loggers": ["custom_components.indego", "pyIndego"]
 }
