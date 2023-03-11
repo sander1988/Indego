@@ -3,6 +3,12 @@ from typing import Final
 
 DOMAIN: Final = "indego"
 
+OAUTH2_AUTHORIZE: Final = "https://prodindego.b2clogin.com/prodindego.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/authorize"
+OAUTH2_TOKEN: Final = "https://prodindego.b2clogin.com/prodindego.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token"
+#OAUTH2_AUTHORIZE: Final = "https://api.home-connect.com/security/oauth/authorize"
+#OAUTH2_TOKEN: Final = "https://api.home-connect.com/security/oauth/token"
+OAUTH2_CLIENT_ID: Final = "65bb8c9d-1070-4fb4-aa95-853618acc876"
+
 DATA_UPDATED: Final = f"{DOMAIN}_data_updated"
 
 CONF_MOWER_SERIAL: Final = "mower_serial"

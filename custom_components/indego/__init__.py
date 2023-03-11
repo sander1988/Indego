@@ -198,6 +198,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load a config entry."""
     hass.data.setdefault(DOMAIN, {})
 
+    await application_credentials.async_import_client_credential(
+        hass,
+        DOMAIN,
+        application_credentials.ClientCredential(
+            config[DOMAIN][CONF_CLIENT_ID], config[DOMAIN][CONF_CLIENT_SECRET]
+        ),
+    )
+
     indego_hub = hass.data[DOMAIN][entry.entry_id] = IndegoHub(
         entry.data[CONF_MOWER_NAME],
         entry.data[CONF_USERNAME],
