@@ -1,10 +1,9 @@
 {
     "config": {
         "abort": {
-            "already_configured": "This Bosch Indego mower has already been configured"
-        },
-        "error": {
-            "connection_failed": "The connection to the Bosch Indego API failed!"
+            "already_configured": "This Bosch Indego mower has already been configured!",
+            "connection_error": "The connection to the Bosch Indego API failed!",
+            "no_mowers_found": "No mowers found in this Bosch Indego account!"
         },
         "step": {
             "mower": {

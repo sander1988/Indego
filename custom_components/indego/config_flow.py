@@ -73,15 +73,19 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
         """Test connection and load the available mowers."""
         self._config = data
 
+        _LOGGER.debug("Testing API access by retrieving available mowers...")
+
         api_client = IndegoAsyncClient(
             token=self._config["token"]["access_token"],
             session=async_get_clientsession(self.hass)
         )
 
         try:
-            self._mower_serials = []
-            for mower in api_client.mowers_in_account:
-                self._mower_serials.append(mower.get("alm_sn"))
+            self._mower_serials = await api_client.get_mowers()
+            _LOGGER.debug("Found mowers in account: %s", self._mower_serials)
+            
+            if len(self._mower_serials) == 0:
+                return self.async_abort(reason="no_mowers_found")
 
         except Exception as exc:  # TODO: Change to some kind of custom Indego error
             _LOGGER.error("Error while retrieving mower serial in account! Reason: %s", str(exc))
