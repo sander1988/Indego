@@ -4,16 +4,9 @@
             "already_configured": "This Bosch Indego mower has already been configured"
         },
         "error": {
-            "connection_failed": "The connection to the Bosch Indego failed! Please check your credentials"
+            "connection_failed": "The connection to the Bosch Indego API failed!"
         },
         "step": {
-            "user": {
-                "data": {
-                    "username": "Email",
-                    "password": "Password"
-                },
-                "description": "Please enter the credentials we should use to access your Bosch Indego account"
-            },
             "mower": {
                 "data": {
                     "mower_serial": "Mower serial",

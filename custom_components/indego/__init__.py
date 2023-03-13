@@ -16,10 +16,8 @@ from homeassistant.const import (
     CONF_ICON,
     CONF_ID,
     CONF_NAME,
-    CONF_PASSWORD,
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
-    CONF_USERNAME,
     DEVICE_CLASS_BATTERY,
     DEVICE_CLASS_TIMESTAMP,
     EVENT_HOMEASSISTANT_STARTED,
@@ -32,6 +30,8 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_call_later
 from homeassistant.util.dt import utcnow
 from homeassistant.helpers.entity import DeviceInfo
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.config_entry_oauth2_flow import OAuth2Session, async_get_config_entry_implementation
 from pyIndego import IndegoAsyncClient
 
 from .binary_sensor import IndegoBinarySensor
@@ -198,10 +198,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load a config entry."""
     hass.data.setdefault(DOMAIN, {})
 
+    entry_implementation = await async_get_config_entry_implementation(hass, entry)
+    oauth_session = OAuth2Session(hass, entry, entry_implementation)
     indego_hub = hass.data[DOMAIN][entry.entry_id] = IndegoHub(
         entry.data[CONF_MOWER_NAME],
-        entry.data[CONF_USERNAME],
-        entry.data[CONF_PASSWORD],
+        oauth_session,
         entry.data[CONF_MOWER_SERIAL],
         hass,
     )
@@ -216,7 +217,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
 
     try:
-        await indego_hub.login_and_schedule(load_platforms)
+        await indego_hub.update_generic_data_and_load_platforms(load_platforms)
     except AttributeError as e:
         _LOGGER.warning("Login unsuccessful: %s", e)
         return False
@@ -299,24 +300,31 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name, username, password, serial, hass):
+    def __init__(self, name: str, session: OAuth2Session, serial: str, hass: HomeAssistant):
         """Initialize the IndegoHub.
 
         Args:
             name (str): the name of the mower for entities
-            username (str): username for indego service
-            password (str): password for  indego service
+            session (OAuth2Session): the Bosch SingleKey ID OAuth session
             serial (str): serial of the mower, is used for uniqueness
             hass (HomeAssistant): HomeAssistant instance
 
         """
         self.mower_name = name
-        self._username = username
-        self._password = password
         self._serial = serial
         self._hass = hass
 
-        self.indego = IndegoAsyncClient(self._username, self._password, self._serial)
+        async def async_token_refresh() -> str:
+            await session.async_ensure_token_valid()
+            return session.token["access_token"]
+
+        self.indego = IndegoAsyncClient(
+            token=session.token["access_token"],
+            token_refresh_method=async_token_refresh,
+            serial=self._serial,
+            session=async_get_clientsession(hass),
+        )
+
         self.entities = {}
         self.refresh_state_task = None
         self.refresh_10m_remover = None
@@ -351,16 +359,8 @@ class IndegoHub:
                     device_info
                 )
 
-    async def login_and_schedule(self, load_platforms):
-        """Login to the API."""
-        login_success = await self.indego.login()
-        if not login_success:
-            raise AttributeError("Unable to login, please check your credentials")
-
-        _LOGGER.debug("Login OK")
-        if not self._serial:
-            self._serial = self.indego.serial
-
+    async def update_generic_data_and_load_platforms(self, load_platforms):
+        """Update the generic mower data, so we can create the HA platforms for the Indego component."""
         _LOGGER.debug("Getting generic data for device info.")
         generic_data = await self._update_generic_data()
 
@@ -578,7 +578,7 @@ class IndegoHub:
             )
 
     async def _update_generic_data(self):
-        await self.indego.update_generic_data()
+        await self.indego.update_generic_data_and_load_platforms()
 
         # dependent state updates
         if self.indego.generic_data:
