@@ -429,6 +429,7 @@ class IndegoHub:
             self._refresh_24h_remover()
 
         await self._indego_client.close()
+        _LOGGER.debug("Shutdown finished.")
 
     async def refresh_state(self):
         """Update the state, if necessary update operating data and recall itself."""
@@ -471,7 +472,7 @@ class IndegoHub:
         if update_failed:
             _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME)
             when = datetime.now() + timedelta(seconds=(STATUS_UPDATE_FAILURE_DELAY_TIME if update_failed else 0))
-            self._unsub_refresh_state = async_track_point_in_time(self.hass, self._create_refresh_state_task, when)
+            self._unsub_refresh_state = async_track_point_in_time(self._hass, self._create_refresh_state_task, when)
 
         else:
             self._create_refresh_state_task()

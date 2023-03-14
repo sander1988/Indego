@@ -12,6 +12,7 @@ Home Assistant Custom Component for Bosch Indego Lawn Mower.
 
 ### Alternative 1
 Install via HACS Community Store: https://hacs.xyz/
+
 ### Alternative 2
 Copy the folder `indego` in `custom_components` into your `custom_components` in your Home Assistant.
 
@@ -19,25 +20,33 @@ Copy the folder `indego` in `custom_components` into your `custom_components` in
 Reboot HA in order to get HA to find the newly added custom component.
 
 ## Configuration
-Add the domain to your configuration.yaml. Username, password and id (serial) is mandatory. Name is optional (default = Indego).
-``` yaml
-#configuration.yaml
-indego:
-#Required
-  username: !secret indego_username
-  password: !secret indego_password
-  id:       !secret indego_id
-#Optional
-  name:     Indego
-```
 
-Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml: 
-``` yaml
-#secrets.yaml
-indego_username: "name@mail.com"
-indego_password: "mysecretpw"
-indego_id:       "123456789"
-```
+### Authentication using Bosch SingleKey ID
+Bosch moved to a new authentication method called Bosch SingleKey ID (using OAuth) at the beginning of 2023. 
+Therefore we needed to rewrite the authentication flow. 
+
+Currently **only** Google Chrome is the supported for authenticating with the Bosch SingleKey ID servers when adding the integration in HA.
+Also a small extension needs to be installed (temporarily) in Google Chrome to handle the response from the Bosch authentication servers. 
+More (technical) information on the why can be found in this [issue](https://github.com/jm-73/Indego/issues).
+
+Optionally you can remove or disable the extension after adding the Bosch Indego integration to HomeAssistant.
+
+### Installing the Chrome extension
+1. The **HomeAssistant Indego authentication helper** extension can be downloaded [here](/chrome-extension.zip). 
+2. Extract the ZIP archive.
+3. Go to [extensions](chrome://extensions/) in Google Chrome.
+4. Enable **Developer mode** (right top).
+5. Choose **Load unpacked** and select the unpacked extension.
+
+
+### Adding a mower
+_Make sure you are accessing your HomeAssistant through Google Chrome and have the **HomeAssistant Indego authentication helper** extension enabled (as described above)._
+
+Please add this integration through the HomeAssistant interface (Settings > Devices & Services > Add Integration). Search for **Bosch Indego Mower**. 
+Configuration through YAML (configuration) files is no longer supported.
+
+You can add this integration multiple times in case you own multiple Indego mowers.
+
 ## Usage
 
 ### Entities
@@ -166,6 +175,7 @@ nath
 [MagaliDB](https://github.com/MagaliDB)
 [mhosse](https://github.com/mhosse)
 [Promises](https://github.com/Pr0mises)
+[Sander1988](https://github.com/sander1988)
 
 Fork from iMarkus/Indego https://github.com/iMarkus/Indego
 
