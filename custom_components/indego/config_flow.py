@@ -87,7 +87,7 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
             if len(self._mower_serials) == 0:
                 return self.async_abort(reason="no_mowers_found")
 
-        except Exception as exc:  # TODO: Change to some kind of custom Indego error
+        except Exception as exc:
             _LOGGER.error("Error while retrieving mower serial in account! Reason: %s", str(exc))
             return self.async_abort(reason="connection_error")
 
