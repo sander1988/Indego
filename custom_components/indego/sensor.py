@@ -87,7 +87,7 @@ class IndegoSensor(IndegoEntity, SensorEntity):
             return self._icon_func(self._state)
         if self._icon == "battery":
             return icon_for_battery_level(
-                int(self._state) if self._state is not None else None, self.charging
+                int(self._state) if self._state is not None and self._state.isdigit() else None, self.charging
             )
         return self._icon
 
