@@ -533,7 +533,7 @@ class IndegoHub:
         await self._indego_client.update_operating_data()
 
         # dependent state updates
-        _LOGGER.info(f"Updating operating data")
+        _LOGGER.debug(f"Updating operating data")
         if self._indego_client.operating_data:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
             self.entities[
