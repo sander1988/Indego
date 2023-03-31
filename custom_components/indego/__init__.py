@@ -38,9 +38,11 @@ from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
 
 from .binary_sensor import IndegoBinarySensor
+from .vacuum import IndegoVacuum
 from .const import (
     STATUS_UPDATE_FAILURE_DELAY_TIME,
     BINARY_SENSOR_TYPE,
+    VACUUM_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
     CONF_SERVICES_REGISTERED,
@@ -60,6 +62,7 @@ from .const import (
     ENTITY_ONLINE,
     ENTITY_RUNTIME,
     ENTITY_UPDATE_AVAILABLE,
+    ENTITY_VACUUM,
     INDEGO_PLATFORMS,
     SENSOR_TYPE,
     SERVICE_NAME_COMMAND,
@@ -195,6 +198,9 @@ ENTITY_DEFINITIONS = {
             "total_operation_time_h",
         ],
     },
+    ENTITY_VACUUM: {
+        CONF_TYPE: VACUUM_TYPE,
+    },
 }
 
 
@@ -247,8 +253,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         instance = find_instance_for_mower_service_call(call)
         command = call.data.get(CONF_SEND_COMMAND, DEFAULT_NAME_COMMANDS)
         _LOGGER.debug("Indego.send_command service called, with command: %s", command)
-        await instance._indego_client.put_command(command)
-        await instance._update_state()
+        await instance.async_send_command_to_client(command)
 
     async def async_send_smartmowing(call):
         """Handle the smartmowing service call."""
@@ -336,6 +341,12 @@ class IndegoHub:
             session=async_get_clientsession(hass),
         )
 
+    async def async_send_command_to_client(self, command: str):
+        """Send a mower command to the Indego client."""
+        _LOGGER.debug("Sending command to mower (%s): '%s'", self._serial, command)
+        await self._indego_client.put_command(command)
+        await self._update_state()
+
     def _create_entities(self, device_info):
         """Create sub-entities and add them to Hass."""
 
@@ -361,6 +372,14 @@ class IndegoHub:
                     entity[CONF_DEVICE_CLASS],
                     entity[CONF_ATTR],
                     device_info
+                )
+
+            elif entity[CONF_TYPE] == VACUUM_TYPE:
+                self.entities[entity_key] = IndegoVacuum(
+                    f"indego_{self._serial}",
+                    self._mower_name,
+                    device_info,
+                    self
                 )
 
     async def update_generic_data_and_load_platforms(self, load_platforms):
@@ -536,9 +555,8 @@ class IndegoHub:
         _LOGGER.debug(f"Updating operating data")
         if self._indego_client.operating_data:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
-            self.entities[
-                ENTITY_BATTERY
-            ].state = self._indego_client.operating_data.battery.percent_adjusted
+            self.entities[ENTITY_BATTERY].state = self._indego_client.operating_data.battery.percent_adjusted
+            self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
 
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
@@ -576,6 +594,7 @@ class IndegoHub:
         self.entities[ENTITY_BATTERY].charging = (
             True if self._indego_client.state_description_detail == "Charging" else False
         )
+        self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
 
         # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE].add_attribute(
@@ -595,6 +614,8 @@ class IndegoHub:
                 "state_description": self._indego_client.state_description_detail,
             }
         )
+
+        self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
 
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {
