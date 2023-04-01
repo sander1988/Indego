@@ -77,7 +77,8 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
 
         api_client = IndegoAsyncClient(
             token=self._config["token"]["access_token"],
-            session=async_get_clientsession(self.hass)
+            session=async_get_clientsession(self.hass),
+            raise_request_exceptions=True
         )
 
         try:

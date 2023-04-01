@@ -1,7 +1,6 @@
 """Bosch Indego Mower integration."""
 import asyncio
 import logging
-import time
 from datetime import datetime, timedelta
 
 import homeassistant.util.dt
@@ -339,6 +338,7 @@ class IndegoHub:
             token_refresh_method=async_token_refresh,
             serial=self._serial,
             session=async_get_clientsession(hass),
+            raise_request_exceptions=True
         )
 
     async def async_send_command_to_client(self, command: str):
@@ -455,18 +455,21 @@ class IndegoHub:
         _LOGGER.debug("Refreshing state.")
         self._cancel_delayed_refresh_state()
 
-        update_start_time = time.time()
+        update_failed = False
         try:
             await self._update_state()
 
-        except Exception as e:
-            _LOGGER.info("Update state got an exception: %s", e)
-
-        # Detect quick call failure.
-        # To prevent infinite update loops in case of server or authentication errors.
-        update_failed = not self._indego_client.state and (time.time() - update_start_time) < 10
+        except Exception as exc:
+            update_failed = True
+            _LOGGER.warning("Mower state update failed, reason: %s", exc)
 
         if self._shutdown:
+            return
+
+        if update_failed:
+            _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME)
+            when = datetime.now() + timedelta(seconds=(STATUS_UPDATE_FAILURE_DELAY_TIME if update_failed else 0))
+            self._unsub_refresh_state = async_track_point_in_time(self._hass, self._create_refresh_state_task, when)
             return
 
         if self._indego_client.state:
@@ -476,8 +479,8 @@ class IndegoHub:
                     _LOGGER.debug("Refreshing operating data.")
                     await self._update_operating_data()
 
-                except Exception as e:
-                    _LOGGER.info("Update operating data got an exception: %s", e)
+                except Exception as exc:
+                    _LOGGER.warning("Mower operating data update failed, reason: %s", exc)
 
             if self._indego_client.state.error != self._latest_alert:
                 self._latest_alert = self._indego_client.state.error
@@ -485,15 +488,9 @@ class IndegoHub:
                     _LOGGER.debug("Refreshing alerts, to get new alert.")
                     await self._update_alerts()
 
-                except Exception as e:
-                    _LOGGER.info("Update alert got an exception: %s", e)
+                except Exception as exc:
+                    _LOGGER.warning("Mower alerts update failed, reason: %s", exc)
 
-        if update_failed:
-            _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME)
-            when = datetime.now() + timedelta(seconds=(STATUS_UPDATE_FAILURE_DELAY_TIME if update_failed else 0))
-            self._unsub_refresh_state = async_track_point_in_time(self._hass, self._create_refresh_state_task, when)
-
-        else:
             self._create_refresh_state_task()
 
     def _create_refresh_state_task(self):
