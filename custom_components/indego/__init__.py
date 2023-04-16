@@ -32,10 +32,11 @@ from homeassistant.helpers.event import async_call_later
 from homeassistant.util.dt import utcnow
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.config_entry_oauth2_flow import OAuth2Session, async_get_config_entry_implementation
+from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
 
+from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
 from .const import (
     STATUS_UPDATE_FAILURE_DELAY_TIME,
@@ -202,7 +203,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     entry_implementation = await async_get_config_entry_implementation(hass, entry)
-    oauth_session = OAuth2Session(hass, entry, entry_implementation)
+    oauth_session = IndegoOAuth2Session(hass, entry, entry_implementation)
     indego_hub = hass.data[DOMAIN][entry.entry_id] = IndegoHub(
         entry.data[CONF_MOWER_NAME],
         oauth_session,
@@ -303,12 +304,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name: str, session: OAuth2Session, serial: str, hass: HomeAssistant):
+    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant):
         """Initialize the IndegoHub.
 
         Args:
             name (str): the name of the mower for entities
-            session (OAuth2Session): the Bosch SingleKey ID OAuth session
+            session (IndegoOAuth2Session): the Bosch SingleKey ID OAuth session
             serial (str): serial of the mower, is used for uniqueness
             hass (HomeAssistant): HomeAssistant instance
 
@@ -449,7 +450,7 @@ class IndegoHub:
 
         if update_failed:
             _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME)
-            when = datetime.now() + timedelta(seconds=(STATUS_UPDATE_FAILURE_DELAY_TIME if update_failed else 0))
+            when = datetime.now() + timedelta(seconds=STATUS_UPDATE_FAILURE_DELAY_TIME)
             self._unsub_refresh_state = async_track_point_in_time(self._hass, self._create_refresh_state_task, when)
             return
 
@@ -474,7 +475,7 @@ class IndegoHub:
 
             self._create_refresh_state_task()
 
-    def _create_refresh_state_task(self):
+    def _create_refresh_state_task(self, event=None):
         """Create a task to refresh the mower state."""
         self._refresh_state_task = self._hass.async_create_task(self.refresh_state())
 
