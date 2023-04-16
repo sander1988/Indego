@@ -32,10 +32,11 @@ from homeassistant.helpers.event import async_call_later
 from homeassistant.util.dt import utcnow
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.config_entry_oauth2_flow import OAuth2Session, async_get_config_entry_implementation
+from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
 
+from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
 from .vacuum import IndegoVacuum
 from .const import (
@@ -208,7 +209,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     entry_implementation = await async_get_config_entry_implementation(hass, entry)
-    oauth_session = OAuth2Session(hass, entry, entry_implementation)
+    oauth_session = IndegoOAuth2Session(hass, entry, entry_implementation)
     indego_hub = hass.data[DOMAIN][entry.entry_id] = IndegoHub(
         entry.data[CONF_MOWER_NAME],
         oauth_session,
@@ -308,12 +309,12 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name: str, session: OAuth2Session, serial: str, hass: HomeAssistant):
+    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant):
         """Initialize the IndegoHub.
 
         Args:
             name (str): the name of the mower for entities
-            session (OAuth2Session): the Bosch SingleKey ID OAuth session
+            session (IndegoOAuth2Session): the Bosch SingleKey ID OAuth session
             serial (str): serial of the mower, is used for uniqueness
             hass (HomeAssistant): HomeAssistant instance
 
