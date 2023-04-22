@@ -469,7 +469,7 @@ class IndegoHub:
 
         if update_failed:
             _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME)
-            when = datetime.now() + timedelta(seconds=(STATUS_UPDATE_FAILURE_DELAY_TIME if update_failed else 0))
+            when = datetime.now() + timedelta(seconds=STATUS_UPDATE_FAILURE_DELAY_TIME)
             self._unsub_refresh_state = async_track_point_in_time(self._hass, self._create_refresh_state_task, when)
             return
 
@@ -494,7 +494,7 @@ class IndegoHub:
 
             self._create_refresh_state_task()
 
-    def _create_refresh_state_task(self):
+    def _create_refresh_state_task(self, event=None):
         """Create a task to refresh the mower state."""
         self._refresh_state_task = self._hass.async_create_task(self.refresh_state())
 
