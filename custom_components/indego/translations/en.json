@@ -1,0 +1,18 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "This Bosch Indego mower has already been configured!",
+            "connection_error": "The connection to the Bosch Indego API failed!",
+            "no_mowers_found": "No mowers found in this Bosch Indego account!"
+        },
+        "step": {
+            "mower": {
+                "data": {
+                    "mower_serial": "Mower serial",
+                    "mower_name": "Mower name"
+                },
+                "description": "Please select the serial of the Bosch Mower your would like to add"
+            }
+        }
+    }
+}
