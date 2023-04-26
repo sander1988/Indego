@@ -4,6 +4,10 @@
 # Bosch Indego Mower
 ![Screenshot](https://github.com/jm-73/Indego/blob/master/doc/0-Sensors_3.png)
 
+The integration uses the config flow in Homw Assistant combined with a Chrome plugin. Please see documentation on Github pages.
+
+
+Not valid anymore:
 You can add this component to Home Assistant via `configuration.yaml` file.
 
 ## Minimal configuration
