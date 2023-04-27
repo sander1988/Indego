@@ -5,8 +5,8 @@
   "documentation": "https://github.com/jm-73/Indego",
   "dependencies": ["application_credentials"],
   "codeowners": ["@jm-73", "@eavanvalkenburg", "@sander1988"],
-  "requirements": ["pyIndego==3.0.0"],
+  "requirements": ["pyIndego==3.0.1"],
   "iot_class": "cloud_push",
-  "version": "5.0.2",
+  "version": "5.0.1",
   "loggers": ["custom_components.indego", "pyIndego"]
 }

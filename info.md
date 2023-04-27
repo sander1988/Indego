@@ -7,26 +7,10 @@
 The integration uses the config flow in Homw Assistant combined with a Chrome plugin. Please see documentation on Github pages.
 
 
-Not valid anymore:
-You can add this component to Home Assistant via `configuration.yaml` file.
+## Changed to config flow
+You can not add this component to Home Assistant via `configuration.yaml` file anymore (since version 5.0).
 
-## Minimal configuration
-```yaml
-#configuration.yaml
-indego:
-  name:     Indego
-  username: !secret indego_username
-  password: !secret indego_password
-  id:       !secret indego_id
-```
-
-Add your credentials used with Bosch Mower app (mail address, password and mower serial number) to your secrets.yaml:
-```yaml
-#secrets.yaml
-indego_username: name@mail.com
-indego_password: mysecretpw
-indego_id:       123456789
-```
+Add this integration via Home Assistant Settings -> Devices & Services -> Add INtegration. Search for Bosch.
 
 - [GitHub](https://github.com/jm-73/Indego)
 - [Discord](https://discord.gg/aD33GsP)
