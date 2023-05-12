@@ -151,7 +151,11 @@ As known today the following models are supported:
 ## Contribution
 If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to write an issue. I need your input in order to make this component as useful as possible. All suggestions are welcome!
 
-## Issues
+## Known issues
+Password cannot contain dashes (-).
+If serial begins with an (0) the serial needs to be quoted in secrets.yaml. Se example above under Configuration.
+
+## New issues
 If you experience issues/bugs with this the best way to report them is to open an issue in **this** repo.
 
 [Issue link](https://github.com/jm-73/Indego/issues)
