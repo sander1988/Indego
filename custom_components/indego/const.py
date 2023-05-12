@@ -28,7 +28,8 @@ SERVICE_NAME_SMARTMOW: Final = "smartmowing"
 
 SENSOR_TYPE: Final = "sensor"
 BINARY_SENSOR_TYPE: Final = "binary_sensor"
-INDEGO_PLATFORMS: Final = [SENSOR_TYPE, BINARY_SENSOR_TYPE]
+VACUUM_TYPE: Final = "vacuum"
+INDEGO_PLATFORMS: Final = [SENSOR_TYPE, BINARY_SENSOR_TYPE, VACUUM_TYPE]
 
 ENTITY_ONLINE: Final = "online"
 ENTITY_UPDATE_AVAILABLE: Final = "update_available"
@@ -42,3 +43,4 @@ ENTITY_NEXT_MOW: Final = "next_mow"
 ENTITY_MOWING_MODE: Final = "mowing_mode"
 ENTITY_RUNTIME: Final = "runtime_total"
 ENTITY_MOWER_ALERT: Final = "mower_alert"
+ENTITY_VACUUM: Final = "vacuum"

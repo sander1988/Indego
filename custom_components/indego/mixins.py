@@ -14,14 +14,14 @@ class IndegoEntity(RestoreEntity):
         self._unique_id = entity_id
         self._name = name
 
-        self._updateble_icon = callable(icon)
-        if self._updateble_icon:
-            self._icon_func = icon
-            self._icon = None
-        else:
-            self._icon = icon
+        self._icon = icon
+        if icon is not None:
+            self._updateble_icon = callable(icon)
+            if self._updateble_icon:
+                self._icon_func = icon
+                self._icon = None
 
-        self._attr = {key: None for key in attributes}
+        self._attr = {key: None for key in attributes} if attributes is not None else None
         self._device_info = device_info
         self._state = None
         self._should_poll = False
