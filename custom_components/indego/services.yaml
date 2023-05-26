@@ -20,3 +20,33 @@ smartmowing:
       description: Enable Smart Mow 
       example: "true"
       required: true
+download_map:
+  description: Download current Map without location of Mower 
+  fields:
+    filename: 
+      description: Download current Map 
+      example: "mapWithoutIndego"
+delete_alert:
+  description: Delete the selected Alert
+  fields:
+    alert_index: 
+      description: Delete the selected Alert in this case the latest
+      example: "0"
+read_alert:
+  description: Read the selected Alert
+  fields:
+    alert_index: 
+      description: marked the selected Alert as read
+      example: "0"
+delete_alert_all:
+  description: Delete the selected Alert
+  fields:
+    alert_index: 
+      description: Delete all Alerts
+      example: "0"
+read_alert_all:
+  description: Read the selected Alert
+  fields:
+    alert_index: 
+      description: marked all Alerts as read
+      example: "0"
