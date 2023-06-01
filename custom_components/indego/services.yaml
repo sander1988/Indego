@@ -1,12 +1,22 @@
 command:
   description: Send command to mower. Accepted values are mow, returnToDock and pause
   fields:
-    command: 
+    mower_serial:
+      description: The serial of the mower for this command. Only required when you have multiple mowers configured.
+      example: '"012345789"'
+      required: false
+    command:
       description: Command for mower
       example: "mow"
+      required: true
 smartmowing:
   description: Enable or disable Smart Mowing. Accepted values are true and false
   fields:
+    mower_serial:
+      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      example: '"012345789"'
+      required: false
     enable: 
       description: Enable Smart Mow 
       example: "true"
+      required: true
