@@ -167,7 +167,7 @@ ENTITY_DEFINITIONS = {
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:calendar-check",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
+        CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
     ENTITY_NEXT_MOW: {
@@ -175,7 +175,7 @@ ENTITY_DEFINITIONS = {
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:calendar-clock",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
+        CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
     ENTITY_MOWING_MODE: {
