@@ -1,8 +1,6 @@
 """Bosch Indego Mower integration."""
 import asyncio
 import logging
-import json
-from sh import sed
 from datetime import datetime, timedelta
 
 import homeassistant.util.dt
@@ -22,8 +20,6 @@ from homeassistant.const import (
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
     DEVICE_CLASS_BATTERY,
-    DEVICE_CLASS_TEMPERATURE,
-    DEVICE_CLASS_VOLTAGE,
     DEVICE_CLASS_TIMESTAMP,
     EVENT_HOMEASSISTANT_STARTED,
     EVENT_HOMEASSISTANT_STOP,
@@ -39,14 +35,16 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
-from svgutils.transform import fromfile, fromstring
+from svgutils.transform import fromstring
 
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
+from .camera import IndegoCamera
 from .vacuum import IndegoVacuum
 from .const import (
     STATUS_UPDATE_FAILURE_DELAY_TIME,
     BINARY_SENSOR_TYPE,
+    CAMERA_TYPE,
     VACUUM_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
@@ -54,39 +52,11 @@ from .const import (
     CONF_ATTR,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
-    CONF_DOWNLAD_MAP,
     CONF_DELETE_ALERT,
     CONF_READ_ALERT,
     DEFAULT_NAME_COMMANDS,
-    DEFAULT_MAP_NAME,
     DOMAIN,
     ENTITY_ALERT,
-    ENTITY_BATTERY,
-    ENTITY_LAST_COMPLETED,
-    ENTITY_LAWN_MOWED,
-    ENTITY_MOWER_STATE,
-    ENTITY_MOWER_STATE_DETAIL,
-    ENTITY_MOWING_MODE,
-    ENTITY_NEXT_MOW,
-    ENTITY_ONLINE,
-    ENTITY_RUNTIME,
-    ENTITY_UPDATE_AVAILABLE,
-    ENTITY_VACUUM,
-    ENTITY_HAS_MAP,
-    ENTITY_MAP_UPDATE_AVAILABLE,
-    ENTITY_XPOS,
-    ENTITY_YPOS,
-    ENTITY_MAPSVGCACHETS,
-    ENTITY_YSVGPOS,
-    ENTITY_XSVGPOS,
-    ENTITY_MAPCELLSIZE,
-    ENTITY_ID,
-    ENTITY_GARDEN_NAME,
-    ENTITY_SIGNALID,
-    ENTITY_SIZE,
-    ENTITY_INNERBOUNDS,
-    ENTITY_BUMPS,
-    ENTITY_STOPS,
     ENTITY_ALERT_COUNT,
     ENTITY_ALERT_ID,
     ENTITY_ALERT_ERROR_CODE,
@@ -97,22 +67,23 @@ from .const import (
     ENTITY_ALERT_FLAG,
     ENTITY_ALERT_PUSH,
     ENTITY_ALERT_DESCRIPTION,
-    ENTITY_RUNTIME_TOTAL_CHARGING,
-    ENTITY_RUNTIME_TOTAL_MOWING,
-    ENTITY_RUNTIME_TOTAL_OPERATION,
-    ENTITY_RUNTIME_LAST_CHARGING,
-    ENTITY_RUNTIME_LAST_MOWING,
-    ENTITY_RUNTIME_LAST_OPERATION,
-    ENTITY_BATTERY_CYCLES,
-    ENTITY_BATTERY_AMBIENTE_TEMP,
-    ENTITY_BATTERY_TEMP,
-    ENTITY_BATTERY_DISCHARGE,
-    ENTITY_BATTERY_VOLTAGE,
+    ENTITY_BATTERY,
+    ENTITY_CAMERA,
+    ENTITY_LAST_COMPLETED,
+    ENTITY_LAWN_MOWED,
+    ENTITY_SIZE,
+    ENTITY_MOWER_STATE,
+    ENTITY_MOWER_STATE_DETAIL,
+    ENTITY_MOWING_MODE,
+    ENTITY_NEXT_MOW,
+    ENTITY_ONLINE,
+    ENTITY_RUNTIME,
+    ENTITY_UPDATE_AVAILABLE,
+    ENTITY_VACUUM,
     INDEGO_PLATFORMS,
     SENSOR_TYPE,
     SERVICE_NAME_COMMAND,
     SERVICE_NAME_SMARTMOW,
-    SERVICE_NAME_DOWNLOAD_MAP,
     SERVICE_NAME_DELETE_ALERT,
     SERVICE_NAME_READ_ALERT,
     SERVICE_NAME_DELETE_ALERT_ALL,
@@ -131,20 +102,21 @@ SERVICE_SCHEMA_SMARTMOWING = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_SMARTMOWING): cv.string
 })
-SERVICE_SCHEMA_DOWNLOAD_MAP = vol.Schema(
-    {vol.Optional(CONF_DOWNLAD_MAP, default=DEFAULT_MAP_NAME): cv.string})
+SERVICE_SCHEMA_DELETE_ALERT = vol.Schema({
+    vol.Required(CONF_DELETE_ALERT): cv.positive_int
+})
 
-SERVICE_SCHEMA_DELETE_ALERT = vol.Schema(
-    {vol.Required(CONF_DELETE_ALERT): cv.positive_int})
+SERVICE_SCHEMA_READ_ALERT = vol.Schema({
+    vol.Required(CONF_READ_ALERT): cv.positive_int
+})
 
-SERVICE_SCHEMA_READ_ALERT = vol.Schema(
-    {vol.Required(CONF_READ_ALERT): cv.positive_int})
+SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema({
+    vol.Required(CONF_DELETE_ALERT): cv.string
+})
 
-SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema(
-    {vol.Required(CONF_DELETE_ALERT): cv.string})
-
-SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema(
-    {vol.Required(CONF_READ_ALERT): cv.string})
+SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema({
+    vol.Required(CONF_READ_ALERT): cv.string
+})
 
 
 def FUNC_ICON_MOWER_ALERT(state):
@@ -175,253 +147,6 @@ ENTITY_DEFINITIONS = {
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
         CONF_DEVICE_CLASS: DEVICE_CLASS_PROBLEM,
         CONF_ATTR: ["alerts_count"],
-    },
-    ENTITY_MOWER_STATE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "mower state",
-        CONF_ICON: "mdi:robot-mower-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: ["last_updated"],
-    },
-    ENTITY_MOWER_STATE_DETAIL: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "mower state detail",
-        CONF_ICON: "mdi:robot-mower-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [
-            "last_updated",
-            "state_number",
-            "state_description",
-        ],
-    },
-    ENTITY_BATTERY: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "battery %",
-        CONF_ICON: "battery",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_BATTERY,
-        CONF_UNIT_OF_MEASUREMENT: "%",
-        CONF_ATTR: [
-            "last_updated",
-            "voltage_V",
-            "discharge_Ah",
-            "cycles",
-            f"battery_temp_{TEMP_CELSIUS}",
-            f"ambient_temp_{TEMP_CELSIUS}",
-        ],
-    },
-    ENTITY_BATTERY_VOLTAGE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "battery voltage",
-        CONF_ICON: "mdi:flash-triangle-outline",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_VOLTAGE,
-        CONF_UNIT_OF_MEASUREMENT: "V",
-        CONF_ATTR: [],
-    },
-    ENTITY_BATTERY_DISCHARGE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "battery discharge",
-        CONF_ICON: "mdi:battery-arrow-down-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "Ah",
-        CONF_ATTR: [],
-    },
-    ENTITY_BATTERY_TEMP: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "battery temp",
-        CONF_ICON: "mdi:thermometer",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        CONF_UNIT_OF_MEASUREMENT: "°C",
-        CONF_ATTR: [],
-    },
-    ENTITY_BATTERY_AMBIENTE_TEMP: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "battery ambiente temperature",
-        CONF_ICON: "mdi:thermometer",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TEMPERATURE,
-        CONF_UNIT_OF_MEASUREMENT: "°C",
-        CONF_ATTR: [],
-    },
-    ENTITY_BATTERY_CYCLES: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "battery cycles",
-        CONF_ICON: "mdi:battery-sync-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_LAWN_MOWED: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "lawn mowed",
-        CONF_ICON: "mdi:grass",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "%",
-        CONF_ATTR: [
-            "last_updated",
-            "last_completed_mow",
-            "next_mow",
-            "last_session_operation_min",
-            "last_session_cut_min",
-            "last_session_charge_min",
-        ],
-    },
-    ENTITY_LAST_COMPLETED: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "last completed",
-        CONF_ICON: "mdi:calendar-check",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
-        CONF_ATTR: [],
-    },
-    ENTITY_NEXT_MOW: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "next mow",
-        CONF_ICON: "mdi:calendar-clock",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
-        CONF_ATTR: [],
-    },
-    ENTITY_MOWING_MODE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "mowing mode",
-        CONF_ICON: "mdi:alpha-m-circle-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_RUNTIME: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "mowtime total",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "h",
-        CONF_ATTR: [
-            "total_mowing_time_h",
-            "total_charging_time_h",
-            "total_operation_time_h",
-        ],
-    },
-    ENTITY_VACUUM: {
-        CONF_TYPE: VACUUM_TYPE,
-    },
-    ENTITY_XPOS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "position x",
-        CONF_ICON: "mdi:map-marker-radius-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_XSVGPOS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "position svg x",
-        CONF_ICON: "mdi:image-marker",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_YPOS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "position y",
-        CONF_ICON: "mdi:map-marker-radius-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_YSVGPOS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "position svg y",
-        CONF_ICON: "mdi:image-marker",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_MAPSVGCACHETS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "map svg cache ts",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_MAP_UPDATE_AVAILABLE: {
-        CONF_TYPE: BINARY_SENSOR_TYPE,
-        CONF_NAME: "map update available",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_ATTR: [],
-    }, 
-    ENTITY_HAS_MAP: {
-        CONF_TYPE: BINARY_SENSOR_TYPE,
-        CONF_NAME: "has map",
-        CONF_ICON: "mdi:map-search-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_MAPCELLSIZE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "map cell size",
-        CONF_ICON: "mdi:map-legend",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_INNERBOUNDS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "innerbounds",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_SIZE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "size",
-        CONF_ICON: "mdi:ruler-square",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "m²",
-        CONF_ATTR: [],
-    },
-    ENTITY_SIGNALID: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "garden signal id",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_GARDEN_NAME: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "garden name",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_ID: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "garden id",
-        CONF_ICON: "mdi:identifier",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_STOPS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "stops",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_BUMPS: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "bumps",
-        CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
     },
     ENTITY_ALERT_PUSH: {
         CONF_TYPE: BINARY_SENSOR_TYPE,
@@ -502,53 +227,105 @@ ENTITY_DEFINITIONS = {
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },  
-    ENTITY_RUNTIME_TOTAL_OPERATION: {
+    ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime total operation",
-        CONF_ICON: "mdi:timer-check-outline",
+        CONF_NAME: "mower state",
+        CONF_ICON: "mdi:robot-mower-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: ["last_updated"],
+    },
+    ENTITY_MOWER_STATE_DETAIL: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "mower state detail",
+        CONF_ICON: "mdi:robot-mower-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [
+            "last_updated",
+            "state_number",
+            "state_description",
+        ],
+    },
+    ENTITY_BATTERY: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "battery %",
+        CONF_ICON: "battery",
+        CONF_DEVICE_CLASS: DEVICE_CLASS_BATTERY,
+        CONF_UNIT_OF_MEASUREMENT: "%",
+        CONF_ATTR: [
+            "last_updated",
+            "voltage_V",
+            "discharge_Ah",
+            "cycles",
+            f"battery_temp_{TEMP_CELSIUS}",
+            f"ambient_temp_{TEMP_CELSIUS}",
+        ],
+    },
+    ENTITY_CAMERA: {
+        CONF_TYPE: CAMERA_TYPE,
+    },
+    ENTITY_LAWN_MOWED: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "lawn mowed",
+        CONF_ICON: "mdi:grass",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: "%",
+        CONF_ATTR: [
+            "last_updated",
+            "last_completed_mow",
+            "next_mow",
+            "last_session_operation_min",
+            "last_session_cut_min",
+            "last_session_charge_min",
+        ],
+    },
+    ENTITY_SIZE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "size",
+        CONF_ICON: "mdi:ruler-square",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: "m²",
+        CONF_ATTR: [],
+    },
+    ENTITY_LAST_COMPLETED: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "last completed",
+        CONF_ICON: "mdi:calendar-check",
+        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_NEXT_MOW: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "next mow",
+        CONF_ICON: "mdi:calendar-clock",
+        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_MOWING_MODE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "mowing mode",
+        CONF_ICON: "mdi:alpha-m-circle-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_RUNTIME: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "mowtime total",
+        CONF_ICON: "mdi:information-outline",
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: "h",
-        CONF_ATTR: [],
+        CONF_ATTR: [
+            "total_mowing_time_h",
+            "total_charging_time_h",
+            "total_operation_time_h",
+        ],
     },
-    ENTITY_RUNTIME_TOTAL_MOWING: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime total mowing",
-        CONF_ICON: "mdi:timer-play-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "h",
-        CONF_ATTR: [],
-    },
-    ENTITY_RUNTIME_TOTAL_CHARGING: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime total charging",
-        CONF_ICON: "mdi:timer-refresh-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "h",
-        CONF_ATTR: [],
-    },
-    ENTITY_RUNTIME_LAST_OPERATION: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime last operation",
-        CONF_ICON: "mdi:timer-check-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "min",
-        CONF_ATTR: [],
-    },
-    ENTITY_RUNTIME_LAST_MOWING: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime last mowing",
-        CONF_ICON: "mdi:timer-play-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "min",
-        CONF_ATTR: [],
-    },
-    ENTITY_RUNTIME_LAST_CHARGING: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "runtime last charging",
-        CONF_ICON: "mdi:timer-refresh-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "min",
-        CONF_ATTR: [],
+    ENTITY_VACUUM: {
+        CONF_TYPE: VACUUM_TYPE,
     },
 }
 
@@ -612,12 +389,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await instance._indego_client.put_mow_mode(enable)
         await instance._update_generic_data()
 
-    async def async_download_map(call):
-        enable = call.data.get(CONF_DOWNLAD_MAP, DEFAULT_MAP_NAME)
-        filename = hass.config.path(f"www/{enable}.svg")
-        _LOGGER.debug("Indego.download_map service called")
-        await hass.data[DOMAIN][entry.entry_id]._download_map(filename)
-
     async def async_delete_alert(call):
         """Handle the service call."""
         enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
@@ -669,12 +440,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             schema=SERVICE_SCHEMA_SMARTMOWING,
         )
         hass.services.async_register(
-            DOMAIN,
-            SERVICE_NAME_DOWNLOAD_MAP,
-            async_download_map,
-            schema=SERVICE_SCHEMA_DOWNLOAD_MAP,
-        )
-        hass.services.async_register(
             DOMAIN, 
             SERVICE_NAME_DELETE_ALERT, 
             async_delete_alert, 
@@ -698,6 +463,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             async_read_alert_all, 
             schema=SERVICE_SCHEMA_READ_ALERT_ALL
         )
+
         hass.data[DOMAIN][CONF_SERVICES_REGISTERED] = entry.entry_id
 
     else:
@@ -744,6 +510,7 @@ class IndegoHub:
         self._refresh_24h_remover = None
         self._shutdown = False
         self._latest_alert = None
+        self._lawn_map = None
         self.entities = {}
 
         async def async_token_refresh() -> str:
@@ -763,19 +530,6 @@ class IndegoHub:
         _LOGGER.debug("Sending command to mower (%s): '%s'", self._serial, command)
         await self._indego_client.put_command(command)
         await self._update_state()
-
-    async def _download_map(self, filename: str):
-        _LOGGER.debug(f"Downloading map to {filename}")
-        await self._indego_client.download_map(filename)
-
-    async def _update_position(xpos,ypos):
-        svg = fromfile(f"www/mapWithoutIndego.svg")
-        _LOGGER.info(f'Indego position (x,y): {xpos},{ypos}')
-        circle = f'<circle cx="{xpos}" cy="{ypos}" r="15" fill="yellow" />'
-        mower_circle = fromstring(circle)
-        _LOGGER.info(f'Adding mower to map and save new svg...')
-        svg.append(mower_circle)
-        svg.save(f"www/mapWithIndego.svg")
 
     def _create_entities(self, device_info):
         """Create sub-entities and add them to Hass."""
@@ -812,6 +566,14 @@ class IndegoHub:
                     self
                 )
 
+            elif entity[CONF_TYPE] == CAMERA_TYPE:
+                self.entities[entity_key] = IndegoCamera(
+                    f"indego_{self._serial}",
+                    self._mower_name,
+                    device_info,
+                    self
+                )
+
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
         _LOGGER.debug("Getting generic data for device info.")
@@ -819,7 +581,7 @@ class IndegoHub:
 
         device_info = DeviceInfo(
             identifiers={(DOMAIN, self._serial)},
-            serial_number=self._serial,
+#            serial_number=self._serial,
             manufacturer="Bosch",
             name=self._mower_name,
             model=generic_data.bareToolnumber if generic_data else None,
@@ -945,7 +707,6 @@ class IndegoHub:
                 self._update_alerts(),
                 self._update_last_completed_mow(),
                 self._update_next_mow(),
-                self._update_setup(),
             ],
             return_exceptions=True,
         )
@@ -976,6 +737,25 @@ class IndegoHub:
 
         self._refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
+    async def download_map(self, force_refresh_map=False):
+        if self._lawn_map is None or force_refresh_map:
+            try:
+                self._lawn_map = await self._indego_client.get(f"alms/{self._indego_client.serial}/map")
+            except Exception as e:
+                _LOGGER.info("Get map got an exception: %s", e)
+        if self._lawn_map and self._indego_client.state:
+            try:
+                await self._indego_client.update_state(force=True)
+            except Exception as e:
+                _LOGGER.info("Update state force got an exception: %s", e)
+            svg = fromstring(self._lawn_map.decode("utf-8").replace('#FAFAFA', 'transparent').replace('#CCCCCC', 'transparent'))
+            xpos = self._indego_client.state.svg_xPos
+            ypos = self._indego_client.state.svg_yPos
+            circle = f'<circle cx="{xpos}" cy="{ypos}" r="15" fill="yellow" />'
+            mower_circle = fromstring(circle)
+            svg.append(mower_circle)
+            return svg.to_str()
+
     async def _update_operating_data(self):
         await self._indego_client.update_operating_data()
 
@@ -985,21 +765,7 @@ class IndegoHub:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
             self.entities[ENTITY_BATTERY].state = self._indego_client.operating_data.battery.percent_adjusted
             self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
-            self.entities[ENTITY_MAPCELLSIZE].state = self._indego_client.operating_data.garden.map_cell_size
-            #battery
-            self.entities[ENTITY_BATTERY_VOLTAGE].state = self._indego_client.operating_data.battery.voltage
-            self.entities[ENTITY_BATTERY_CYCLES].state = self._indego_client.operating_data.battery.cycles
-            self.entities[ENTITY_BATTERY_DISCHARGE].state = self._indego_client.operating_data.battery.discharge
-            self.entities[ENTITY_BATTERY_AMBIENTE_TEMP].state = self._indego_client.operating_data.battery.ambient_temp
-            self.entities[ENTITY_BATTERY_TEMP].state = self._indego_client.operating_data.battery.battery_temp     
-            #garden
-            self.entities[ENTITY_ID].state = self._indego_client.operating_data.garden.id
-            self.entities[ENTITY_GARDEN_NAME].state = self._indego_client.operating_data.garden.name
-            self.entities[ENTITY_SIGNALID].state = self._indego_client.operating_data.garden.signal_id
             self.entities[ENTITY_SIZE].state = self._indego_client.operating_data.garden.size
-            self.entities[ENTITY_INNERBOUNDS].state = self._indego_client.operating_data.garden.inner_bounds
-            self.entities[ENTITY_BUMPS].state = self._indego_client.operating_data.garden.bumps
-            self.entities[ENTITY_STOPS].state = self._indego_client.operating_data.garden.stops
 
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
@@ -1038,33 +804,9 @@ class IndegoHub:
             True if self._indego_client.state_description_detail == "Charging" else False
         )
         self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
-        self.entities[ENTITY_MAP_UPDATE_AVAILABLE].state = self._indego_client.state.map_update_available
-        self.entities[ENTITY_XPOS].state = self._indego_client.state.xPos
-        self.entities[ENTITY_YPOS].state = self._indego_client.state.yPos
-        self.entities[ENTITY_MAPSVGCACHETS].state = self._indego_client.state.mapsvgcache_ts
-        self.entities[ENTITY_XSVGPOS].state = self._indego_client.state.svg_xPos
-        self.entities[ENTITY_YSVGPOS].state = self._indego_client.state.svg_yPos
-        #Runtime Total
-        self.entities[ENTITY_RUNTIME_TOTAL_OPERATION].state = self._indego_client.state.runtime.total.operate
-        self.entities[ENTITY_RUNTIME_TOTAL_MOWING].state = self._indego_client.state.runtime.total.cut
-        self.entities[ENTITY_RUNTIME_TOTAL_CHARGING].state = self._indego_client.state.runtime.total.charge
-        #Runttime Session
-        self.entities[ENTITY_RUNTIME_LAST_OPERATION].state = self._indego_client.state.runtime.session.operate
-        self.entities[ENTITY_RUNTIME_LAST_MOWING].state = self._indego_client.state.runtime.session.cut
-        self.entities[ENTITY_RUNTIME_LAST_CHARGING].state = self._indego_client.state.runtime.session.charge
-        try:
-            #await _update_position(self.indego.state.svg_xPos,self.indego.state.svg_yPos)
-            svg = fromfile(f"www/mapWithoutIndego.svg")
-            xpos = self._indego_client.state.svg_xPos
-            ypos = self._indego_client.state.svg_yPos
-            _LOGGER.info(f'Indego position (x,y): {xpos},{ypos}')
-            circle = f'<circle cx="{xpos}" cy="{ypos}" r="15" fill="yellow" />'
-            mower_circle = fromstring(circle)
-            _LOGGER.info(f'Adding mower to map and save new svg...')
-            svg.append(mower_circle)
-            svg.save(f"www/mapWithIndego.svg")
-        except Exception as e:
-            _LOGGER.info("Update state got an exception: %s", e)
+        self.entities[ENTITY_CAMERA].is_streaming = (
+            False if self._indego_client.state_description == "Docked" else True
+        )
 
         # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE].add_attribute(
@@ -1120,6 +862,7 @@ class IndegoHub:
 
     async def _update_alerts(self):
         await self._indego_client.update_alerts()
+
         # dependent state updates
         if self._indego_client.alerts:
             self.entities[ENTITY_ALERT].state = self._indego_client.alerts_count > 0
@@ -1133,6 +876,10 @@ class IndegoHub:
             self.entities[ENTITY_ALERT_PUSH].state = self._indego_client.alerts[0].push
             self.entities[ENTITY_ALERT_DESCRIPTION].state = self._indego_client.alerts[0].alert_description
 
+            self.entities[ENTITY_ALERT].add_attribute(
+                {"alerts_count": self._indego_client.alerts_count, }
+            )
+
         else:
             self.entities[ENTITY_ALERT].state = 0
             self.entities[ENTITY_ALERT_COUNT].state = 0
@@ -1144,6 +891,17 @@ class IndegoHub:
             self.entities[ENTITY_ALERT_READ_STATUS].state = False
             self.entities[ENTITY_ALERT_PUSH].state = False
             self.entities[ENTITY_ALERT_DESCRIPTION].state = "Kein Problem"
+
+        j = len(self._indego_client.alerts)
+        # _LOGGER.info(f"Structuring ALERTS.{j}")
+        for i in range(j):
+            self.entities[ENTITY_ALERT].add_attribute(
+                {
+                    self._indego_client.alerts[i].date.strftime("%Y-%m-%d %H:%M"): str(
+                        self._indego_client.alerts[i].alert_description
+                    ),
+                }
+            )
 
     async def _update_updates_available(self):
         await self._indego_client.update_updates_available()
@@ -1189,13 +947,6 @@ class IndegoHub:
                 {"next_mow": self._indego_client.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
 
-    async def _update_setup(self):
-        await self._indego_client.update_setup()
-        _LOGGER.info(f"Updating _update_setup")
-        # dependent state updates
-        if self._indego_client.setup:
-            self.entities[ENTITY_HAS_MAP].state = self._indego_client.setup.hasMap
-    
     @property
     def serial(self) -> str:
         return self._serial
