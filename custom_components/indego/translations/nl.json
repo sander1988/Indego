@@ -1,0 +1,18 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Deze Bosch Indego grasmaaier is al geconfigureerd!",
+            "connection_error": "De verbinding met de Bosch Indego API is mislukt!",
+            "no_mowers_found": "Geen grasmaaiers gevonden in deze Bosch Indego account!"
+        },
+        "step": {
+            "mower": {
+                "data": {
+                    "mower_serial": "Grasmaaier serienummer",
+                    "mower_name": "Grasmaaier naam"
+                },
+                "description": "Selecteer het serienummer van de Bosch Indego grasmaaier die je toe wilt voegen"
+            }
+        }
+    }
+}
