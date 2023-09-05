@@ -35,13 +35,16 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
+from svgutils.transform import fromstring
 
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
+from .camera import IndegoCamera
 from .vacuum import IndegoVacuum
 from .const import (
     STATUS_UPDATE_FAILURE_DELAY_TIME,
     BINARY_SENSOR_TYPE,
+    CAMERA_TYPE,
     VACUUM_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
@@ -49,12 +52,26 @@ from .const import (
     CONF_ATTR,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
+    CONF_DELETE_ALERT,
+    CONF_READ_ALERT,
     DEFAULT_NAME_COMMANDS,
     DOMAIN,
     ENTITY_ALERT,
+    ENTITY_ALERT_COUNT,
+    ENTITY_ALERT_ID,
+    ENTITY_ALERT_ERROR_CODE,
+    ENTITY_ALERT_HEADLINE,
+    ENTITY_ALERT_DATE,
+    ENTITY_ALERT_MESSAGE,
+    ENTITY_ALERT_READ_STATUS,
+    ENTITY_ALERT_FLAG,
+    ENTITY_ALERT_PUSH,
+    ENTITY_ALERT_DESCRIPTION,
     ENTITY_BATTERY,
+    ENTITY_CAMERA,
     ENTITY_LAST_COMPLETED,
     ENTITY_LAWN_MOWED,
+    ENTITY_SIZE,
     ENTITY_MOWER_STATE,
     ENTITY_MOWER_STATE_DETAIL,
     ENTITY_MOWING_MODE,
@@ -67,6 +84,10 @@ from .const import (
     SENSOR_TYPE,
     SERVICE_NAME_COMMAND,
     SERVICE_NAME_SMARTMOW,
+    SERVICE_NAME_DELETE_ALERT,
+    SERVICE_NAME_READ_ALERT,
+    SERVICE_NAME_DELETE_ALERT_ALL,
+    SERVICE_NAME_READ_ALERT_ALL,
 )
 from .sensor import IndegoSensor
 
@@ -80,6 +101,21 @@ SERVICE_SCHEMA_COMMAND = vol.Schema({
 SERVICE_SCHEMA_SMARTMOWING = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_SMARTMOWING): cv.string
+})
+SERVICE_SCHEMA_DELETE_ALERT = vol.Schema({
+    vol.Required(CONF_DELETE_ALERT): cv.positive_int
+})
+
+SERVICE_SCHEMA_READ_ALERT = vol.Schema({
+    vol.Required(CONF_READ_ALERT): cv.positive_int
+})
+
+SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema({
+    vol.Required(CONF_DELETE_ALERT): cv.string
+})
+
+SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema({
+    vol.Required(CONF_READ_ALERT): cv.string
 })
 
 
@@ -112,6 +148,85 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: DEVICE_CLASS_PROBLEM,
         CONF_ATTR: ["alerts_count"],
     },
+    ENTITY_ALERT_PUSH: {
+        CONF_TYPE: BINARY_SENSOR_TYPE,
+        CONF_NAME: "alert push",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_ALERT_COUNT: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert count",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },  
+    ENTITY_ALERT_ID: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert id",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_ERROR_CODE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert errorcode",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_HEADLINE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert headline",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_DATE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert date",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_MESSAGE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert message",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_READ_STATUS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert read status",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_FLAG: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert flag",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_DESCRIPTION: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert description",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },  
     ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "mower state",
@@ -147,6 +262,9 @@ ENTITY_DEFINITIONS = {
             f"ambient_temp_{TEMP_CELSIUS}",
         ],
     },
+    ENTITY_CAMERA: {
+        CONF_TYPE: CAMERA_TYPE,
+    },
     ENTITY_LAWN_MOWED: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "lawn mowed",
@@ -161,6 +279,14 @@ ENTITY_DEFINITIONS = {
             "last_session_cut_min",
             "last_session_charge_min",
         ],
+    },
+    ENTITY_SIZE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "size",
+        CONF_ICON: "mdi:ruler-square",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: "m²",
+        CONF_ATTR: [],
     },
     ENTITY_LAST_COMPLETED: {
         CONF_TYPE: SENSOR_TYPE,
@@ -263,6 +389,38 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await instance._indego_client.put_mow_mode(enable)
         await instance._update_generic_data()
 
+    async def async_delete_alert(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.delete_alert service called, with command: %s", enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.delete_alert(enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()     
+
+    async def async_delete_alert_all(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.delete_alert_all service called, with command: %s", "all")
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.delete_all_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()   
+
+    async def async_read_alert(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.read_alert service called, with command: %s", enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.put_alert_read(enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+
+    async def async_read_alert_all(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.read_alert_all service called, with command: %s", "all")
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.put_all_alerts_read()
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+
     # In HASS we can have multiple Indego component instances as long as the mower serial is unique.
     # So the mower services should only need to be registered for the first instance.
     if CONF_SERVICES_REGISTERED not in hass.data[DOMAIN]:
@@ -280,6 +438,30 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             SERVICE_NAME_SMARTMOW,
             async_send_smartmowing,
             schema=SERVICE_SCHEMA_SMARTMOWING,
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_DELETE_ALERT, 
+            async_delete_alert, 
+            schema=SERVICE_SCHEMA_DELETE_ALERT
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_READ_ALERT, 
+            async_read_alert, 
+            schema=SERVICE_SCHEMA_READ_ALERT
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_DELETE_ALERT_ALL, 
+            async_delete_alert_all, 
+            schema=SERVICE_SCHEMA_DELETE_ALERT_ALL
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_READ_ALERT_ALL, 
+            async_read_alert_all, 
+            schema=SERVICE_SCHEMA_READ_ALERT_ALL
         )
 
         hass.data[DOMAIN][CONF_SERVICES_REGISTERED] = entry.entry_id
@@ -328,6 +510,7 @@ class IndegoHub:
         self._refresh_24h_remover = None
         self._shutdown = False
         self._latest_alert = None
+        self._lawn_map = None
         self.entities = {}
 
         async def async_token_refresh() -> str:
@@ -383,6 +566,14 @@ class IndegoHub:
                     self
                 )
 
+            elif entity[CONF_TYPE] == CAMERA_TYPE:
+                self.entities[entity_key] = IndegoCamera(
+                    f"indego_{self._serial}",
+                    self._mower_name,
+                    device_info,
+                    self
+                )
+
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
         _LOGGER.debug("Getting generic data for device info.")
@@ -390,7 +581,7 @@ class IndegoHub:
 
         device_info = DeviceInfo(
             identifiers={(DOMAIN, self._serial)},
-            serial_number=self._serial,
+#            serial_number=self._serial,
             manufacturer="Bosch",
             name=self._mower_name,
             model=generic_data.bareToolnumber if generic_data else None,
@@ -546,6 +737,25 @@ class IndegoHub:
 
         self._refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
+    async def download_map(self, force_refresh_map=False):
+        if self._lawn_map is None or force_refresh_map:
+            try:
+                self._lawn_map = await self._indego_client.get(f"alms/{self._indego_client.serial}/map")
+            except Exception as e:
+                _LOGGER.info("Get map got an exception: %s", e)
+        if self._lawn_map and self._indego_client.state:
+            try:
+                await self._indego_client.update_state(force=True)
+            except Exception as e:
+                _LOGGER.info("Update state force got an exception: %s", e)
+            svg = fromstring(self._lawn_map.decode("utf-8").replace('#FAFAFA', 'transparent').replace('#CCCCCC', 'transparent'))
+            xpos = self._indego_client.state.svg_xPos
+            ypos = self._indego_client.state.svg_yPos
+            circle = f'<circle cx="{xpos}" cy="{ypos}" r="15" fill="yellow" />'
+            mower_circle = fromstring(circle)
+            svg.append(mower_circle)
+            return svg.to_str()
+
     async def _update_operating_data(self):
         await self._indego_client.update_operating_data()
 
@@ -555,6 +765,7 @@ class IndegoHub:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
             self.entities[ENTITY_BATTERY].state = self._indego_client.operating_data.battery.percent_adjusted
             self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
+            self.entities[ENTITY_SIZE].state = self._indego_client.operating_data.garden.size
 
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
@@ -593,6 +804,9 @@ class IndegoHub:
             True if self._indego_client.state_description_detail == "Charging" else False
         )
         self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
+        self.entities[ENTITY_CAMERA].is_streaming = (
+            False if self._indego_client.state_description == "Docked" else True
+        )
 
         # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE].add_attribute(
@@ -652,6 +866,15 @@ class IndegoHub:
         # dependent state updates
         if self._indego_client.alerts:
             self.entities[ENTITY_ALERT].state = self._indego_client.alerts_count > 0
+            self.entities[ENTITY_ALERT_COUNT].state = self._indego_client.alerts_count
+            self.entities[ENTITY_ALERT_ID].state = self._indego_client.alerts[0].alert_id
+            self.entities[ENTITY_ALERT_ERROR_CODE].state = self._indego_client.alerts[0].error_code
+            self.entities[ENTITY_ALERT_HEADLINE].state = self._indego_client.alerts[0].headline
+            self.entities[ENTITY_ALERT_DATE].state = self._indego_client.alerts[0].date
+            self.entities[ENTITY_ALERT_MESSAGE].state = self._indego_client.alerts[0].message
+            self.entities[ENTITY_ALERT_READ_STATUS].state = self._indego_client.alerts[0].read_status
+            self.entities[ENTITY_ALERT_PUSH].state = self._indego_client.alerts[0].push
+            self.entities[ENTITY_ALERT_DESCRIPTION].state = self._indego_client.alerts[0].alert_description
 
             self.entities[ENTITY_ALERT].add_attribute(
                 {"alerts_count": self._indego_client.alerts_count, }
@@ -659,6 +882,15 @@ class IndegoHub:
 
         else:
             self.entities[ENTITY_ALERT].state = 0
+            self.entities[ENTITY_ALERT_COUNT].state = 0
+            self.entities[ENTITY_ALERT_ID].state = 0
+            self.entities[ENTITY_ALERT_ERROR_CODE].state = 0
+            self.entities[ENTITY_ALERT_HEADLINE].state = "Kein Problem"
+            self.entities[ENTITY_ALERT_DATE].state = "Kein Problem"
+            self.entities[ENTITY_ALERT_MESSAGE].state = "Kein Problem"
+            self.entities[ENTITY_ALERT_READ_STATUS].state = False
+            self.entities[ENTITY_ALERT_PUSH].state = False
+            self.entities[ENTITY_ALERT_DESCRIPTION].state = "Kein Problem"
 
         j = len(self._indego_client.alerts)
         # _LOGGER.info(f"Structuring ALERTS.{j}")
