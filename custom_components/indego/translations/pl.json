@@ -1,0 +1,18 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Ta kosiarka Bosch Indego została już skonfigurowana wcześniej!",
+            "connection_error": "Błąd połączenia z Bosch Indego API!",
+            "no_mowers_found": "Nie znaleziono żadnej kosiarki na tym koncie Bosch Indego!"
+        },
+        "step": {
+            "mower": {
+                "data": {
+                    "mower_serial": "Numer seryjny kosiarki",
+                    "mower_name": "Nazwa kosiarki"
+                },
+                "description": "Proszę wybrać numer seryjny kosiarki Bosch którą chcesz dodać"
+            }
+        }
+    }
+}

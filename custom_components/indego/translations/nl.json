@@ -1,0 +1,18 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Deze Bosch Indego robotmaaier is al geconfigureerd!",
+            "connection_error": "De verbinding met de Bosch Indego API is mislukt!",
+            "no_mowers_found": "Geen robotmaaiers gevonden in deze Bosch Indego account!"
+        },
+        "step": {
+            "mower": {
+                "data": {
+                    "mower_serial": "Robotmaaier serienummer",
+                    "mower_name": "Robotmaaier naam"
+                },
+                "description": "Selecteer het serienummer van de Bosch Indego robotmaaier die je toe wilt voegen"
+            }
+        }
+    }
+}
