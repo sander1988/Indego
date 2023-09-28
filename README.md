@@ -94,6 +94,41 @@ Accepted values are:
 | `true`      | SmartMowing enabled  |
 | `false`     | SmartMowing disabled |
 
+### indego.delete_alert ####
+Deletes one specific Alert. Example:<br>
+`alert_index: 0` deletes the latest alert.
+
+Accepted values are:
+|value               |Description                           |
+|--------------------|--------------------------------------|
+| `each number`      | Delete Alert number X (0 for latest) |
+
+### indego.delete_alert_all ####
+Deletes all Alerts. Example:<br>
+`alert_index: 0` 
+
+Accepted values are:
+|value     |Description         |
+|----------|--------------------|
+| `0`      | Delete all Alerts  |
+
+### indego.read_alert ####
+Marks one specific Alert as read. Example:<br>
+`alert_index: 0` marks the latest alert.
+
+Accepted values are:
+|value               |Description                                 |
+|--------------------|--------------------------------------------|
+| `each number`      | Mark Alert number X as read (0 for latest) |
+
+### indego.read_alert_all ####
+Marks all Alerts as read. Example:<br>
+`alert_index: 0` 
+
+Accepted values are:
+|value     |Description               |
+|----------|--------------------------|
+| `0`      | Mark all Alerts as read  |
 
 ## Examples
 Creating automation in HA gui:
