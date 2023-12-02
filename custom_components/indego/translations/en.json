@@ -6,6 +6,12 @@
             "no_mowers_found": "No mowers found in this Bosch Indego account!"
         },
         "step": {
+            "advanced": {
+                "data": {
+                    "user_agent": "User-Agent"
+                },
+                "description": "Advanced settings of the Bosch Indego component. Can be left unchanged for most users."
+            },
             "mower": {
                 "data": {
                     "mower_serial": "Mower serial",
@@ -14,5 +20,16 @@
                 "description": "Please select the serial of the Bosch Mower your would like to add"
             }
         }
+    },
+    "options": {
+      "step": {
+          "init": {
+              "title": "Advanced settings",
+              "description": "Advanced settings of the Bosch Indego component.",
+              "data": {
+                  "user_agent": "User-Agent"
+              }
+          }
+      }
     }
 }

@@ -1,4 +1,5 @@
 """Bosch Indego Mower integration."""
+from typing import Optional
 import asyncio
 import logging
 from datetime import datetime, timedelta
@@ -45,6 +46,7 @@ from .const import (
     VACUUM_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
+    CONF_USER_AGENT,
     CONF_SERVICES_REGISTERED,
     CONF_ATTR,
     CONF_SEND_COMMAND,
@@ -67,6 +69,7 @@ from .const import (
     SENSOR_TYPE,
     SERVICE_NAME_COMMAND,
     SERVICE_NAME_SMARTMOW,
+    HTTP_HEADER_USER_AGENT
 )
 from .sensor import IndegoSensor
 
@@ -215,6 +218,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         oauth_session,
         entry.data[CONF_MOWER_SERIAL],
         hass,
+        entry.options.get(CONF_USER_AGENT)
     )
 
     async def load_platforms():
@@ -309,7 +313,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant):
+    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant, user_agent: Optional[str] = None):
         """Initialize the IndegoHub.
 
         Args:
@@ -341,6 +345,7 @@ class IndegoHub:
             session=async_get_clientsession(hass),
             raise_request_exceptions=True
         )
+        self._indego_client.set_default_header(HTTP_HEADER_USER_AGENT, user_agent)
 
     async def async_send_command_to_client(self, command: str):
         """Send a mower command to the Indego client."""
@@ -718,3 +723,7 @@ class IndegoHub:
     @property
     def serial(self) -> str:
         return self._serial
+
+    @property
+    def client(self) -> IndegoAsyncClient:
+        return self._indego_client
