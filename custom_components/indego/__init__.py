@@ -25,7 +25,7 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_STOP,
     STATE_ON,
     STATE_UNKNOWN,
-    TEMP_CELSIUS,
+    UnitOfTemperature,
 )
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_call_later
@@ -143,8 +143,8 @@ ENTITY_DEFINITIONS = {
             "voltage_V",
             "discharge_Ah",
             "cycles",
-            f"battery_temp_{TEMP_CELSIUS}",
-            f"ambient_temp_{TEMP_CELSIUS}",
+            f"battery_temp_{UnitOfTemperature.CELSIUS}",
+            f"ambient_temp_{UnitOfTemperature.CELSIUS}",
         ],
     },
     ENTITY_LAWN_MOWED: {
@@ -565,8 +565,8 @@ class IndegoHub:
                     "voltage_V": self._indego_client.operating_data.battery.voltage,
                     "discharge_Ah": self._indego_client.operating_data.battery.discharge,
                     "cycles": self._indego_client.operating_data.battery.cycles,
-                    f"battery_temp_{TEMP_CELSIUS}": self._indego_client.operating_data.battery.battery_temp,
-                    f"ambient_temp_{TEMP_CELSIUS}": self._indego_client.operating_data.battery.ambient_temp,
+                    f"battery_temp_{UnitOfTemperature.CELSIUS}": self._indego_client.operating_data.battery.battery_temp,
+                    f"ambient_temp_{UnitOfTemperature.CELSIUS}": self._indego_client.operating_data.battery.ambient_temp,
                 }
             )
 
