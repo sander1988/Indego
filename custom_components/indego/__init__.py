@@ -9,8 +9,7 @@ from homeassistant.core import HomeAssistant, CoreState
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.binary_sensor import (
-    DEVICE_CLASS_CONNECTIVITY,
-    DEVICE_CLASS_PROBLEM,
+    BinarySensorDeviceClass,
 )
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
@@ -95,7 +94,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "online",
         CONF_ICON: "mdi:cloud-check",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_CONNECTIVITY,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.CONNECTIVITY,
         CONF_ATTR: [],
     },
     ENTITY_UPDATE_AVAILABLE: {
@@ -109,7 +108,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "alert",
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_PROBLEM,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.PROBLEM,
         CONF_ATTR: ["alerts_count"],
     },
     ENTITY_MOWER_STATE: {
