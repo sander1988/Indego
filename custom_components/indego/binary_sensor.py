@@ -6,11 +6,9 @@ from homeassistant.components.binary_sensor import (
 )
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.const import (
-    CONF_ID,
     STATE_OFF,
     STATE_ON,
     STATE_UNKNOWN,
-    TEMP_CELSIUS,
 )
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback

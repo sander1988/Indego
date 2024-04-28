@@ -9,10 +9,6 @@ import voluptuous as vol
 from homeassistant.core import HomeAssistant, CoreState
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.binary_sensor import (
-    DEVICE_CLASS_CONNECTIVITY,
-    DEVICE_CLASS_PROBLEM,
-)
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_ICON,
@@ -20,14 +16,14 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
-    DEVICE_CLASS_BATTERY,
-    DEVICE_CLASS_TIMESTAMP,
     EVENT_HOMEASSISTANT_STARTED,
     EVENT_HOMEASSISTANT_STOP,
     STATE_ON,
     STATE_UNKNOWN,
-    TEMP_CELSIUS,
+    UnitOfTemperature,
 )
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_call_later
 from homeassistant.util.dt import utcnow
@@ -98,7 +94,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "online",
         CONF_ICON: "mdi:cloud-check",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_CONNECTIVITY,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.CONNECTIVITY,
         CONF_ATTR: [],
     },
     ENTITY_UPDATE_AVAILABLE: {
@@ -112,7 +108,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "alert",
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_PROBLEM,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.PROBLEM,
         CONF_ATTR: ["alerts_count"],
     },
     ENTITY_MOWER_STATE: {
@@ -139,15 +135,15 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "battery %",
         CONF_ICON: "battery",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_BATTERY,
+        CONF_DEVICE_CLASS: SensorDeviceClass.BATTERY,
         CONF_UNIT_OF_MEASUREMENT: "%",
         CONF_ATTR: [
             "last_updated",
             "voltage_V",
             "discharge_Ah",
             "cycles",
-            f"battery_temp_{TEMP_CELSIUS}",
-            f"ambient_temp_{TEMP_CELSIUS}",
+            f"battery_temp_{UnitOfTemperature.CELSIUS}",
+            f"ambient_temp_{UnitOfTemperature.CELSIUS}",
         ],
     },
     ENTITY_LAWN_MOWED: {
@@ -169,7 +165,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:calendar-check",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        CONF_DEVICE_CLASS: SensorDeviceClass.TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -177,7 +173,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:calendar-clock",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        CONF_DEVICE_CLASS: SensorDeviceClass.TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -570,8 +566,8 @@ class IndegoHub:
                     "voltage_V": self._indego_client.operating_data.battery.voltage,
                     "discharge_Ah": self._indego_client.operating_data.battery.discharge,
                     "cycles": self._indego_client.operating_data.battery.cycles,
-                    f"battery_temp_{TEMP_CELSIUS}": self._indego_client.operating_data.battery.battery_temp,
-                    f"ambient_temp_{TEMP_CELSIUS}": self._indego_client.operating_data.battery.ambient_temp,
+                    f"battery_temp_{UnitOfTemperature}": self._indego_client.operating_data.battery.battery_temp,
+                    f"ambient_temp_{UnitOfTemperature.CELSIUS}": self._indego_client.operating_data.battery.ambient_temp,
                 }
             )
 
