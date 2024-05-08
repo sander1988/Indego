@@ -1,6 +1,8 @@
 """Bosch Indego Mower integration."""
 import asyncio
 import logging
+import json
+from sh import sed
 from datetime import datetime, timedelta
 
 import homeassistant.util.dt
@@ -35,6 +37,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
+from svgutils.transform import fromfile, fromstring
 
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
@@ -49,7 +52,11 @@ from .const import (
     CONF_ATTR,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
+    CONF_DOWNLAD_MAP,
+    CONF_DELETE_ALERT,
+    CONF_READ_ALERT,
     DEFAULT_NAME_COMMANDS,
+    DEFAULT_MAP_NAME,
     DOMAIN,
     ENTITY_ALERT,
     ENTITY_BATTERY,
@@ -63,10 +70,32 @@ from .const import (
     ENTITY_RUNTIME,
     ENTITY_UPDATE_AVAILABLE,
     ENTITY_VACUUM,
+    ENTITY_HAS_MAP,
+    ENTITY_MAP_UPDATE_AVAILABLE,
+    ENTITY_XPOS,
+    ENTITY_YPOS,
+    ENTITY_MAPSVGCACHETS,
+    ENTITY_YSVGPOS,
+    ENTITY_XSVGPOS,
+    ENTITY_ALERT_COUNT,
+    ENTITY_ALERT_ID,
+    ENTITY_ALERT_ERROR_CODE,
+    ENTITY_ALERT_HEADLINE,
+    ENTITY_ALERT_DATE,
+    ENTITY_ALERT_MESSAGE,
+    ENTITY_ALERT_READ_STATUS,
+    ENTITY_ALERT_FLAG,
+    ENTITY_ALERT_PUSH,
+    ENTITY_ALERT_DESCRIPTION,
     INDEGO_PLATFORMS,
     SENSOR_TYPE,
     SERVICE_NAME_COMMAND,
     SERVICE_NAME_SMARTMOW,
+    SERVICE_NAME_DOWNLOAD_MAP,
+    SERVICE_NAME_DELETE_ALERT,
+    SERVICE_NAME_READ_ALERT,
+    SERVICE_NAME_DELETE_ALERT_ALL,
+    SERVICE_NAME_READ_ALERT_ALL,
 )
 from .sensor import IndegoSensor
 
@@ -81,6 +110,20 @@ SERVICE_SCHEMA_SMARTMOWING = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_SMARTMOWING): cv.string
 })
+SERVICE_SCHEMA_DOWNLOAD_MAP = vol.Schema(
+    {vol.Optional(CONF_DOWNLAD_MAP, default=DEFAULT_MAP_NAME): cv.string})
+
+SERVICE_SCHEMA_DELETE_ALERT = vol.Schema(
+    {vol.Required(CONF_DELETE_ALERT): cv.positive_int})
+
+SERVICE_SCHEMA_READ_ALERT = vol.Schema(
+    {vol.Required(CONF_READ_ALERT): cv.positive_int})
+
+SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema(
+    {vol.Required(CONF_DELETE_ALERT): cv.string})
+
+SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema(
+    {vol.Required(CONF_READ_ALERT): cv.string})
 
 
 def FUNC_ICON_MOWER_ALERT(state):
@@ -167,7 +210,7 @@ ENTITY_DEFINITIONS = {
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:calendar-check",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_ATTR: [],
     },
     ENTITY_NEXT_MOW: {
@@ -175,7 +218,7 @@ ENTITY_DEFINITIONS = {
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:calendar-clock",
         CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
-        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_UNIT_OF_MEASUREMENT: "ISO8601",
         CONF_ATTR: [],
     },
     ENTITY_MOWING_MODE: {
@@ -201,6 +244,139 @@ ENTITY_DEFINITIONS = {
     ENTITY_VACUUM: {
         CONF_TYPE: VACUUM_TYPE,
     },
+    ENTITY_XPOS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "position x",
+        CONF_ICON: "mdi:map-marker-radius-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_XSVGPOS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "position svg x",
+        CONF_ICON: "mdi:image-marker",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_YPOS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "position y",
+        CONF_ICON: "mdi:map-marker-radius-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_YSVGPOS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "position svg y",
+        CONF_ICON: "mdi:image-marker",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_MAPSVGCACHETS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "map svg cache ts",
+        CONF_ICON: "mdi:information-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_MAP_UPDATE_AVAILABLE: {
+        CONF_TYPE: BINARY_SENSOR_TYPE,
+        CONF_NAME: "map update available",
+        CONF_ICON: "mdi:information-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_ATTR: [],
+    }, 
+    ENTITY_HAS_MAP: {
+        CONF_TYPE: BINARY_SENSOR_TYPE,
+        CONF_NAME: "has map",
+        CONF_ICON: "mdi:map-search-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_ALERT_PUSH: {
+        CONF_TYPE: BINARY_SENSOR_TYPE,
+        CONF_NAME: "alert push",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_ATTR: [],
+    },
+    ENTITY_ALERT_COUNT: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert count",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },  
+    ENTITY_ALERT_ID: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert id",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_ERROR_CODE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert errorcode",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_HEADLINE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert headline",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_DATE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert date",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_MESSAGE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert message",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_READ_STATUS: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert read status",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_FLAG: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert flag",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },   
+    ENTITY_ALERT_DESCRIPTION: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "alert description",
+        CONF_ICON: "mdi:alert-octagon-outline",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: None,
+        CONF_ATTR: [],
+    },  
 }
 
 
@@ -263,6 +439,44 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await instance._indego_client.put_mow_mode(enable)
         await instance._update_generic_data()
 
+    async def async_download_map(call):
+        enable = call.data.get(CONF_DOWNLAD_MAP, DEFAULT_MAP_NAME)
+        filename = hass.config.path(f"www/{enable}.svg")
+        _LOGGER.debug("Indego.download_map service called")
+        await hass.data[DOMAIN][entry.entry_id]._download_map(filename)
+
+    async def async_delete_alert(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.delete_alert service called, with command: %s", enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.delete_alert(enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()     
+
+    async def async_delete_alert_all(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.delete_alert_all service called, with command: %s", "all")
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.delete_all_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()   
+
+    async def async_read_alert(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.read_alert service called, with command: %s", enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.put_alert_read(enable)
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+
+    async def async_read_alert_all(call):
+        """Handle the service call."""
+        enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.read_alert_all service called, with command: %s", "all")
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await hass.data[DOMAIN][entry.entry_id]._indego_client.put_all_alerts_read()
+        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+
     # In HASS we can have multiple Indego component instances as long as the mower serial is unique.
     # So the mower services should only need to be registered for the first instance.
     if CONF_SERVICES_REGISTERED not in hass.data[DOMAIN]:
@@ -281,7 +495,36 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             async_send_smartmowing,
             schema=SERVICE_SCHEMA_SMARTMOWING,
         )
-
+        hass.services.async_register(
+            DOMAIN,
+            SERVICE_NAME_DOWNLOAD_MAP,
+            async_download_map,
+            schema=SERVICE_SCHEMA_DOWNLOAD_MAP,
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_DELETE_ALERT, 
+            async_delete_alert, 
+            schema=SERVICE_SCHEMA_DELETE_ALERT
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_READ_ALERT, 
+            async_read_alert, 
+            schema=SERVICE_SCHEMA_READ_ALERT
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_DELETE_ALERT_ALL, 
+            async_delete_alert_all, 
+            schema=SERVICE_SCHEMA_DELETE_ALERT_ALL
+        )
+        hass.services.async_register(
+            DOMAIN, 
+            SERVICE_NAME_READ_ALERT_ALL, 
+            async_read_alert_all, 
+            schema=SERVICE_SCHEMA_READ_ALERT_ALL
+        )
         hass.data[DOMAIN][CONF_SERVICES_REGISTERED] = entry.entry_id
 
     else:
@@ -348,6 +591,19 @@ class IndegoHub:
         await self._indego_client.put_command(command)
         await self._update_state()
 
+    async def _download_map(self, filename: str):
+        _LOGGER.debug(f"Downloading map to {filename}")
+        await self._indego_client.download_map(filename)
+
+    async def _update_position(xpos,ypos):
+        svg = fromfile(f"www/mapWithoutIndego.svg")
+        _LOGGER.info(f'Indego position (x,y): {xpos},{ypos}')
+        circle = f'<circle cx="{xpos}" cy="{ypos}" r="15" fill="yellow" />'
+        mower_circle = fromstring(circle)
+        _LOGGER.info(f'Adding mower to map and save new svg...')
+        svg.append(mower_circle)
+        svg.save(f"www/mapWithIndego.svg")
+
     def _create_entities(self, device_info):
         """Create sub-entities and add them to Hass."""
 
@@ -390,7 +646,7 @@ class IndegoHub:
 
         device_info = DeviceInfo(
             identifiers={(DOMAIN, self._serial)},
-            #serial_number=self._serial,
+            serial_number=self._serial,
             manufacturer="Bosch",
             name=self._mower_name,
             model=generic_data.bareToolnumber if generic_data else None,
@@ -516,6 +772,7 @@ class IndegoHub:
                 self._update_alerts(),
                 self._update_last_completed_mow(),
                 self._update_next_mow(),
+                self._update_setup(),
             ],
             return_exceptions=True,
         )
@@ -593,6 +850,25 @@ class IndegoHub:
             True if self._indego_client.state_description_detail == "Charging" else False
         )
         self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
+        self.entities[ENTITY_MAP_UPDATE_AVAILABLE].state = self._indego_client.state.map_update_available
+        self.entities[ENTITY_XPOS].state = self._indego_client.state.xPos
+        self.entities[ENTITY_YPOS].state = self._indego_client.state.yPos
+        self.entities[ENTITY_MAPSVGCACHETS].state = self._indego_client.state.mapsvgcache_ts
+        self.entities[ENTITY_XSVGPOS].state = self._indego_client.state.svg_xPos
+        self.entities[ENTITY_YSVGPOS].state = self._indego_client.state.svg_yPos
+        try:
+            #await _update_position(self.indego.state.svg_xPos,self.indego.state.svg_yPos)
+            svg = fromfile(f"www/mapWithoutIndego.svg")
+            xpos = self._indego_client.state.svg_xPos
+            ypos = self._indego_client.state.svg_yPos
+            _LOGGER.info(f'Indego position (x,y): {xpos},{ypos}')
+            circle = f'<circle cx="{xpos}" cy="{ypos}" r="15" fill="yellow" />'
+            mower_circle = fromstring(circle)
+            _LOGGER.info(f'Adding mower to map and save new svg...')
+            svg.append(mower_circle)
+            svg.save(f"www/mapWithIndego.svg")
+        except Exception as e:
+            _LOGGER.info("Update state got an exception: %s", e)
 
         # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE].add_attribute(
@@ -652,6 +928,15 @@ class IndegoHub:
         # dependent state updates
         if self._indego_client.alerts:
             self.entities[ENTITY_ALERT].state = self._indego_client.alerts_count > 0
+            self.entities[ENTITY_ALERT_COUNT].state = self._indego_client.alerts_count
+            self.entities[ENTITY_ALERT_ID].state = self._indego_client.alerts[0].alert_id
+            self.entities[ENTITY_ALERT_ERROR_CODE].state = self._indego_client.alerts[0].error_code
+            self.entities[ENTITY_ALERT_HEADLINE].state = self._indego_client.alerts[0].headline
+            self.entities[ENTITY_ALERT_DATE].state = self._indego_client.alerts[0].date
+            self.entities[ENTITY_ALERT_MESSAGE].state = self._indego_client.alerts[0].message
+            self.entities[ENTITY_ALERT_READ_STATUS].state = self._indego_client.alerts[0].read_status
+            self.entities[ENTITY_ALERT_PUSH].state = self._indego_client.alerts[0].push
+            self.entities[ENTITY_ALERT_DESCRIPTION].state = self._indego_client.alerts[0].alert_description
 
             self.entities[ENTITY_ALERT].add_attribute(
                 {"alerts_count": self._indego_client.alerts_count, }
@@ -659,6 +944,15 @@ class IndegoHub:
 
         else:
             self.entities[ENTITY_ALERT].state = 0
+            self.entities[ENTITY_ALERT_COUNT].state = 0
+            self.entities[ENTITY_ALERT_ID].state = 0
+            self.entities[ENTITY_ALERT_ERROR_CODE].state = 0
+            self.entities[ENTITY_ALERT_HEADLINE].state = "No Problem"
+            self.entities[ENTITY_ALERT_DATE].state = "No Problem"
+            self.entities[ENTITY_ALERT_MESSAGE].state = "No Problem"
+            self.entities[ENTITY_ALERT_READ_STATUS].state = False
+            self.entities[ENTITY_ALERT_PUSH].state = False
+            self.entities[ENTITY_ALERT_DESCRIPTION].state = "No Problem"
 
         j = len(self._indego_client.alerts)
         # _LOGGER.info(f"Structuring ALERTS.{j}")
@@ -715,6 +1009,13 @@ class IndegoHub:
                 {"next_mow": self._indego_client.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
 
+    async def _update_setup(self):
+        await self._indego_client.update_setup()
+        _LOGGER.info(f"Updating _update_setup")
+        # dependent state updates
+        if self._indego_client.setup:
+            self.entities[ENTITY_HAS_MAP].state = self._indego_client.setup.hasMap
+    
     @property
     def serial(self) -> str:
         return self._serial
