@@ -7,6 +7,6 @@
   "codeowners": ["@jm-73", "@eavanvalkenburg", "@sander1988"],
   "requirements": ["pyIndego==3.1.1"],
   "iot_class": "cloud_push",
-  "version": "5.5.0",
+  "version": "5.6.2",
   "loggers": ["custom_components.indego", "pyIndego"]
 }
