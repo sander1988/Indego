@@ -36,10 +36,12 @@ from pyIndego import IndegoAsyncClient
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
 from .vacuum import IndegoVacuum
+from .lawn_mower import IndegoLawnMower
 from .const import (
     STATUS_UPDATE_FAILURE_DELAY_TIME,
     BINARY_SENSOR_TYPE,
     VACUUM_TYPE,
+    LAWN_MOWER_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
     CONF_USER_AGENT,
@@ -73,6 +75,7 @@ from .const import (
     ENTITY_RUNTIME,
     ENTITY_UPDATE_AVAILABLE,
     ENTITY_VACUUM,
+    ENTITY_LAWN_MOWER,
     INDEGO_PLATFORMS,
     SENSOR_TYPE,
     SERVICE_NAME_COMMAND,
@@ -310,6 +313,9 @@ ENTITY_DEFINITIONS = {
     },
     ENTITY_VACUUM: {
         CONF_TYPE: VACUUM_TYPE,
+    },
+    ENTITY_LAWN_MOWER: {
+        CONF_TYPE: LAWN_MOWER_TYPE,
     },
 }
 
@@ -550,6 +556,14 @@ class IndegoHub:
                     self
                 )
 
+            elif entity[CONF_TYPE] == LAWN_MOWER_TYPE:
+                self.entities[entity_key] = IndegoLawnMower(
+                    f"indego_{self._serial}",
+                    self._mower_name,
+                    device_info,
+                    self
+                )
+
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
         _LOGGER.debug("Getting generic data for device info.")
@@ -781,6 +795,7 @@ class IndegoHub:
         )
 
         self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
+        self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
 
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {
