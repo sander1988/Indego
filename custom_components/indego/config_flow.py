@@ -8,17 +8,73 @@ from homeassistant.helpers import selector
 from homeassistant.helpers import config_entry_oauth2_flow
 from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential, DOMAIN as AC_DOMAIN, DATA_STORAGE as AC_DATA_STORAGE
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.config_entries import OptionsFlowWithConfigEntry, ConfigEntry
+from homeassistant.core import callback
 
+from pyIndego.const import DEFAULT_HEADERS
 from pyIndego import IndegoAsyncClient
 
 from .const import (
     DOMAIN,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
-    OAUTH2_CLIENT_ID
+    CONF_USER_AGENT,
+    OAUTH2_CLIENT_ID,
+    HTTP_HEADER_USER_AGENT
 )
 
 _LOGGER: Final = logging.getLogger(__name__)
+
+
+def default_user_agent_in_config(config: dict) -> bool:
+    if CONF_USER_AGENT not in config:
+        return True
+    if config[CONF_USER_AGENT] is None:
+        return True
+    if config[CONF_USER_AGENT] == "":
+        return True
+    return config[CONF_USER_AGENT] == DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT]
+
+
+class IndegoOptionsFlowHandler(OptionsFlowWithConfigEntry):
+
+    def __init__(self, config_entry: ConfigEntry) -> None:
+        """Initialize options flow."""
+        super().__init__(config_entry)
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle options flow."""
+        if user_input is not None:
+            return self._save_config(user_input)
+
+        schema = vol.Schema(
+            {
+                vol.Optional(
+                    CONF_USER_AGENT,
+                    description={
+                        "suggested_value": self.options.get(CONF_USER_AGENT, DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT])
+                    },
+                ): str,
+            }
+        )
+        return self.async_show_form(step_id="init", data_schema=schema)
+
+    @callback
+    def _save_config(self, data: dict[str, Any]) -> FlowResult:
+        """Save the updated options."""
+
+        if default_user_agent_in_config(data):
+            del data[CONF_USER_AGENT]
+
+        _LOGGER.debug("Updating config options: '%s'", data)
+
+        if CONF_USER_AGENT in data:
+            self.hass.data[DOMAIN][self.config_entry.entry_id].client.set_default_header(HTTP_HEADER_USER_AGENT, data[CONF_USER_AGENT])
+            _LOGGER.debug("Applied new User-Agent '%s' to Indego API client.", data[CONF_USER_AGENT])
+
+        return self.async_create_entry(title="", data=data)
 
 
 class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, domain=DOMAIN):
@@ -27,6 +83,7 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
     DOMAIN = DOMAIN
     VERSION = 1
     _config = {}
+    _options = {}
     _mower_serials = None
 
     @property
@@ -44,7 +101,7 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
     async def async_step_user(
             self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Handle a flow start."""
+        """Handle config flow start."""
 
         # Create the OAuth application credentials entry in HA.
         # No need to ask the user for input, settings are the same for everyone.
@@ -72,32 +129,53 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
     async def async_oauth_create_entry(self, data: dict[str, Any]) -> FlowResult:
         """Test connection and load the available mowers."""
         self._config = data
+        return await self.async_step_advanced()
 
-        _LOGGER.debug("Testing API access by retrieving available mowers...")
+    async def async_step_advanced(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle config flow advanced settings step ."""
+        if user_input is not None:
+            _LOGGER.debug("Testing API access by retrieving available mowers...")
 
-        api_client = IndegoAsyncClient(
-            token=self._config["token"]["access_token"],
-            session=async_get_clientsession(self.hass),
-            raise_request_exceptions=True
+            api_client = IndegoAsyncClient(
+                token=self._config["token"]["access_token"],
+                session=async_get_clientsession(self.hass),
+                raise_request_exceptions=True
+            )
+            if not default_user_agent_in_config(user_input):
+                self._options[CONF_USER_AGENT] = user_input[CONF_USER_AGENT]
+                api_client.set_default_header(HTTP_HEADER_USER_AGENT, user_input[CONF_USER_AGENT])
+
+            try:
+                self._mower_serials = await api_client.get_mowers()
+                _LOGGER.debug("Found mowers in account: %s", self._mower_serials)
+
+                if len(self._mower_serials) == 0:
+                    return self.async_abort(reason="no_mowers_found")
+
+            except Exception as exc:
+                _LOGGER.error("Error while retrieving mower serial in account! Reason: %s", str(exc))
+                return self.async_abort(reason="connection_error")
+
+            return await self.async_step_mower()
+
+        schema = vol.Schema(
+            {
+                vol.Optional(
+                    CONF_USER_AGENT,
+                    description={
+                        "suggested_value": DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT]
+                    },
+                ): str,
+            }
         )
-
-        try:
-            self._mower_serials = await api_client.get_mowers()
-            _LOGGER.debug("Found mowers in account: %s", self._mower_serials)
-            
-            if len(self._mower_serials) == 0:
-                return self.async_abort(reason="no_mowers_found")
-
-        except Exception as exc:
-            _LOGGER.error("Error while retrieving mower serial in account! Reason: %s", str(exc))
-            return self.async_abort(reason="connection_error")
-
-        return await self.async_step_mower()
+        return self.async_show_form(step_id="advanced", data_schema=schema)
 
     async def async_step_mower(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Handle a flow select mower step."""
+        """Handle config flow choose mower step."""
 
         errors = {}
         if user_input is not None:
@@ -107,10 +185,15 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
             self._config[CONF_MOWER_SERIAL] = user_input[CONF_MOWER_SERIAL]
             self._config[CONF_MOWER_NAME] = user_input[CONF_MOWER_NAME]
 
-            return self.async_create_entry(
+            _LOGGER.debug("Creating entry with config: '%s'", self._config)
+            _LOGGER.debug("Creating entry with options: '%s'", self._options)
+
+            result = self.async_create_entry(
                 title=("%s (%s)" % (user_input[CONF_MOWER_NAME], user_input[CONF_MOWER_SERIAL])),
                 data=self._config
             )
+            result["options"] = self._options
+            return result
 
         return self.async_show_form(
             step_id="mower",
@@ -129,3 +212,9 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
                 }),
                 vol.Required(CONF_MOWER_NAME): str,
             })
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> IndegoOptionsFlowHandler:
+        """Get the options flow for this handler."""
+        return IndegoOptionsFlowHandler(config_entry)

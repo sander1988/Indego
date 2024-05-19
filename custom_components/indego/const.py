@@ -13,6 +13,7 @@ DATA_UPDATED: Final = f"{DOMAIN}_data_updated"
 
 CONF_MOWER_SERIAL: Final = "mower_serial"
 CONF_MOWER_NAME: Final = "mower_name"
+CONF_USER_AGENT: Final = "user_agent"
 CONF_SERVICES_REGISTERED: Final = "services_registered"
 
 CONF_ATTR: Final = "attributes"
@@ -62,3 +63,5 @@ ENTITY_MOWING_MODE: Final = "mowing_mode"
 ENTITY_RUNTIME: Final = "runtime_total"
 ENTITY_MOWER_ALERT: Final = "mower_alert"
 ENTITY_VACUUM: Final = "vacuum"
+
+HTTP_HEADER_USER_AGENT: Final = "User-Agent"
