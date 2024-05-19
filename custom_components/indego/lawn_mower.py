@@ -122,9 +122,9 @@ class IndegoLawnMower(IndegoEntity, LawnMowerEntity):
     @indego_state.setter
     def indego_state(self, indego_state: int):
         self._attr_indego_state = indego_state
-        self._attr_state = INDEGO_STATE_TO_LAWN_MOWER_MAPPING.get(indego_state)
+        self._attr_activity = INDEGO_STATE_TO_LAWN_MOWER_MAPPING.get(indego_state)
         _LOGGER.debug("Mower state updated to: %s", self._attr_state)
 
-        if self._attr_state is None:
+        if self._attr_activity is None:
             _LOGGER.warning("Received unsupported Indego mower state: %i", indego_state)
 
