@@ -1,4 +1,5 @@
 """Bosch Indego Mower integration."""
+from typing import Optional
 import asyncio
 import logging
 from datetime import datetime, timedelta
@@ -8,10 +9,6 @@ import voluptuous as vol
 from homeassistant.core import HomeAssistant, CoreState
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.components.binary_sensor import (
-    DEVICE_CLASS_CONNECTIVITY,
-    DEVICE_CLASS_PROBLEM,
-)
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
     CONF_ICON,
@@ -19,14 +16,14 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_TYPE,
     CONF_UNIT_OF_MEASUREMENT,
-    DEVICE_CLASS_BATTERY,
-    DEVICE_CLASS_TIMESTAMP,
     EVENT_HOMEASSISTANT_STARTED,
     EVENT_HOMEASSISTANT_STOP,
     STATE_ON,
     STATE_UNKNOWN,
-    TEMP_CELSIUS,
+    UnitOfTemperature,
 )
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.sensor import SensorDeviceClass
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.event import async_call_later
 from homeassistant.util.dt import utcnow
@@ -45,6 +42,7 @@ from .const import (
     VACUUM_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
+    CONF_USER_AGENT,
     CONF_SERVICES_REGISTERED,
     CONF_ATTR,
     CONF_SEND_COMMAND,
@@ -83,6 +81,7 @@ from .const import (
     SERVICE_NAME_READ_ALERT,
     SERVICE_NAME_DELETE_ALERT_ALL,
     SERVICE_NAME_READ_ALERT_ALL,
+    HTTP_HEADER_USER_AGENT
 )
 from .sensor import IndegoSensor
 
@@ -127,7 +126,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "online",
         CONF_ICON: "mdi:cloud-check",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_CONNECTIVITY,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.CONNECTIVITY,
         CONF_ATTR: [],
     },
     ENTITY_UPDATE_AVAILABLE: {
@@ -141,7 +140,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "alert",
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
-        CONF_DEVICE_CLASS: DEVICE_CLASS_PROBLEM,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.PROBLEM,
         CONF_ATTR: ["alerts_count"],
     },
     ENTITY_ALERT_PUSH: {
@@ -247,15 +246,15 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "battery %",
         CONF_ICON: "battery",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_BATTERY,
+        CONF_DEVICE_CLASS: SensorDeviceClass.BATTERY,
         CONF_UNIT_OF_MEASUREMENT: "%",
         CONF_ATTR: [
             "last_updated",
             "voltage_V",
             "discharge_Ah",
             "cycles",
-            f"battery_temp_{TEMP_CELSIUS}",
-            f"ambient_temp_{TEMP_CELSIUS}",
+            f"battery_temp_{UnitOfTemperature.CELSIUS}",
+            f"ambient_temp_{UnitOfTemperature.CELSIUS}",
         ],
     },
     ENTITY_LAWN_MOWED: {
@@ -277,7 +276,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "last completed",
         CONF_ICON: "mdi:calendar-check",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        CONF_DEVICE_CLASS: SensorDeviceClass.TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -285,7 +284,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "next mow",
         CONF_ICON: "mdi:calendar-clock",
-        CONF_DEVICE_CLASS: DEVICE_CLASS_TIMESTAMP,
+        CONF_DEVICE_CLASS: SensorDeviceClass.TIMESTAMP,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
     },
@@ -326,6 +325,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         oauth_session,
         entry.data[CONF_MOWER_SERIAL],
         hass,
+        entry.options.get(CONF_USER_AGENT)
     )
 
     async def load_platforms():
@@ -475,7 +475,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant):
+    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant, user_agent: Optional[str] = None):
         """Initialize the IndegoHub.
 
         Args:
@@ -507,6 +507,7 @@ class IndegoHub:
             session=async_get_clientsession(hass),
             raise_request_exceptions=True
         )
+        self._indego_client.set_default_header(HTTP_HEADER_USER_AGENT, user_agent)
 
     async def async_send_command_to_client(self, command: str):
         """Send a mower command to the Indego client."""
@@ -731,8 +732,8 @@ class IndegoHub:
                     "voltage_V": self._indego_client.operating_data.battery.voltage,
                     "discharge_Ah": self._indego_client.operating_data.battery.discharge,
                     "cycles": self._indego_client.operating_data.battery.cycles,
-                    f"battery_temp_{TEMP_CELSIUS}": self._indego_client.operating_data.battery.battery_temp,
-                    f"ambient_temp_{TEMP_CELSIUS}": self._indego_client.operating_data.battery.ambient_temp,
+                    f"battery_temp_{UnitOfTemperature.CELSIUS}": self._indego_client.operating_data.battery.battery_temp,
+                    f"ambient_temp_{UnitOfTemperature.CELSIUS}": self._indego_client.operating_data.battery.ambient_temp,
                 }
             )
 
@@ -902,3 +903,7 @@ class IndegoHub:
     @property
     def serial(self) -> str:
         return self._serial
+
+    @property
+    def client(self) -> IndegoAsyncClient:
+        return self._indego_client
