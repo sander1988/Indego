@@ -838,12 +838,12 @@ class IndegoHub:
             self.entities[ENTITY_ALERT_COUNT].state = 0
             self.entities[ENTITY_ALERT_ID].state = 0
             self.entities[ENTITY_ALERT_ERROR_CODE].state = 0
-            self.entities[ENTITY_ALERT_HEADLINE].state = "Kein Problem"
-            self.entities[ENTITY_ALERT_DATE].state = "Kein Problem"
-            self.entities[ENTITY_ALERT_MESSAGE].state = "Kein Problem"
+            self.entities[ENTITY_ALERT_HEADLINE].state = "No Problem"
+            self.entities[ENTITY_ALERT_DATE].state = "No Problem"
+            self.entities[ENTITY_ALERT_MESSAGE].state = "No Problem"
             self.entities[ENTITY_ALERT_READ_STATUS].state = False
             self.entities[ENTITY_ALERT_PUSH].state = False
-            self.entities[ENTITY_ALERT_DESCRIPTION].state = "Kein Problem"
+            self.entities[ENTITY_ALERT_DESCRIPTION].state = "No Problem"
 
         j = len(self._indego_client.alerts)
         # _LOGGER.info(f"Structuring ALERTS.{j}")
