@@ -98,18 +98,22 @@ SERVICE_SCHEMA_SMARTMOWING = vol.Schema({
 })
 
 SERVICE_SCHEMA_DELETE_ALERT = vol.Schema({
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_DELETE_ALERT): cv.positive_int
 })
 
 SERVICE_SCHEMA_READ_ALERT = vol.Schema({
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_READ_ALERT): cv.positive_int
 })
 
 SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema({
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_DELETE_ALERT): cv.string
 })
 
 SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema({
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
     vol.Required(CONF_READ_ALERT): cv.string
 })
 
@@ -375,35 +379,39 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await instance._update_generic_data()
     async def async_delete_alert(call):
         """Handle the service call."""
+        instance = find_instance_for_mower_service_call(call)
         enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
         _LOGGER.debug("Indego.delete_alert service called, with command: %s", enable)
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
-        await hass.data[DOMAIN][entry.entry_id]._indego_client.delete_alert(enable)
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()     
+        await instance._update_alerts()
+        await instance._indego_client.delete_alert(enable)
+        await instance._update_alerts()     
 
     async def async_delete_alert_all(call):
         """Handle the service call."""
+        instance = find_instance_for_mower_service_call(call)
         enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
         _LOGGER.debug("Indego.delete_alert_all service called, with command: %s", "all")
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
-        await hass.data[DOMAIN][entry.entry_id]._indego_client.delete_all_alerts()
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()   
+        await instance._update_alerts()
+        await instance._indego_client.delete_all_alerts()
+        await instance._update_alerts()   
 
     async def async_read_alert(call):
         """Handle the service call."""
+        instance = find_instance_for_mower_service_call(call)
         enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
         _LOGGER.debug("Indego.read_alert service called, with command: %s", enable)
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
-        await hass.data[DOMAIN][entry.entry_id]._indego_client.put_alert_read(enable)
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await instance._update_alerts()
+        await instance._indego_client.put_alert_read(enable)
+        await instance._update_alerts()
 
     async def async_read_alert_all(call):
         """Handle the service call."""
+        instance = find_instance_for_mower_service_call(call)
         enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
         _LOGGER.debug("Indego.read_alert_all service called, with command: %s", "all")
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
-        await hass.data[DOMAIN][entry.entry_id]._indego_client.put_all_alerts_read()
-        await hass.data[DOMAIN][entry.entry_id]._update_alerts()
+        await instance._update_alerts()
+        await instance._indego_client.put_all_alerts_read()
+        await instance._update_alerts()
 
     # In HASS we can have multiple Indego component instances as long as the mower serial is unique.
     # So the mower services should only need to be registered for the first instance.
