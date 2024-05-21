@@ -23,23 +23,39 @@ smartmowing:
 delete_alert:
   description: Delete the selected Alert
   fields:
+    mower_serial:
+      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      example: '"0123456789"'
+      required: false
     alert_index: 
       description: Delete the selected Alert in this case the latest
       example: "0"
 read_alert:
   description: Read the selected Alert
   fields:
+    mower_serial:
+      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      example: '"0123456789"'
+      required: false
     alert_index: 
       description: marked the selected Alert as read
       example: "0"
 delete_alert_all:
   description: Delete the selected Alert
   fields:
+    mower_serial:
+      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      example: '"0123456789"'
+      required: false
     alert_index: 
       description: Delete all Alerts
       example: "0"
 read_alert_all:
   description: Read the selected Alert
   fields:
+    mower_serial:
+      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      example: '"0123456789"'
+      required: false
     alert_index: 
-      description: marked all Alerts as read
+      description: Mark all Alerts as read
