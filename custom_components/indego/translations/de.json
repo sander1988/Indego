@@ -1,0 +1,18 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Dieser Bosch Indego mower wurde bereits konfiguriert!",
+            "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen!",
+            "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mäher gefunden!"
+        },
+        "step": {
+            "mower": {
+                "data": {
+                    "mower_serial": "Mäher Seriennummer",
+                    "mower_name": "Mäher Name"
+                },
+                "description": "Bitte die Seriennummer des Bosch Mähers, der hinzugefügt werden soll, auswählen"
+            }
+        }
+    }
+}
