@@ -6,12 +6,97 @@
             "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mäher gefunden!"
         },
         "step": {
+            "advanced": {
+                "data": {
+                    "user_agent": "User-Agent"
+                },
+                "description": "Erweiterte Einstellung des Bosch Indego Component. Kann für die meisten Benutzer unverändert gelassen werden."
+            },
             "mower": {
                 "data": {
                     "mower_serial": "Mäher Seriennummer",
                     "mower_name": "Mäher Name"
                 },
                 "description": "Bitte die Seriennummer des Bosch Mähers, der hinzugefügt werden soll, auswählen"
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Erweiterte Einstellung",
+                "description": "Erweiterte Einstellung des Bosch Indego Component.",
+                "data": {
+                    "user_agent": "User-Agent"
+                }
+            }
+        }
+    },
+    "services": {
+        "command": {
+            "description": "Befehle an den Mäher senden. Möglich Befehle sind mow, returnToDock und pause.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                },
+                "command": {
+                    "description": "Befehl für den Mäher."
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "SmartMowing aktivieren oder deaktivieren. Mögliche Befehle sind true oder false",
+            "fields": {
+                "mower_serial": {
+                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                },
+                "enable": {
+                    "description": "SmartMowing aktivieren."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Löscht den ausgewählten Fehler",
+            "fields": {
+                "mower_serial": {
+                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                },
+                "alert_index": {
+                    "description": "Den ausgewählten Fehler löschen. Mit 0 wird der letzte/aktuellste Fehler gelöscht."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Löscht alle Fehler",
+            "fields": {
+                "mower_serial": {
+                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                },
+                "alert_index": {
+                    "description": "Mit 0 werden alle Fehler gelöscht."
+                }
+            }
+        },
+        "read_alert": {
+            "description": "Markiert den ausgewählten Fehler als gelesen",
+            "fields": {
+                "mower_serial": {
+                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                },
+                "alert_index": {
+                    "description": "Den ausgewählten Fehler als gelesen markieren. Mit 0 wird der letzte/aktuellste Fehler ausgewählt."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Markiert alle Fehler als gelesen",
+            "fields": {
+                "mower_serial": {
+                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                },
+                "alert_index": {
+                    "description": "Mit 0 werden alle Fehler als gelesen markiert."
+                }
             }
         }
     }
