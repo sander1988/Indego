@@ -13,6 +13,8 @@ DATA_UPDATED: Final = f"{DOMAIN}_data_updated"
 
 CONF_MOWER_SERIAL: Final = "mower_serial"
 CONF_MOWER_NAME: Final = "mower_name"
+CONF_EXPOSE_INDEGO_AS_MOWER: Final = "expose_mower"
+CONF_EXPOSE_INDEGO_AS_VACUUM: Final = "expose_vacuum"
 CONF_USER_AGENT: Final = "user_agent"
 CONF_SERVICES_REGISTERED: Final = "services_registered"
 
@@ -62,7 +64,6 @@ ENTITY_LAST_COMPLETED: Final = "last_completed"
 ENTITY_NEXT_MOW: Final = "next_mow"
 ENTITY_MOWING_MODE: Final = "mowing_mode"
 ENTITY_RUNTIME: Final = "runtime_total"
-ENTITY_MOWER_ALERT: Final = "mower_alert"
 ENTITY_VACUUM: Final = "vacuum"
 ENTITY_LAWN_MOWER: Final = "lawn_mower"
 

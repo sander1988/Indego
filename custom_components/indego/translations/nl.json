@@ -6,6 +6,14 @@
             "no_mowers_found": "Geen robotmaaiers gevonden in deze Bosch Indego account!"
         },
         "step": {
+            "advanced": {
+                "data": {
+                    "user_agent": "User-Agent",
+                    "expose_mower": "Voeg de Indego robotmaaier toe als grasmaaier entiteit aan HomeAssistant",
+                    "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan HomeAssistant"
+                },
+                "description": "Advanced settings of the Bosch Indego component. Can be left unchanged for most users."
+            },
             "mower": {
                 "data": {
                     "mower_serial": "Robotmaaier serienummer",
@@ -14,5 +22,18 @@
                 "description": "Selecteer het serienummer van de Bosch Indego robotmaaier die je toe wilt voegen"
             }
         }
+    },
+    "options": {
+      "step": {
+          "init": {
+              "title": "Geavanceerde instellingen",
+              "description": "Geavanceerde instellingen van het Bosch Indego component. Mogelijk moet het component opnieuw geladen worden na het wijzigen van deze instellingen.",
+              "data": {
+                  "user_agent": "User-Agent",
+                    "expose_mower": "Voeg de Indego robotmaaier toe als grasmaaier entiteit aan HomeAssistant",
+                    "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan HomeAssistant"
+              }
+          }
+      }
     }
 }

@@ -18,9 +18,11 @@ from .const import (
     DOMAIN,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
+    CONF_EXPOSE_INDEGO_AS_MOWER,
+    CONF_EXPOSE_INDEGO_AS_VACUUM,
     CONF_USER_AGENT,
     OAUTH2_CLIENT_ID,
-    HTTP_HEADER_USER_AGENT
+    HTTP_HEADER_USER_AGENT,
 )
 
 _LOGGER: Final = logging.getLogger(__name__)
@@ -57,6 +59,12 @@ class IndegoOptionsFlowHandler(OptionsFlowWithConfigEntry):
                         "suggested_value": self.options.get(CONF_USER_AGENT, DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT])
                     },
                 ): str,
+                vol.Optional(
+                    CONF_EXPOSE_INDEGO_AS_MOWER, default=self.options.get(CONF_EXPOSE_INDEGO_AS_MOWER, False)
+                ): bool,
+                vol.Optional(
+                    CONF_EXPOSE_INDEGO_AS_VACUUM, default=self.options.get(CONF_EXPOSE_INDEGO_AS_VACUUM, False)
+                ): bool,
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)
@@ -168,6 +176,12 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
                         "suggested_value": DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT]
                     },
                 ): str,
+                vol.Optional(
+                    CONF_EXPOSE_INDEGO_AS_MOWER, default=False
+                ): bool,
+                vol.Optional(
+                    CONF_EXPOSE_INDEGO_AS_VACUUM, default=False
+                ): bool,
             }
         )
         return self.async_show_form(step_id="advanced", data_schema=schema)

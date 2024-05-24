@@ -44,6 +44,8 @@ from .const import (
     LAWN_MOWER_TYPE,
     CONF_MOWER_SERIAL,
     CONF_MOWER_NAME,
+    CONF_EXPOSE_INDEGO_AS_MOWER,
+    CONF_EXPOSE_INDEGO_AS_VACUUM,
     CONF_USER_AGENT,
     CONF_SERVICES_REGISTERED,
     CONF_ATTR,
@@ -330,6 +332,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         entry.data[CONF_MOWER_NAME],
         oauth_session,
         entry.data[CONF_MOWER_SERIAL],
+        {
+            CONF_EXPOSE_INDEGO_AS_MOWER: entry.options.get(CONF_EXPOSE_INDEGO_AS_MOWER, False),
+            CONF_EXPOSE_INDEGO_AS_VACUUM: entry.options.get(CONF_EXPOSE_INDEGO_AS_VACUUM, False),
+        },
         hass,
         entry.options.get(CONF_USER_AGENT)
     )
@@ -481,7 +487,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
-    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, hass: HomeAssistant, user_agent: Optional[str] = None):
+    def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, features: dict, hass: HomeAssistant, user_agent: Optional[str] = None):
         """Initialize the IndegoHub.
 
         Args:
@@ -493,6 +499,7 @@ class IndegoHub:
         """
         self._mower_name = name
         self._serial = serial
+        self._features = features
         self._hass = hass
         self._unsub_refresh_state = None
         self._refresh_state_task = None
@@ -548,21 +555,23 @@ class IndegoHub:
                     device_info
                 )
 
-            elif entity[CONF_TYPE] == VACUUM_TYPE:
-                self.entities[entity_key] = IndegoVacuum(
-                    f"indego_{self._serial}",
-                    self._mower_name,
-                    device_info,
-                    self
-                )
-
             elif entity[CONF_TYPE] == LAWN_MOWER_TYPE:
-                self.entities[entity_key] = IndegoLawnMower(
-                    f"indego_{self._serial}",
-                    self._mower_name,
-                    device_info,
-                    self
-                )
+                if self._features[CONF_EXPOSE_INDEGO_AS_MOWER]:
+                    self.entities[entity_key] = IndegoLawnMower(
+                        f"indego_{self._serial}",
+                        self._mower_name,
+                        device_info,
+                        self
+                    )
+
+            elif entity[CONF_TYPE] == VACUUM_TYPE:
+                if self._features[CONF_EXPOSE_INDEGO_AS_VACUUM]:
+                    self.entities[entity_key] = IndegoVacuum(
+                        f"indego_{self._serial}",
+                        self._mower_name,
+                        device_info,
+                        self
+                    )
 
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
@@ -571,7 +580,6 @@ class IndegoHub:
 
         device_info = DeviceInfo(
             identifiers={(DOMAIN, self._serial)},
-            #serial_number=self._serial,
             manufacturer="Bosch",
             name=self._mower_name,
             model=generic_data.bareToolnumber if generic_data else None,
@@ -606,7 +614,7 @@ class IndegoHub:
             await self._update_operating_data()
 
         except Exception as e:
-            _LOGGER.info("Update operating data got an exception: %s", e)
+            _LOGGER.warning("Update operating data got an exception: %s", e)
 
     async def async_shutdown(self, _=None):
         """Remove all future updates, cancel tasks and close the client."""
@@ -723,7 +731,7 @@ class IndegoHub:
             await self._update_updates_available()
 
         except Exception as e:
-            _LOGGER.info("Update updates available got an exception: %s", e)
+            _LOGGER.warning("Update updates available got an exception: %s", e)
 
         self._refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
@@ -735,7 +743,9 @@ class IndegoHub:
         if self._indego_client.operating_data:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
             self.entities[ENTITY_BATTERY].state = self._indego_client.operating_data.battery.percent_adjusted
-            self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
+
+            if ENTITY_VACUUM in self.entities:
+                self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
 
             # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attribute(
@@ -773,7 +783,8 @@ class IndegoHub:
         self.entities[ENTITY_BATTERY].charging = (
             True if self._indego_client.state_description_detail == "Charging" else False
         )
-        self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
+        if ENTITY_VACUUM in self.entities:
+            self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
 
         # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE].add_attribute(
@@ -794,8 +805,10 @@ class IndegoHub:
             }
         )
 
-        self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
-        self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
+        if ENTITY_VACUUM in self.entities:
+            self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
+        if ENTITY_LAWN_MOWER in self.entities:
+            self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
 
         self.entities[ENTITY_LAWN_MOWED].add_attribute(
             {

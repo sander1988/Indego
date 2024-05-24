@@ -8,7 +8,9 @@
         "step": {
             "advanced": {
                 "data": {
-                    "user_agent": "User-Agent"
+                    "user_agent": "User-Agent",
+                    "expose_mower": "Expose Indego mower as mower entity in HomeAssistant",
+                    "expose_vacuum": "Expose Indego mower as vacuum entity in HomeAssistant"
                 },
                 "description": "Advanced settings of the Bosch Indego component. Can be left unchanged for most users."
             },
@@ -25,9 +27,11 @@
       "step": {
           "init": {
               "title": "Advanced settings",
-              "description": "Advanced settings of the Bosch Indego component.",
+              "description": "Advanced settings of the Bosch Indego component. You might have to reload the component after changing these settings.",
               "data": {
-                  "user_agent": "User-Agent"
+                  "user_agent": "User-Agent",
+                  "expose_mower": "Expose Indego mower as mower entity in HomeAssistant",
+                  "expose_vacuum": "Expose Indego mower as vacuum entity in HomeAssistant"
               }
           }
       }
