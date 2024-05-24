@@ -9,6 +9,8 @@
             "advanced": {
                 "data": {
                     "user_agent": "User-Agent"
+                    "expose_mower": "Indego Mäher als Mower Entität in HomeAssistant anlegen",
+                    "expose_vacuum": "Indego Mäher als Vacuum Entität in HomeAssistant anlegen"
                 },
                 "description": "Erweiterte Einstellung des Bosch Indego Component. Kann für die meisten Benutzer unverändert gelassen werden."
             },
@@ -27,7 +29,9 @@
                 "title": "Erweiterte Einstellung",
                 "description": "Erweiterte Einstellung des Bosch Indego Component.",
                 "data": {
-                    "user_agent": "User-Agent"
+                    "user_agent": "User-Agent",
+                    "expose_mower": "Indego Mäher als Mower Entität in HomeAssistant anlegen",
+                    "expose_vacuum": "Indego Mäher als Vacuum Entität in HomeAssistant anlegen"
                 }
             }
         }
