@@ -775,9 +775,7 @@ class IndegoHub:
             return  # State update failed
 
         self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
-        self.entities[
-            ENTITY_MOWER_STATE_DETAIL
-        ].state = self._indego_client.state_description_detail
+        self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
         self.entities[ENTITY_LAWN_MOWED].state = self._indego_client.state.mowed
         self.entities[ENTITY_RUNTIME].state = self._indego_client.state.runtime.total.cut
         self.entities[ENTITY_BATTERY].charging = (
