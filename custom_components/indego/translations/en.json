@@ -35,5 +35,73 @@
               }
           }
       }
+    },
+    "services": {
+        "command": {
+            "description": "Send commands to the mower. Allowed commands are mow, returnToDock and pause.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "command": {
+                    "description": "Command for the mower"
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "Enable or Disable SmartMowing. Allowed commands are true or false",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "enable": {
+                    "description": "Enable SmartMowing."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Delete the selected Alert",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Delete the selected Alert. 0 for the latest Alert"
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Delete all Alerts",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Delete all alerts with 0"
+                }
+            }
+        },
+        "read_alert": {
+            "description": "mark the selected alert as read.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Mark the selected alert as read. 0 for the latest alert."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Mark all alerts as read",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Mark all alerts as read with 0."
+                }
+            }
+        }
     }
 }
