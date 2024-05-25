@@ -1,61 +1,56 @@
 command:
-  description: Send command to mower. Accepted values are mow, returnToDock and pause
+  description: Send commands to the mower. Allowed commands are mow, returnToDock and pause.
   fields:
     mower_serial:
-      description: The serial of the mower for this command. Only required when you have multiple mowers configured.
+      description: Mower serial. Only needed when you have configured multiple mowers.
       example: '"012345789"'
       required: false
     command:
-      description: Command for mower
+      description: Command for the mower.
       example: "mow"
       required: true
 smartmowing:
-  description: Enable or disable Smart Mowing. Accepted values are true and false
+  description: Enable or Disable SmartMowing. Allowed commands are true or false.
   fields:
     mower_serial:
-      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      description: Mower serial. Only needed when you have configured multiple mowers.
       example: '"012345789"'
       required: false
     enable: 
-      description: Enable Smart Mow 
+      description: Enable SmartMowing.
       example: "true"
       required: true
 delete_alert:
-  description: Delete the selected Alert
+  description: Delete the selected alert.
   fields:
     mower_serial:
-      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      description: Mower serial. Only needed when you have configured multiple mowers.
       example: '"0123456789"'
       required: false
     alert_index: 
-      description: Delete the selected Alert in this case the latest
-      example: "0"
-read_alert:
-  description: Read the selected Alert
-  fields:
-    mower_serial:
-      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
-      example: '"0123456789"'
-      required: false
-    alert_index: 
-      description: marked the selected Alert as read
+      description: Delete the selected alerts. 0 for the latest alert.
       example: "0"
 delete_alert_all:
-  description: Delete the selected Alert
+  description: Delete all alerts.
   fields:
     mower_serial:
-      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      description: Mower serial. Only needed when you have configured multiple mowers.
+      example: '"0123456789"'
+      required: false
+read_alert:
+  description: Mark the selected alert as read.
+  fields:
+    mower_serial:
+      description: Mower serial. Only needed when you have configured multiple mowers.
       example: '"0123456789"'
       required: false
     alert_index: 
-      description: Delete all Alerts
+      description: Mark the selected alert as read. 0 for the latest alert.
       example: "0"
 read_alert_all:
-  description: Read the selected Alert
+  description: Mark all alerts as read.
   fields:
     mower_serial:
-      description: The serial of the mower for this action. Only required when you have multiple mowers configured.
+      description: Mower serial. Only needed when you have configured multiple mowers.
       example: '"0123456789"'
       required: false
-    alert_index: 
-      description: Mark all Alerts as read

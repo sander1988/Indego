@@ -19,7 +19,7 @@
                     "mower_serial": "Mower serial",
                     "mower_name": "Mower name"
                 },
-                "description": "Please select the serial of the Bosch Mower your would like to add"
+                "description": "Please select the serial of the Bosch Mower your would like to add."
             }
         }
     },
@@ -44,12 +44,12 @@
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 },
                 "command": {
-                    "description": "Command for the mower"
+                    "description": "Command for the mower."
                 }
             }
         },
         "smartmowing": {
-            "description": "Enable or Disable SmartMowing. Allowed commands are true or false",
+            "description": "Enable or Disable SmartMowing. Allowed commands are true or false.",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
@@ -60,29 +60,26 @@
             }
         },
         "delete_alert": {
-            "description": "Delete the selected Alert",
+            "description": "Delete the selected alert.",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 },
                 "alert_index": {
-                    "description": "Delete the selected Alert. 0 for the latest Alert"
+                    "description": "Delete the selected alerts. 0 for the latest alert."
                 }
             }
         },
         "delete_alert_all": {
-            "description": "Delete all Alerts",
+            "description": "Delete all alerts.",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
-                },
-                "alert_index": {
-                    "description": "Delete all alerts with 0"
                 }
             }
         },
         "read_alert": {
-            "description": "mark the selected alert as read.",
+            "description": "Mark the selected alert as read.",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
@@ -93,13 +90,10 @@
             }
         },
         "read_alert_all": {
-            "description": "Mark all alerts as read",
+            "description": "Mark all alerts as read.",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
-                },
-                "alert_index": {
-                    "description": "Mark all alerts as read with 0."
                 }
             }
         }

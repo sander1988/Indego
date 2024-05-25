@@ -23,9 +23,6 @@ CONF_SEND_COMMAND: Final = "command"
 CONF_SMARTMOWING: Final = "enable"
 CONF_POLLING: Final = "polling"
 
-CONF_DELETE_ALERT: Final = "alert_index"
-CONF_READ_ALERT: Final = "alert_index"
-
 DEFAULT_NAME: Final = "Indego"
 DEFAULT_NAME_COMMANDS: Final = None
 
@@ -35,6 +32,7 @@ SERVICE_NAME_DELETE_ALERT: Final = "delete_alert"
 SERVICE_NAME_READ_ALERT: Final = "read_alert"
 SERVICE_NAME_DELETE_ALERT_ALL: Final = "delete_alert_all"
 SERVICE_NAME_READ_ALERT_ALL: Final = "read_alert_all"
+SERVER_DATA_ALERT_INDEX: Final = "alert_index"
 
 SENSOR_TYPE: Final = "sensor"
 BINARY_SENSOR_TYPE: Final = "binary_sensor"

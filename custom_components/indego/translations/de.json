@@ -19,7 +19,7 @@
                     "mower_serial": "Mäher Seriennummer",
                     "mower_name": "Mäher Name"
                 },
-                "description": "Bitte die Seriennummer des Bosch Mähers, der hinzugefügt werden soll, auswählen"
+                "description": "Bitte die Seriennummer des Bosch Mähers, der hinzugefügt werden soll, auswählen."
             }
         }
     },
@@ -49,7 +49,7 @@
             }
         },
         "smartmowing": {
-            "description": "SmartMowing aktivieren oder deaktivieren. Mögliche Befehle sind true oder false",
+            "description": "SmartMowing aktivieren oder deaktivieren. Mögliche Befehle sind true oder false.",
             "fields": {
                 "mower_serial": {
                     "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
@@ -60,7 +60,7 @@
             }
         },
         "delete_alert": {
-            "description": "Löscht den ausgewählten Fehler",
+            "description": "Löscht den ausgewählten Fehler.",
             "fields": {
                 "mower_serial": {
                     "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
@@ -71,18 +71,15 @@
             }
         },
         "delete_alert_all": {
-            "description": "Löscht alle Fehler",
+            "description": "Löscht alle Fehler.",
             "fields": {
                 "mower_serial": {
                     "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
-                },
-                "alert_index": {
-                    "description": "Mit 0 werden alle Fehler gelöscht."
                 }
             }
         },
         "read_alert": {
-            "description": "Markiert den ausgewählten Fehler als gelesen",
+            "description": "Markiert den ausgewählten Fehler als gelesen.",
             "fields": {
                 "mower_serial": {
                     "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
@@ -93,13 +90,10 @@
             }
         },
         "read_alert_all": {
-            "description": "Markiert alle Fehler als gelesen",
+            "description": "Markiert alle Fehler als gelesen.",
             "fields": {
                 "mower_serial": {
                     "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
-                },
-                "alert_index": {
-                    "description": "Mit 0 werden alle Fehler als gelesen markiert."
                 }
             }
         }

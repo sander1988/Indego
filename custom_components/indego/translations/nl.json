@@ -19,7 +19,7 @@
                     "mower_serial": "Robotmaaier serienummer",
                     "mower_name": "Robotmaaier naam"
                 },
-                "description": "Selecteer het serienummer van de Bosch Indego robotmaaier die je toe wilt voegen"
+                "description": "Selecteer het serienummer van de Bosch Indego robotmaaier die je toe wilt voegen."
             }
         }
     },
@@ -35,5 +35,67 @@
               }
           }
       }
+    },
+    "services": {
+        "command": {
+            "description": "Stuur een opdracht naar de grasmaaier. Ondersteunde opdrachten zijn: mow, returnToDock en pause.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
+                },
+                "command": {
+                    "description": "De opdracht voor de grasmaaier."
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "Schakel smart-maaier in of uit. Ondersteunde waardes zijn: true of false.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
+                },
+                "enable": {
+                    "description": "Schakel smart-maaier in of uit."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Verwijder een specifieke melding.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
+                },
+                "alert_index": {
+                    "description": "De index van het melding. 0 is het nieuwste bericht."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Verwijder alle meldingen.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
+                }
+            }
+        },
+        "read_alert": {
+            "description": "Markeer een specifieke melding als gelezen.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
+                },
+                "alert_index": {
+                    "description": "De index van het melding. 0 is het nieuwste bericht."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Markeer alle meldingen als gelezen.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
+                }
+            }
+        }
     }
 }

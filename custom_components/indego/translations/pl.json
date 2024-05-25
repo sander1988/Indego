@@ -11,7 +11,7 @@
                     "mower_serial": "Numer seryjny kosiarki",
                     "mower_name": "Nazwa kosiarki"
                 },
-                "description": "Proszę wybrać numer seryjny kosiarki Bosch którą chcesz dodać"
+                "description": "Proszę wybrać numer seryjny kosiarki Bosch którą chcesz dodać."
             }
         }
     }

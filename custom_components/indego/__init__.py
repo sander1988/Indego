@@ -51,8 +51,7 @@ from .const import (
     CONF_ATTR,
     CONF_SEND_COMMAND,
     CONF_SMARTMOWING,
-    CONF_DELETE_ALERT,
-    CONF_READ_ALERT,
+    SERVER_DATA_ALERT_INDEX,
     DEFAULT_NAME_COMMANDS,
     DOMAIN,
     ENTITY_ALERT,
@@ -104,22 +103,20 @@ SERVICE_SCHEMA_SMARTMOWING = vol.Schema({
 
 SERVICE_SCHEMA_DELETE_ALERT = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
-    vol.Required(CONF_DELETE_ALERT): cv.positive_int
+    vol.Required(SERVER_DATA_ALERT_INDEX): cv.positive_int
+})
+
+SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema({
+    vol.Optional(CONF_MOWER_SERIAL): cv.string
 })
 
 SERVICE_SCHEMA_READ_ALERT = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
-    vol.Required(CONF_READ_ALERT): cv.positive_int
-})
-
-SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema({
-    vol.Optional(CONF_MOWER_SERIAL): cv.string,
-    vol.Required(CONF_DELETE_ALERT): cv.string
+    vol.Required(SERVER_DATA_ALERT_INDEX): cv.positive_int
 })
 
 SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema({
-    vol.Optional(CONF_MOWER_SERIAL): cv.string,
-    vol.Required(CONF_READ_ALERT): cv.string
+    vol.Optional(CONF_MOWER_SERIAL): cv.string
 })
 
 
@@ -380,29 +377,33 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         instance = find_instance_for_mower_service_call(call)
         command = call.data.get(CONF_SEND_COMMAND, DEFAULT_NAME_COMMANDS)
         _LOGGER.debug("Indego.send_command service called, with command: %s", command)
+
         await instance.async_send_command_to_client(command)
 
     async def async_send_smartmowing(call):
         """Handle the smartmowing service call."""
         instance = find_instance_for_mower_service_call(call)
         enable = call.data.get(CONF_SMARTMOWING, DEFAULT_NAME_COMMANDS)
-        _LOGGER.debug("Indego.send_smartmowing service called, set to %s", enable)
+        _LOGGER.debug("Indego.send_smartmowing service called, enable: %s", enable)
+
         await instance._indego_client.put_mow_mode(enable)
         await instance._update_generic_data()
+
     async def async_delete_alert(call):
         """Handle the service call."""
         instance = find_instance_for_mower_service_call(call)
-        enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
-        _LOGGER.debug("Indego.delete_alert service called, with command: %s", enable)
+        index = call.data.get(SERVER_DATA_ALERT_INDEX, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.delete_alert service called with alert index: %s", index)
+
         await instance._update_alerts()
-        await instance._indego_client.delete_alert(enable)
+        await instance._indego_client.delete_alert(index)
         await instance._update_alerts()     
 
     async def async_delete_alert_all(call):
         """Handle the service call."""
         instance = find_instance_for_mower_service_call(call)
-        enable = call.data.get(CONF_DELETE_ALERT, DEFAULT_NAME_COMMANDS)
-        _LOGGER.debug("Indego.delete_alert_all service called, with command: %s", "all")
+        _LOGGER.debug("Indego.delete_alert_all service called")
+
         await instance._update_alerts()
         await instance._indego_client.delete_all_alerts()
         await instance._update_alerts()   
@@ -410,17 +411,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     async def async_read_alert(call):
         """Handle the service call."""
         instance = find_instance_for_mower_service_call(call)
-        enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
-        _LOGGER.debug("Indego.read_alert service called, with command: %s", enable)
+        index = call.data.get(SERVER_DATA_ALERT_INDEX, DEFAULT_NAME_COMMANDS)
+        _LOGGER.debug("Indego.read_alert service called with alert index: %s", index)
+
         await instance._update_alerts()
-        await instance._indego_client.put_alert_read(enable)
+        await instance._indego_client.put_alert_read(index)
         await instance._update_alerts()
 
     async def async_read_alert_all(call):
         """Handle the service call."""
         instance = find_instance_for_mower_service_call(call)
-        enable = call.data.get(CONF_READ_ALERT, DEFAULT_NAME_COMMANDS)
-        _LOGGER.debug("Indego.read_alert_all service called, with command: %s", "all")
+        _LOGGER.debug("Indego.read_alert_all service called")
+
         await instance._update_alerts()
         await instance._indego_client.put_all_alerts_read()
         await instance._update_alerts()
