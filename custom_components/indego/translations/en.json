@@ -60,13 +60,13 @@
             }
         },
         "delete_alert": {
-            "description": "Löscht den ausgewählten Fehler",
+            "description": "Delete the selected Alert",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 },
                 "alert_index": {
-                    "description": "Den ausgewählten Fehler löschen. Mit 0 wird der letzte/aktuellste Fehler gelöscht."
+                    "description": "Delete the selected Alert. 0 for the latest Alert"
                 }
             }
         },
