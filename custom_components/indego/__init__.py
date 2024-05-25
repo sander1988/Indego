@@ -647,7 +647,7 @@ class IndegoHub:
                 except Exception as exc:
                     _LOGGER.warning("Mower alerts update failed, reason: %s", exc)
 
-            self._create_refresh_state_task()
+        self._create_refresh_state_task()
 
     def _create_refresh_state_task(self, event=None):
         """Create a task to refresh the mower state."""
