@@ -35,4 +35,73 @@
               }
           }
       }
+    },
+    "services": {
+        "command": {
+            "description": "Send commands to the mower. Allowed commands are mow, returnToDock and pause.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "command": {
+                    "description": "Command for the mower"
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "Enable or Disable SmartMowing. Allowed commands are true or false",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "enable": {
+                    "description": "Enable SmartMowing."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Löscht den ausgewählten Fehler",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Den ausgewählten Fehler löschen. Mit 0 wird der letzte/aktuellste Fehler gelöscht."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Löscht alle Fehler",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Mit 0 werden alle Fehler gelöscht."
+                }
+            }
+        },
+        "read_alert": {
+            "description": "Markiert den ausgewählten Fehler als gelesen",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Den ausgewählten Fehler als gelesen markieren. Mit 0 wird der letzte/aktuellste Fehler ausgewählt."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Markiert alle Fehler als gelesen",
+            "fields": {
+                "mower_serial": {
+                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                },
+                "alert_index": {
+                    "description": "Mit 0 werden alle Fehler als gelesen markiert."
+                }
+            }
+        }
     }
+}
