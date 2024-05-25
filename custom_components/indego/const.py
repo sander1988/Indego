@@ -18,6 +18,7 @@ CONF_EXPOSE_INDEGO_AS_VACUUM: Final = "expose_vacuum"
 CONF_USER_AGENT: Final = "user_agent"
 CONF_SERVICES_REGISTERED: Final = "services_registered"
 
+CONF_TRANSLATION_KEY: Final = "translation_key"
 CONF_ATTR: Final = "attributes"
 CONF_SEND_COMMAND: Final = "command"
 CONF_SMARTMOWING: Final = "enable"

@@ -36,6 +36,15 @@
           }
       }
     },
+    "entity": {
+        "sensor": {
+            "indego_alert": {
+                "state": {
+                    "No problem": "Geen probleem"
+                }
+            }
+        }
+    },
     "services": {
         "command": {
             "description": "Stuur een opdracht naar de grasmaaier. Ondersteunde opdrachten zijn: mow, returnToDock en pause.",

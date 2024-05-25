@@ -37,56 +37,7 @@ from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
 from .vacuum import IndegoVacuum
 from .lawn_mower import IndegoLawnMower
-from .const import (
-    STATUS_UPDATE_FAILURE_DELAY_TIME,
-    BINARY_SENSOR_TYPE,
-    VACUUM_TYPE,
-    LAWN_MOWER_TYPE,
-    CONF_MOWER_SERIAL,
-    CONF_MOWER_NAME,
-    CONF_EXPOSE_INDEGO_AS_MOWER,
-    CONF_EXPOSE_INDEGO_AS_VACUUM,
-    CONF_USER_AGENT,
-    CONF_SERVICES_REGISTERED,
-    CONF_ATTR,
-    CONF_SEND_COMMAND,
-    CONF_SMARTMOWING,
-    SERVER_DATA_ALERT_INDEX,
-    DEFAULT_NAME_COMMANDS,
-    DOMAIN,
-    ENTITY_ALERT,
-    ENTITY_ALERT_COUNT,
-    ENTITY_ALERT_ID,
-    ENTITY_ALERT_ERROR_CODE,
-    ENTITY_ALERT_HEADLINE,
-    ENTITY_ALERT_DATE,
-    ENTITY_ALERT_MESSAGE,
-    ENTITY_ALERT_READ_STATUS,
-    ENTITY_ALERT_FLAG,
-    ENTITY_ALERT_PUSH,
-    ENTITY_ALERT_DESCRIPTION,
-    ENTITY_BATTERY,
-    ENTITY_LAST_COMPLETED,
-    ENTITY_LAWN_MOWED,
-    ENTITY_MOWER_STATE,
-    ENTITY_MOWER_STATE_DETAIL,
-    ENTITY_MOWING_MODE,
-    ENTITY_NEXT_MOW,
-    ENTITY_ONLINE,
-    ENTITY_RUNTIME,
-    ENTITY_UPDATE_AVAILABLE,
-    ENTITY_VACUUM,
-    ENTITY_LAWN_MOWER,
-    INDEGO_PLATFORMS,
-    SENSOR_TYPE,
-    SERVICE_NAME_COMMAND,
-    SERVICE_NAME_SMARTMOW,
-    SERVICE_NAME_DELETE_ALERT,
-    SERVICE_NAME_READ_ALERT,
-    SERVICE_NAME_DELETE_ALERT_ALL,
-    SERVICE_NAME_READ_ALERT_ALL,
-    HTTP_HEADER_USER_AGENT
-)
+from .const import *
 from .sensor import IndegoSensor
 
 _LOGGER = logging.getLogger(__name__)
@@ -187,6 +138,7 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
+        CONF_TRANSLATION_KEY: "indego_alert",
     },   
     ENTITY_ALERT_DATE: {
         CONF_TYPE: SENSOR_TYPE,
@@ -195,6 +147,7 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
+        CONF_TRANSLATION_KEY: "indego_alert",
     },   
     ENTITY_ALERT_MESSAGE: {
         CONF_TYPE: SENSOR_TYPE,
@@ -203,8 +156,9 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
+        CONF_TRANSLATION_KEY: "indego_alert",
     },   
-    ENTITY_ALERT_READ_STATUS: {
+    ENTITY_ALERT_READ_STATUS: {  # TODO: Change to binary sensor? As it's true/false
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "alert read status",
         CONF_ICON: "mdi:alert-octagon-outline",
@@ -227,6 +181,7 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
+        CONF_TRANSLATION_KEY: "indego_alert",
     },  
     ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
@@ -552,7 +507,8 @@ class IndegoHub:
                     entity[CONF_DEVICE_CLASS],
                     entity[CONF_UNIT_OF_MEASUREMENT],
                     entity[CONF_ATTR],
-                    device_info
+                    device_info,
+                    translation_key=entity[CONF_TRANSLATION_KEY] if CONF_TRANSLATION_KEY in entity else None,
                 )
 
             elif entity[CONF_TYPE] == BINARY_SENSOR_TYPE:
@@ -874,12 +830,12 @@ class IndegoHub:
             self.entities[ENTITY_ALERT_COUNT].state = 0
             self.entities[ENTITY_ALERT_ID].state = 0
             self.entities[ENTITY_ALERT_ERROR_CODE].state = 0
-            self.entities[ENTITY_ALERT_HEADLINE].state = "No Problem"
-            self.entities[ENTITY_ALERT_DATE].state = "No Problem"
-            self.entities[ENTITY_ALERT_MESSAGE].state = "No Problem"
+            self.entities[ENTITY_ALERT_HEADLINE].state = "No problem"
+            self.entities[ENTITY_ALERT_DATE].state = "No problem"
+            self.entities[ENTITY_ALERT_MESSAGE].state = "No problem"
             self.entities[ENTITY_ALERT_READ_STATUS].state = False
             self.entities[ENTITY_ALERT_PUSH].state = False
-            self.entities[ENTITY_ALERT_DESCRIPTION].state = "No Problem"
+            self.entities[ENTITY_ALERT_DESCRIPTION].state = "No problem"
 
         j = len(self._indego_client.alerts)
         # _LOGGER.info(f"Structuring ALERTS.{j}")

@@ -8,7 +8,7 @@
         "step": {
             "advanced": {
                 "data": {
-                    "user_agent": "User-Agent"
+                    "user_agent": "User-Agent",
                     "expose_mower": "Indego Mäher als Mower Entität in HomeAssistant anlegen",
                     "expose_vacuum": "Indego Mäher als Vacuum Entität in HomeAssistant anlegen"
                 },
@@ -32,6 +32,15 @@
                     "user_agent": "User-Agent",
                     "expose_mower": "Indego Mäher als Mower Entität in HomeAssistant anlegen",
                     "expose_vacuum": "Indego Mäher als Vacuum Entität in HomeAssistant anlegen"
+                }
+            }
+        }
+    },
+    "entity": {
+        "sensor": {
+            "indego_alert": {
+                "state": {
+                    "No problem": "Kein Problem"
                 }
             }
         }
