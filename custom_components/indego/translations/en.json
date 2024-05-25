@@ -71,35 +71,35 @@
             }
         },
         "delete_alert_all": {
-            "description": "Löscht alle Fehler",
+            "description": "Delete all Alerts",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 },
                 "alert_index": {
-                    "description": "Mit 0 werden alle Fehler gelöscht."
+                    "description": "Delete all alerts with 0"
                 }
             }
         },
         "read_alert": {
-            "description": "Markiert den ausgewählten Fehler als gelesen",
+            "description": "mark the selected alert as read.",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 },
                 "alert_index": {
-                    "description": "Den ausgewählten Fehler als gelesen markieren. Mit 0 wird der letzte/aktuellste Fehler ausgewählt."
+                    "description": "Mark the selected alert as read. 0 for the latest alert."
                 }
             }
         },
         "read_alert_all": {
-            "description": "Markiert alle Fehler als gelesen",
+            "description": "Mark all alerts as read",
             "fields": {
                 "mower_serial": {
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 },
                 "alert_index": {
-                    "description": "Mit 0 werden alle Fehler als gelesen markiert."
+                    "description": "Mark all alerts as read with 0."
                 }
             }
         }
