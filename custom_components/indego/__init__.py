@@ -731,7 +731,7 @@ class IndegoHub:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
 
     async def _update_state(self):
-        await self._indego_client.update_state(longpoll=True, longpoll_timeout=300)
+        await self._indego_client.update_state(longpoll=True, longpoll_timeout=230)
 
         # dependent state updates
         if self._shutdown:
