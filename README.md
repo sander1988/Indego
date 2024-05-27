@@ -27,7 +27,7 @@ Therefore we needed to rewrite the authentication flow.
 
 Currently **only** Google Chrome is the supported for authenticating with the Bosch SingleKey ID servers when adding the integration in HA.
 Also a small extension needs to be installed (temporarily) in Google Chrome to handle the response from the Bosch authentication servers. 
-More (technical) information on the why can be found in this [issue](https://github.com/jm-73/Indego/issues).
+More (technical) information on the why can be found in this [issue](https://github.com/jm-73/Indego/issues/171).
 
 Optionally you can remove or disable the extension after adding the Bosch Indego integration to HomeAssistant.
 
