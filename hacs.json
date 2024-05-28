@@ -32,7 +32,9 @@
   ],
   "domains": [
     "sensor",
-    "binary_sensor"
+    "binary_sensor",
+    "vacuum",
+    "lawn_mower"
   ],
-  "homeassistant": "0.110.0"
+  "homeassistant": "2023.9.0"
 }
