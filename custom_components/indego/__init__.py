@@ -492,7 +492,7 @@ class IndegoHub:
         """Do the initial update and create all entities."""
         _LOGGER.debug("Starting initial update.")
 
-        self._create_refresh_state_task()
+        await self._create_refresh_state_task()
         await asyncio.gather(*[self.refresh_10m(), self.refresh_24h()])
 
         try:
@@ -567,9 +567,9 @@ class IndegoHub:
                 except Exception as exc:
                     _LOGGER.warning("Mower alerts update failed, reason: %s", exc)
 
-        self._create_refresh_state_task()
+        await self._create_refresh_state_task()
 
-    def _create_refresh_state_task(self, event=None):
+    async def _create_refresh_state_task(self, event=None):
         """Create a task to refresh the mower state."""
         self._refresh_state_task = self._hass.async_create_task(self.refresh_state())
 
