@@ -31,10 +31,38 @@
               "data": {
                   "user_agent": "User-Agent",
                   "expose_mower": "Expose Indego mower as mower entity in HomeAssistant",
-                  "expose_vacuum": "Expose Indego mower as vacuum entity in HomeAssistant"
+                  "expose_vacuum": "Expose Indego mower as vacuum entity in HomeAssistant",
+                  "show_all_alerts": "Show the full alert history into HomeAssistant. This is not recommended for most users, it might have a significant impact on the HomeAssistant database size!"
               }
           }
       }
+    },
+    "entity": {
+        "binary_sensor": {
+            "indego_alert": {
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Number of alerts"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Error code (most recent)"
+                    },
+                    "last_alert_message": {
+                        "name": "Alert message (most recent)"
+                    },
+                    "last_alert_date": {
+                        "name": " Alert date (most recent)"
+                    },
+                    "last_alert_read": {
+                        "name": "Alert status (most recent)",
+                        "state": {
+                            "read": "Read",
+                            "unread": "Unread"
+                        }
+                    }
+                }
+            }
+        }
     },
     "services": {
         "command": {

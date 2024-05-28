@@ -30,17 +30,36 @@
               "description": "Geavanceerde instellingen van het Bosch Indego component. Mogelijk moet het component opnieuw geladen worden na het wijzigen van deze instellingen.",
               "data": {
                   "user_agent": "User-Agent",
-                    "expose_mower": "Voeg de Indego robotmaaier toe als grasmaaier entiteit aan HomeAssistant",
-                    "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan HomeAssistant"
+                  "expose_mower": "Voeg de Indego robotmaaier toe als grasmaaier entiteit aan HomeAssistant",
+                  "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan HomeAssistant",
+                  "show_all_alerts": "Toon de volledige melding/waarschuwing geschiedenis in HomeAssistant. Dit wordt niet aangeraden voor de meeste gebruikers, het heeft mogelijk een significante impact op de HomeAssistant database!"
               }
           }
       }
     },
     "entity": {
-        "sensor": {
+        "binary_sensor": {
             "indego_alert": {
-                "state": {
-                    "No problem": "Geen probleem"
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Aantal meldingen"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Foutcode (meest recente)"
+                    },
+                    "last_alert_message": {
+                        "name": "Melding (meest recente)"
+                    },
+                    "last_alert_date": {
+                        "name": "Datum melding (meest recente)"
+                    },
+                    "last_alert_read": {
+                        "name": "Status melding (meest recente)",
+                        "state": {
+                            "read": "Gelezen",
+                            "unread": "Ongelezen"
+                        }
+                    }
                 }
             }
         }

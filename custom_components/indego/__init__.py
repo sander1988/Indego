@@ -99,90 +99,8 @@ ENTITY_DEFINITIONS = {
         CONF_ICON: FUNC_ICON_MOWER_ALERT,
         CONF_DEVICE_CLASS: BinarySensorDeviceClass.PROBLEM,
         CONF_ATTR: ["alerts_count"],
+        CONF_TRANSLATION_KEY: "indego_alert",
     },
-    ENTITY_ALERT_PUSH: {
-        CONF_TYPE: BINARY_SENSOR_TYPE,
-        CONF_NAME: "alert push",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_ATTR: [],
-    },
-    ENTITY_ALERT_COUNT: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert count",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },  
-    ENTITY_ALERT_ID: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert id",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },   
-    ENTITY_ALERT_ERROR_CODE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert errorcode",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },   
-    ENTITY_ALERT_HEADLINE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert headline",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-        CONF_TRANSLATION_KEY: "indego_alert",
-    },   
-    ENTITY_ALERT_DATE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert date",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-        CONF_TRANSLATION_KEY: "indego_alert",
-    },   
-    ENTITY_ALERT_MESSAGE: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert message",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-        CONF_TRANSLATION_KEY: "indego_alert",
-    },   
-    ENTITY_ALERT_READ_STATUS: {  # TODO: Change to binary sensor? As it's true/false
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert read status",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },   
-    ENTITY_ALERT_FLAG: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert flag",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-    },   
-    ENTITY_ALERT_DESCRIPTION: {
-        CONF_TYPE: SENSOR_TYPE,
-        CONF_NAME: "alert description",
-        CONF_ICON: "mdi:alert-octagon-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: None,
-        CONF_ATTR: [],
-        CONF_TRANSLATION_KEY: "indego_alert",
-    },  
     ENTITY_MOWER_STATE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "mower state",
@@ -291,6 +209,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         {
             CONF_EXPOSE_INDEGO_AS_MOWER: entry.options.get(CONF_EXPOSE_INDEGO_AS_MOWER, False),
             CONF_EXPOSE_INDEGO_AS_VACUUM: entry.options.get(CONF_EXPOSE_INDEGO_AS_VACUUM, False),
+            CONF_SHOW_ALL_ALERTS: entry.options.get(CONF_SHOW_ALL_ALERTS, False),
         },
         hass,
         entry.options.get(CONF_USER_AGENT)
@@ -518,7 +437,8 @@ class IndegoHub:
                     entity[CONF_ICON],
                     entity[CONF_DEVICE_CLASS],
                     entity[CONF_ATTR],
-                    device_info
+                    device_info,
+                    translation_key=entity[CONF_TRANSLATION_KEY] if CONF_TRANSLATION_KEY in entity else None,
                 )
 
             elif entity[CONF_TYPE] == LAWN_MOWER_TYPE:
@@ -704,7 +624,6 @@ class IndegoHub:
     async def _update_operating_data(self):
         await self._indego_client.update_operating_data()
 
-        # dependent state updates
         _LOGGER.debug(f"Updating operating data")
         if self._indego_client.operating_data:
             self.entities[ENTITY_ONLINE].state = self._indego_client._online
@@ -714,7 +633,7 @@ class IndegoHub:
                 self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
 
             # dependent attribute updates
-            self.entities[ENTITY_BATTERY].add_attribute(
+            self.entities[ENTITY_BATTERY].add_attributes(
                 {
                     "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
                         "%Y-%m-%d %H:%M"
@@ -733,7 +652,6 @@ class IndegoHub:
     async def _update_state(self):
         await self._indego_client.update_state(longpoll=True, longpoll_timeout=230)
 
-        # dependent state updates
         if self._shutdown:
             return
 
@@ -751,7 +669,7 @@ class IndegoHub:
             self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
 
         # dependent attribute updates
-        self.entities[ENTITY_MOWER_STATE].add_attribute(
+        self.entities[ENTITY_MOWER_STATE].add_attributes(
             {
                 "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
                     "%Y-%m-%d %H:%M"
@@ -759,7 +677,7 @@ class IndegoHub:
             }
         )
 
-        self.entities[ENTITY_MOWER_STATE_DETAIL].add_attribute(
+        self.entities[ENTITY_MOWER_STATE_DETAIL].add_attributes(
             {
                 "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
                     "%Y-%m-%d %H:%M"
@@ -774,7 +692,7 @@ class IndegoHub:
         if ENTITY_LAWN_MOWER in self.entities:
             self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
 
-        self.entities[ENTITY_LAWN_MOWED].add_attribute(
+        self.entities[ENTITY_LAWN_MOWED].add_attributes(
             {
                 "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
                     "%Y-%m-%d %H:%M"
@@ -785,7 +703,7 @@ class IndegoHub:
             }
         )
 
-        self.entities[ENTITY_RUNTIME].add_attribute(
+        self.entities[ENTITY_RUNTIME].add_attributes(
             {
                 "total_operation_time_h": self._indego_client.state.runtime.total.operate,
                 "total_mowing_time_h": self._indego_client.state.runtime.total.cut,
@@ -796,7 +714,6 @@ class IndegoHub:
     async def _update_generic_data(self):
         await self._indego_client.update_generic_data()
 
-        # dependent state updates
         if self._indego_client.generic_data:
             if ENTITY_MOWING_MODE in self.entities:
                 self.entities[
@@ -808,50 +725,35 @@ class IndegoHub:
     async def _update_alerts(self):
         await self._indego_client.update_alerts()
 
-        # dependent state updates
+        self.entities[ENTITY_ALERT].state = self._indego_client.alerts_count > 0
+        self.entities[ENTITY_ALERT].set_attributes(
+            {
+                "alerts_count": self._indego_client.alerts_count
+            }
+        )
+
         if self._indego_client.alerts:
-            self.entities[ENTITY_ALERT].state = self._indego_client.alerts_count > 0
-            self.entities[ENTITY_ALERT_COUNT].state = self._indego_client.alerts_count
-            self.entities[ENTITY_ALERT_ID].state = self._indego_client.alerts[0].alert_id
-            self.entities[ENTITY_ALERT_ERROR_CODE].state = self._indego_client.alerts[0].error_code
-            self.entities[ENTITY_ALERT_HEADLINE].state = self._indego_client.alerts[0].headline
-            self.entities[ENTITY_ALERT_DATE].state = self._indego_client.alerts[0].date
-            self.entities[ENTITY_ALERT_MESSAGE].state = self._indego_client.alerts[0].message
-            self.entities[ENTITY_ALERT_READ_STATUS].state = self._indego_client.alerts[0].read_status
-            self.entities[ENTITY_ALERT_PUSH].state = self._indego_client.alerts[0].push
-            self.entities[ENTITY_ALERT_DESCRIPTION].state = self._indego_client.alerts[0].alert_description
-
-            self.entities[ENTITY_ALERT].add_attribute(
-                {"alerts_count": self._indego_client.alerts_count, }
-            )
-
-        else:
-            self.entities[ENTITY_ALERT].state = 0
-            self.entities[ENTITY_ALERT_COUNT].state = 0
-            self.entities[ENTITY_ALERT_ID].state = 0
-            self.entities[ENTITY_ALERT_ERROR_CODE].state = 0
-            self.entities[ENTITY_ALERT_HEADLINE].state = "No problem"
-            self.entities[ENTITY_ALERT_DATE].state = "No problem"
-            self.entities[ENTITY_ALERT_MESSAGE].state = "No problem"
-            self.entities[ENTITY_ALERT_READ_STATUS].state = False
-            self.entities[ENTITY_ALERT_PUSH].state = False
-            self.entities[ENTITY_ALERT_DESCRIPTION].state = "No problem"
-
-        j = len(self._indego_client.alerts)
-        # _LOGGER.info(f"Structuring ALERTS.{j}")
-        for i in range(j):
-            self.entities[ENTITY_ALERT].add_attribute(
+            self.entities[ENTITY_ALERT].add_attributes(
                 {
-                    self._indego_client.alerts[i].date.strftime("%Y-%m-%d %H:%M"): str(
-                        self._indego_client.alerts[i].alert_description
-                    ),
+                    "alerts_count": self._indego_client.alerts_count,
+                    "last_alert_error_code": self._indego_client.alerts[0].error_code,
+                    "last_alert_message": self._indego_client.alerts[0].message,
+                    "last_alert_date": self._indego_client.alerts[0].date.strftime("%Y-%m-%d %H:%M:%S"),
+                    "last_alert_read": self._indego_client.alerts[0].read_status,
                 }
             )
+
+            # It's not recommended to track full alerts, disabled by default.
+            # See the developer docs: https://developers.home-assistant.io/docs/core/entity/
+            if self._features[CONF_SHOW_ALL_ALERTS]:
+                for index, alert in enumerate(self._indego_client.alerts):
+                    self.entities[ENTITY_ALERT].add_attributes({
+                        ("alert_%i" % index): "%s: %s" % (alert.date.strftime("%Y-%m-%d %H:%M:%S"), alert.message)
+                    })
 
     async def _update_updates_available(self):
         await self._indego_client.update_updates_available()
 
-        # dependent state updates
         self.entities[ENTITY_UPDATE_AVAILABLE].state = self._indego_client.update_available
 
     async def _update_last_completed_mow(self):
@@ -862,7 +764,7 @@ class IndegoHub:
                 ENTITY_LAST_COMPLETED
             ].state = self._indego_client.last_completed_mow.isoformat()
 
-            self.entities[ENTITY_LAST_COMPLETED].add_attribute(
+            self.entities[ENTITY_LAST_COMPLETED].add_attributes(
                 {
                     "last_completed_mow": self._indego_client.last_completed_mow.strftime(
                         "%Y-%m-%d %H:%M"
@@ -870,7 +772,7 @@ class IndegoHub:
                 }
             )
 
-            self.entities[ENTITY_LAWN_MOWED].add_attribute(
+            self.entities[ENTITY_LAWN_MOWED].add_attributes(
                 {
                     "last_completed_mow": self._indego_client.last_completed_mow.strftime(
                         "%Y-%m-%d %H:%M"
@@ -884,11 +786,11 @@ class IndegoHub:
         if self._indego_client.next_mow:
             self.entities[ENTITY_NEXT_MOW].state = self._indego_client.next_mow.isoformat()
 
-            self.entities[ENTITY_NEXT_MOW].add_attribute(
+            self.entities[ENTITY_NEXT_MOW].add_attributes(
                 {"next_mow": self._indego_client.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
 
-            self.entities[ENTITY_LAWN_MOWED].add_attribute(
+            self.entities[ENTITY_LAWN_MOWED].add_attributes(
                 {"next_mow": self._indego_client.next_mow.strftime("%Y-%m-%d %H:%M")}
             )
 

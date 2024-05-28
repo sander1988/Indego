@@ -40,7 +40,7 @@ async def async_setup_entry(
 class IndegoBinarySensor(IndegoEntity, BinarySensorEntity):
     """Class for Indego Binary Sensors."""
 
-    def __init__(self, entity_id, name, icon, device_class, attributes, device_info: DeviceInfo):
+    def __init__(self, entity_id, name, icon, device_class, attributes, device_info: DeviceInfo, translation_key: str = None):
         """Initialize a binary sensor.
 
         Args:
@@ -54,6 +54,7 @@ class IndegoBinarySensor(IndegoEntity, BinarySensorEntity):
 
         self._device_class = device_class
         self._is_on = None
+        self._attr_translation_key = translation_key
 
     async def async_added_to_hass(self):
         """Add sensor to HASS."""

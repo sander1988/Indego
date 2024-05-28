@@ -46,9 +46,17 @@ class IndegoEntity(RestoreEntity):
         """Return attributes."""
         return self._attr
 
-    def add_attribute(self, attr: dict):
+    def add_attributes(self, attr: dict):
         """Update attributes."""
         self._attr.update(attr)
+
+    def set_attributes(self, attr: dict):
+        """Update attributes."""
+        self._attr = attr
+
+    def clear_attributes(self):
+        """Clear attributes."""
+        self._attr = None
 
     @property
     def unique_id(self) -> str:
