@@ -31,16 +31,35 @@
                 "data": {
                     "user_agent": "User-Agent",
                     "expose_mower": "Indego Mähroboter als Mower Entität in HomeAssistant anlegen",
-                    "expose_vacuum": "Indego Mähroboter als Vacuum Entität in HomeAssistant anlegen"
+                    "expose_vacuum": "Indego Mähroboter als Vacuum Entität in HomeAssistant anlegen",
+                    "show_all_alerts": "Zeige den kompletten Alarm Verlauf in HomeAssistant. Dies wird für die meisten Nutzer nicht empfohlen, da es signifikanten Einfluss auf die Größe der HomeAssistant Datenbank haben kann."
                 }
             }
         }
     },
     "entity": {
-        "sensor": {
+        "binary_sensor": {
             "indego_alert": {
-                "state": {
-
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Anzahl der Alarme"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Error Code (letztes Auftreten)"
+                    },
+                    "last_alert_message": {
+                        "name": "Alarm Nachricht (letztes Auftreten)"
+                    },
+                    "last_alert_date": {
+                        "name": " Alarm Datum (letztes Auftreten)"
+                    },
+                    "last_alert_read": {
+                        "name": "Alarm Status (letztes Auftreten)",
+                        "state": {
+                            "read": "Gelesen",
+                            "unread": "Ungelesen"
+                        }
+                    }
                 }
             }
         }
