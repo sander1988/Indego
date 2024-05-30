@@ -7,7 +7,7 @@ OAUTH2_AUTHORIZE: Final = "https://prodindego.b2clogin.com/prodindego.onmicrosof
 OAUTH2_TOKEN: Final = "https://prodindego.b2clogin.com/prodindego.onmicrosoft.com/b2c_1a_signup_signin/oauth2/v2.0/token"
 OAUTH2_CLIENT_ID: Final = "65bb8c9d-1070-4fb4-aa95-853618acc876"
 
-STATUS_UPDATE_FAILURE_DELAY_TIME: Final = 60
+STATUS_UPDATE_FAILURE_DELAY_TIME: Final = [0, 10, 30, 60]
 
 DATA_UPDATED: Final = f"{DOMAIN}_data_updated"
 

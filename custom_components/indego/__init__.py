@@ -90,7 +90,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: BINARY_SENSOR_TYPE,
         CONF_NAME: "update available",
         CONF_ICON: "mdi:download-outline",
-        CONF_DEVICE_CLASS: None,
+        CONF_DEVICE_CLASS: BinarySensorDeviceClass.UPDATE,
         CONF_ATTR: [],
     },
     ENTITY_ALERT: {
@@ -226,8 +226,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     try:
         await indego_hub.update_generic_data_and_load_platforms(load_platforms)
-    except AttributeError as e:
-        _LOGGER.warning("Login unsuccessful: %s", e)
+    except AttributeError as exc:
+        _LOGGER.warning("Login unsuccessful: %s", str(exc))
         return False
 
     def find_instance_for_mower_service_call(call):
@@ -392,6 +392,7 @@ class IndegoHub:
         self._shutdown = False
         self._latest_alert = None
         self.entities = {}
+        self._update_fail_count = None
 
         async def async_token_refresh() -> str:
             await session.async_ensure_token_valid()
@@ -410,7 +411,6 @@ class IndegoHub:
         """Send a mower command to the Indego client."""
         _LOGGER.debug("Sending command to mower (%s): '%s'", self._serial, command)
         await self._indego_client.put_command(command)
-        await self._update_state()
 
     def _create_entities(self, device_info):
         """Create sub-entities and add them to Hass."""
@@ -492,6 +492,7 @@ class IndegoHub:
         """Do the initial update and create all entities."""
         _LOGGER.debug("Starting initial update.")
 
+        self.set_online_state(False)
         await self._create_refresh_state_task()
         await asyncio.gather(*[self.refresh_10m(), self.refresh_24h()])
 
@@ -499,8 +500,8 @@ class IndegoHub:
             _LOGGER.debug("Refreshing initial operating data.")
             await self._update_operating_data()
 
-        except Exception as e:
-            _LOGGER.warning("Update operating data got an exception: %s", e)
+        except Exception as exc:
+            _LOGGER.warning("Error %s for while performing initial update", str(exc))
 
     async def async_shutdown(self, _=None):
         """Remove all future updates, cancel tasks and close the client."""
@@ -533,18 +534,23 @@ class IndegoHub:
 
         update_failed = False
         try:
-            await self._update_state()
+            await self._update_state(longpoll=(self._update_fail_count is None or self._update_fail_count == 0))
+            self._update_fail_count = 0
 
         except Exception as exc:
             update_failed = True
-            _LOGGER.warning("Mower state update failed, reason: %s", exc)
+            _LOGGER.warning("Mower state update failed, reason: %s", str(exc))
+            self.set_online_state(False)
 
         if self._shutdown:
             return
 
         if update_failed:
-            _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME)
-            when = datetime.now() + timedelta(seconds=STATUS_UPDATE_FAILURE_DELAY_TIME)
+            if self._update_fail_count is None:
+                self._update_fail_count = 1
+            _LOGGER.debug("Delaying next status update with %i seconds due to previous failure...", STATUS_UPDATE_FAILURE_DELAY_TIME[self._update_fail_count])
+            when = datetime.now() + timedelta(seconds=STATUS_UPDATE_FAILURE_DELAY_TIME[self._update_fail_count])
+            self._update_fail_count = min(self._update_fail_count + 1, len(STATUS_UPDATE_FAILURE_DELAY_TIME) - 1)
             self._unsub_refresh_state = async_track_point_in_time(self._hass, self._create_refresh_state_task, when)
             return
 
@@ -556,7 +562,7 @@ class IndegoHub:
                     await self._update_operating_data()
 
                 except Exception as exc:
-                    _LOGGER.warning("Mower operating data update failed, reason: %s", exc)
+                    _LOGGER.warning("Mower operating data update failed, reason: %s", str(exc))
 
             if self._indego_client.state.error != self._latest_alert:
                 self._latest_alert = self._indego_client.state.error
@@ -565,7 +571,7 @@ class IndegoHub:
                     await self._update_alerts()
 
                 except Exception as exc:
-                    _LOGGER.warning("Mower alerts update failed, reason: %s", exc)
+                    _LOGGER.warning("Mower alerts update failed, reason: %s", str(exc))
 
         await self._create_refresh_state_task()
 
@@ -601,8 +607,8 @@ class IndegoHub:
             if res and isinstance(res, BaseException):
                 try:
                     raise res
-                except Exception as e:
-                    _LOGGER.warning("Uncaught error: %s on index: %s", e, index)
+                except Exception as exc:
+                    _LOGGER.warning("Error %s for index %i while performing 10m update", str(exc), index)
             index += 1
 
         self._refresh_10m_remover = async_call_later(
@@ -616,8 +622,8 @@ class IndegoHub:
         try:
             await self._update_updates_available()
 
-        except Exception as e:
-            _LOGGER.warning("Update updates available got an exception: %s", e)
+        except Exception as exc:
+            _LOGGER.warning("Error %s while performing 24h update", str(exc))
 
         self._refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
@@ -626,13 +632,11 @@ class IndegoHub:
 
         _LOGGER.debug(f"Updating operating data")
         if self._indego_client.operating_data:
-            self.entities[ENTITY_ONLINE].state = self._indego_client._online
             self.entities[ENTITY_BATTERY].state = self._indego_client.operating_data.battery.percent_adjusted
 
             if ENTITY_VACUUM in self.entities:
                 self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
 
-            # dependent attribute updates
             self.entities[ENTITY_BATTERY].add_attributes(
                 {
                     "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
@@ -646,18 +650,30 @@ class IndegoHub:
                 }
             )
 
-        else:
-            self.entities[ENTITY_ONLINE].state = self._indego_client._online
+    def set_online_state(self, online: bool):
+        _LOGGER.debug("Set online state: %s", online)
 
-    async def _update_state(self):
-        await self._indego_client.update_state(longpoll=True, longpoll_timeout=230)
+        self.entities[ENTITY_ONLINE].state = online
+        self.entities[ENTITY_MOWER_STATE].set_cloud_connection_state(online)
+        self.entities[ENTITY_MOWER_STATE_DETAIL].set_cloud_connection_state(online)
+
+        if ENTITY_VACUUM in self.entities:
+            self.entities[ENTITY_VACUUM].set_cloud_connection_state(online)
+
+        if ENTITY_LAWN_MOWER in self.entities:
+            self.entities[ENTITY_LAWN_MOWER].set_cloud_connection_state(online)
+
+    async def _update_state(self, longpoll: bool = True):
+        await self._indego_client.update_state(longpoll=longpoll, longpoll_timeout=230)
 
         if self._shutdown:
             return
 
         if not self._indego_client.state:
+            self.set_online_state(False)
             return  # State update failed
 
+        self.set_online_state(self._indego_client.online)
         self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
         self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
         self.entities[ENTITY_LAWN_MOWED].state = self._indego_client.state.mowed
@@ -665,10 +681,7 @@ class IndegoHub:
         self.entities[ENTITY_BATTERY].charging = (
             True if self._indego_client.state_description_detail == "Charging" else False
         )
-        if ENTITY_VACUUM in self.entities:
-            self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
 
-        # dependent attribute updates
         self.entities[ENTITY_MOWER_STATE].add_attributes(
             {
                 "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
@@ -686,11 +699,6 @@ class IndegoHub:
                 "state_description": self._indego_client.state_description_detail,
             }
         )
-
-        if ENTITY_VACUUM in self.entities:
-            self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
-        if ENTITY_LAWN_MOWER in self.entities:
-            self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
 
         self.entities[ENTITY_LAWN_MOWED].add_attributes(
             {
@@ -710,6 +718,13 @@ class IndegoHub:
                 "total_charging_time_h": self._indego_client.state.runtime.total.charge,
             }
         )
+
+        if ENTITY_VACUUM in self.entities:
+            self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
+            self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
+
+        if ENTITY_LAWN_MOWER in self.entities:
+            self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
 
     async def _update_generic_data(self):
         await self._indego_client.update_generic_data()
