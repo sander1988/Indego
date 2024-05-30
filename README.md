@@ -116,19 +116,13 @@ Example for automations.yaml:
 ```
 
 ## Debugging
-To get debug logs from the component in your log file, specify theese options in your configuration file:
+To see the debug logs from the component (and the pyIndego library) in your log file, specify theese options in your configuration file:
 
 ``` yaml
 #configuration.yaml
 logger:
   logs: 
     custom_components.indego: debug
-    pyIndego: debug
-```
-
-To get debug logs from the python API library in your log file, add this line to your configuration file in additon to the lines above:
-
-``` yaml
     pyIndego: debug
 ```
 
