@@ -65,14 +65,9 @@ labels: bug
   If your issue is about gettings errors, API connection failures etc. include the relevant HomeAssitant logs (in text, no screenshot).
   Logs are required to investigate this type of issues.
 
-  Make sure you add logs in debug mode when there is no clear error message or root cause. You can enable debug logs by adding this to your HomeAssistant configuration:
-
-  logger:
-    logs:
-      custom_components.indego: debug
-      pyIndego: debug
--->
-
+  Make sure you add logs in debug mode when there is no clear error message or root cause.
+  See https://github.com/jm-73/Indego/blob/master/README.md#debugging on how to enable the debug logs.
+  
 ```yaml
 Paste the logs here.
 ```
