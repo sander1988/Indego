@@ -70,7 +70,7 @@ You can add this integration multiple times in case you own multiple Indego mowe
 
 
 ## Service
-This is list might incomplete. You can find all services provided by this component in HomeAssistant under Developer tools > Services and search for 'Bosch Indego Mower'.
+This list might incomplete. You can find all services provided by this component in HomeAssistant under Developer tools > Services and search for 'Bosch Indego Mower'.
 
 ### indego.command ####
 Sends a command to the mower. Example code:<br>
