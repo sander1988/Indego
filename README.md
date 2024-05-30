@@ -64,12 +64,13 @@ You can add this integration multiple times in case you own multiple Indego mowe
 ***Last completed mow***<br>Shows when the lawn was completed last time. | ![Last mow](/doc/8-LastCompleted_3.png)
 ***Next mow time***<br>Show the next planned mow. | ![Next mow](/doc/9-NextMow_3.png)
 ***Mowing mode***<br>Shows the mowing mode set. | ![Mowing mode](/doc/10-MowingMode_2.png)
-***Online***<br>Shows if the mower is online/offline/sleeping. Possble values:<br> *True, False* | ![Online status](/doc/11-Online_3.png)
+***Online***<br>Shows if the mower is online/offline. Possble values:<br> *True, False* | ![Online status](/doc/11-Online_3.png)
 ***Update available***<br>Shows if there is an update available for the firmware. Possble values:<br> *On, Off* | ![Update available](/doc/12-Update_4.png)
 
 
 
 ## Service
+This is list might incomplete. You can find all services provided by this component in HomeAssistant under Developer tools > Services and search for 'Bosch Indego Mower'.
 
 ### indego.command ####
 Sends a command to the mower. Example code:<br>
@@ -119,10 +120,10 @@ To get debug logs from the component in your log file, specify theese options in
 
 ``` yaml
 #configuration.yaml
-logger: 
-  default: critical 
+logger:
   logs: 
-    custom_components.indego: debug 
+    custom_components.indego: debug
+    pyIndego: debug
 ```
 
 To get debug logs from the python API library in your log file, add this line to your configuration file in additon to the lines above:
@@ -152,8 +153,8 @@ As known today the following models are supported:
 If you experience any readings from your mower that the sensor does not read out correct (could be Alerts or mower state), please dont hesitate to write an issue. I need your input in order to make this component as useful as possible. All suggestions are welcome!
 
 ## Known issues
-Password cannot contain dashes (-).
-If serial begins with an (0) the serial needs to be quoted in secrets.yaml. Se example above under Configuration.
+* A special [Chrome plugin](#installing-the-chrome-extension) is required to complete the account linking in HomeAssistant.
+* The Bosch Cloud (running on Azure) might block this integration from time to time (errors like 'The connection to the Bosch Indego API failed!'). This might happen during component setup or during state updates. In that case you might be able to workaround the issue by changing the user agent (using the Configuration panel in HomeAssistant of this component).
 
 ## New issues
 If you experience issues/bugs with this the best way to report them is to open an issue in **this** repo.
