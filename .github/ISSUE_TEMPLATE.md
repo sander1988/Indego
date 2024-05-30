@@ -7,7 +7,8 @@ labels: bug
 <!-- READ THIS FIRST:
 - Make sure you are running the latest release of the Indego component
 - Make sure you are running the latest version of Home Assistant before reporting an issue: https://github.com/home-assistant/home-assistant/releases
-- Provide as many details as possible. **Paste logs**, configuration samples and code into the backticks.
+- Include logs where possible. But make sure you replace/hide any senstitive information
+- Provide as many details as possible. Paste logs, configuration samples and code into the backticks.
 -->
 
 ## Checklist
