@@ -1,25 +1,25 @@
 {
     "config": {
         "abort": {
-            "already_configured": "Dieser Bosch Indego mower wurde bereits konfiguriert!",
+            "already_configured": "Dieser Bosch Indego Mähroboter wurde bereits konfiguriert!",
             "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen!",
-            "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mäher gefunden!"
+            "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mähroboter gefunden!"
         },
         "step": {
             "advanced": {
                 "data": {
                     "user_agent": "User-Agent",
-                    "expose_mower": "Indego Mäher als Mower Entität in HomeAssistant anlegen",
-                    "expose_vacuum": "Indego Mäher als Vacuum Entität in HomeAssistant anlegen"
+                    "expose_mower": "Indego Mähroboter als Mower Entität in HomeAssistant anlegen",
+                    "expose_vacuum": "Indego Mähroboter als Vacuum Entität in HomeAssistant anlegen"
                 },
                 "description": "Erweiterte Einstellung des Bosch Indego Component. Kann für die meisten Benutzer unverändert gelassen werden."
             },
             "mower": {
                 "data": {
-                    "mower_serial": "Mäher Seriennummer",
-                    "mower_name": "Mäher Name"
+                    "mower_serial": "Mähroboter Seriennummer",
+                    "mower_name": "Mähroboter Name"
                 },
-                "description": "Bitte die Seriennummer des Bosch Mähers, der hinzugefügt werden soll, auswählen."
+                "description": "Bitte die Seriennummer des Bosch Mähroboters, der hinzugefügt werden soll, auswählen."
             }
         }
     },
@@ -30,30 +30,49 @@
                 "description": "Erweiterte Einstellung des Bosch Indego Component.",
                 "data": {
                     "user_agent": "User-Agent",
-                    "expose_mower": "Indego Mäher als Mower Entität in HomeAssistant anlegen",
-                    "expose_vacuum": "Indego Mäher als Vacuum Entität in HomeAssistant anlegen"
+                    "expose_mower": "Indego Mähroboter als Mower Entität in HomeAssistant anlegen",
+                    "expose_vacuum": "Indego Mähroboter als Vacuum Entität in HomeAssistant anlegen",
+                    "show_all_alerts": "Zeige den kompletten Alarm Verlauf in HomeAssistant. Dies wird für die meisten Nutzer nicht empfohlen, da es signifikanten Einfluss auf die Größe der HomeAssistant Datenbank haben kann."
                 }
             }
         }
     },
     "entity": {
-        "sensor": {
+        "binary_sensor": {
             "indego_alert": {
-                "state": {
-
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Anzahl der Alarme"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Error Code (letztes Auftreten)"
+                    },
+                    "last_alert_message": {
+                        "name": "Alarm Nachricht (letztes Auftreten)"
+                    },
+                    "last_alert_date": {
+                        "name": " Alarm Datum (letztes Auftreten)"
+                    },
+                    "last_alert_read": {
+                        "name": "Alarm Status (letztes Auftreten)",
+                        "state": {
+                            "read": "Gelesen",
+                            "unread": "Ungelesen"
+                        }
+                    }
                 }
             }
         }
     },
     "services": {
         "command": {
-            "description": "Befehle an den Mäher senden. Möglich Befehle sind mow, returnToDock und pause.",
+            "description": "Befehle an den Mähroboter senden. Möglich Befehle sind mow, returnToDock und pause.",
             "fields": {
                 "mower_serial": {
-                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "command": {
-                    "description": "Befehl für den Mäher."
+                    "description": "Befehl für den Mähroboter."
                 }
             }
         },
@@ -61,7 +80,7 @@
             "description": "SmartMowing aktivieren oder deaktivieren. Mögliche Befehle sind true oder false.",
             "fields": {
                 "mower_serial": {
-                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "enable": {
                     "description": "SmartMowing aktivieren."
@@ -72,7 +91,7 @@
             "description": "Löscht den ausgewählten Fehler.",
             "fields": {
                 "mower_serial": {
-                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "alert_index": {
                     "description": "Den ausgewählten Fehler löschen. Mit 0 wird der letzte/aktuellste Fehler gelöscht."
@@ -83,7 +102,7 @@
             "description": "Löscht alle Fehler.",
             "fields": {
                 "mower_serial": {
-                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 }
             }
         },
@@ -91,7 +110,7 @@
             "description": "Markiert den ausgewählten Fehler als gelesen.",
             "fields": {
                 "mower_serial": {
-                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "alert_index": {
                     "description": "Den ausgewählten Fehler als gelesen markieren. Mit 0 wird der letzte/aktuellste Fehler ausgewählt."
@@ -102,7 +121,7 @@
             "description": "Markiert alle Fehler als gelesen.",
             "fields": {
                 "mower_serial": {
-                    "description": "Seriennummer des Mähers. Wird nur benötigt wenn mehrere Mäher eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 }
             }
         }
