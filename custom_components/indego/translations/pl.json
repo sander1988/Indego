@@ -1,17 +1,128 @@
 {
     "config": {
         "abort": {
-            "already_configured": "Ta kosiarka Bosch Indego została już skonfigurowana wcześniej!",
+            "already_configured": "Ta kosiarka Bosch Indego została już wcześniej skonfigurowana!",
             "connection_error": "Błąd połączenia z Bosch Indego API!",
-            "no_mowers_found": "Nie znaleziono żadnej kosiarki na tym koncie Bosch Indego!"
+            "no_mowers_found": "Na tym koncie Bosch Indego nie znaleziono żadnej kosiarki!"
         },
         "step": {
+            "advanced": {
+                "data": {
+                    "user_agent": "User-Agent",
+                    "expose_mower": "Wyświetl kosiarkę Indego jako encję kosiarki w HomeAssistant",
+                    "expose_vacuum": "Wyświetl kosiarkę Indego jako encję odkurzacza w HomeAssistant"
+                },
+                "description": "Ustawienia zaawansowane komponentu Bosch Indego. Większość użytkowników może pozostawić je bez zmian."
+            },
             "mower": {
                 "data": {
                     "mower_serial": "Numer seryjny kosiarki",
                     "mower_name": "Nazwa kosiarki"
                 },
                 "description": "Proszę wybrać numer seryjny kosiarki Bosch którą chcesz dodać."
+            }
+        }
+    },
+    "options": {
+      "step": {
+          "init": {
+              "title": "Ustawienia zaawansowane",
+              "description": "Ustawienia zaawansowane komponentu Bosch Indego. Po zmianie tych ustawień może być konieczne ponowne załadowanie komponentu.",
+              "data": {
+                  "user_agent": "User-Agent",
+                  "expose_mower": "Wyświetl kosiarkę Indego jako encję kosiarki w HomeAssistant",
+                  "expose_vacuum": "Wyświetl kosiarkę Indego jako encję odkurzacza w HomeAssistant",
+                  "show_all_alerts": "Pokaż pełną historię alertów w HomeAssistant. Nie rekomendowane dla większości użytkowników, może mieć wpływ na znaczące zwiększenie rozmiaru bazy danych HomeAssistant!"
+              }
+          }
+      }
+    },
+    "entity": {
+        "binary_sensor": {
+            "indego_alert": {
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Liczba alertów"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Kod ostatniego błędu"
+                    },
+                    "last_alert_message": {
+                        "name": "Treść ostatniegoalertu"
+                    },
+                    "last_alert_date": {
+                        "name": "Data ostatniego alertu"
+                    },
+                    "last_alert_read": {
+                        "name": "Status ostatniego alertu",
+                        "state": {
+                            "read": "Odczytany",
+                            "unread": "Nieodczytany"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "services": {
+        "command": {
+            "description": "Wyślij polecenie do kosiarki. Dostępne polecenia to: mow, returnToDock oraz pause.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
+                },
+                "command": {
+                    "description": "Polecenie do wysłania do kosiarki."
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "Włącz lub wyłącz tryb SmartMowing. Dostępne polecenia to true lub false.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
+                },
+                "enable": {
+                    "description": "Włącz tryb SmartMowing."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Usuń zaznaczony alert.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
+                },
+                "alert_index": {
+                    "description": "Usuń zaznaczony alert. 0 dla ostatniego alertu."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Usuń wszystkie alerty.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
+                }
+            }
+        },
+        "read_alert": {
+            "description": "Oznacz alert jako przeczytany.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
+                },
+                "alert_index": {
+                    "description": "Oznacz wybrany alert jako przeczytany. 0 dla ostatniego alertu."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Oznacz wszystkie alerty jako przeczytane.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
+                }
             }
         }
     }

@@ -1,0 +1,129 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Cette tondeuse Bosch Indego a déjà été configurée !",
+            "connection_error": "La connexion à l'API Bosch Indego a échoué !",
+            "no_mowers_found": "Aucune tondeuse n'a été trouvée sur ce compte Bosch Indego !"
+        },
+        "step": {
+            "advanced": {
+                "data": {
+                    "user_agent": "User-Agent",
+                    "expose_mower": "Exposer la tondeuse Indego comme une entité tondeuse dans HomeAssistant",
+                    "expose_vacuum": "Exposer la tondeuse Indego comme une entité aspirateur dans HomeAssistant"
+                },
+                "description": "Réglages avancés du composant Bosch Indego. Peuvent être laissés inchangés pour la plupart des utilisateurs."
+            },
+            "mower": {
+                "data": {
+                    "mower_serial": "Numéro de série de la tondeuse",
+                    "mower_name": "Nom de la tondeuse"
+                },
+                "description": "Sélectionez le numéro de série de la tondeuse Bosch que vous souhaitez ajouter."
+            }
+        }
+    },
+    "options": {
+      "step": {
+          "init": {
+              "title": "Réglages avancés",
+              "description": "Réglages avancés du composant Bosch Indego. Vous devrez recharger le composant après avoir changé ces paramètres.",
+              "data": {
+                  "user_agent": "User-Agent",
+                  "expose_mower": "Exposer la tondeuse Indego comme une entité tondeuse dans HomeAssistant",
+                  "expose_vacuum": "Exposer la tondeuse Indego comme une entité aspirateur dans HomeAssistant",
+                  "show_all_alerts": "Montrer l'historique complet des alertes dans HomeAssistant. Non recommandé pour la plupart des utilisateurs, l'impact sur la taille de la base de données HomeAssistant peut être assez important!"
+              }
+          }
+      }
+    },
+    "entity": {
+        "binary_sensor": {
+            "indego_alert": {
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Nombre d'alertes"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Code erreur (plus récent)"
+                    },
+                    "last_alert_message": {
+                        "name": "Message d'alerte (plus récent)"
+                    },
+                    "last_alert_date": {
+                        "name": " Date de l'alerte (plus récent)"
+                    },
+                    "last_alert_read": {
+                        "name": "Statut de l'alerte (plus récent)",
+                        "state": {
+                            "read": "Lues",
+                            "unread": "Non lues"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "services": {
+        "command": {
+            "description": "Envoyer des commandes à la tondeuse. Les commandes autorisées sont mow (tondre), returnToDock (retour à la station de charge) et pause.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
+                },
+                "command": {
+                    "description": "Commande pour la tondeuse."
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "Activer ou Désactiver le SmartMowing. Les commandes autorisées sont true (activé) ou false (déactivé).",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
+                },
+                "enable": {
+                    "description": "Activer SmartMowing."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Effacer l'alerte sélectionnée.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
+                },
+                "alert_index": {
+                    "description": "Effacer l'alerte sélectionnée. 0 pour la dernière alerte."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Effacer toutes les alertes.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
+                }
+            }
+        },
+        "read_alert": {
+            "description": "Marquer l'alerte sélectionnée comme lue.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
+                },
+                "alert_index": {
+                    "description": "Marquer l'alerte sélectionnée comme lue. 0 pour la dernière alerte."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Marquer toutes les alertes comme lues.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
+                }
+            }
+        }
+    }
+}
