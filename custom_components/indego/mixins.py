@@ -47,21 +47,34 @@ class IndegoEntity(RestoreEntity):
         """Return attributes."""
         return self._attr
 
-    def add_attributes(self, attr: dict):
+    def add_attributes(self, attr: dict, sync_state: bool = True):
         """Update attributes."""
         self._attr.update(attr)
-        self.async_schedule_update_ha_state()
+        if sync_state:
+            self.async_schedule_update_ha_state()
 
-    def set_attributes(self, attr: dict):
+    def set_attributes(self, attr: dict, sync_state: bool = True):
         """Update attributes."""
         self._attr = attr
-        self.async_schedule_update_ha_state()
+        if sync_state:
+            self.async_schedule_update_ha_state()
 
-    def clear_attributes(self):
+    def clear_attributes(self, sync_state: bool = True):
         """Clear attributes."""
         if self._attr is not None:
             self._attr = None
+            if sync_state:
+                self.async_schedule_update_ha_state()
+
+    def clear_attribute(self, key: str, sync_state: bool = True) -> bool:
+        """Clear a single attribute."""
+        if self._attr is None or key not in self._attr:
+            return False
+
+        del self._attr[key]
+        if sync_state:
             self.async_schedule_update_ha_state()
+        return True
 
     def set_cloud_connection_state(self, state: bool):
         """Set the cloud connection state."""

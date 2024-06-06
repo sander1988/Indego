@@ -741,11 +741,6 @@ class IndegoHub:
         await self._indego_client.update_alerts()
 
         self.entities[ENTITY_ALERT].state = self._indego_client.alerts_count > 0
-        self.entities[ENTITY_ALERT].set_attributes(
-            {
-                "alerts_count": self._indego_client.alerts_count
-            }
-        )
 
         if self._indego_client.alerts:
             self.entities[ENTITY_ALERT].add_attributes(
@@ -755,16 +750,32 @@ class IndegoHub:
                     "last_alert_message": self._indego_client.alerts[0].message,
                     "last_alert_date": self._indego_client.alerts[0].date.strftime("%Y-%m-%d %H:%M:%S"),
                     "last_alert_read": self._indego_client.alerts[0].read_status,
-                }
+                }, False
             )
 
             # It's not recommended to track full alerts, disabled by default.
             # See the developer docs: https://developers.home-assistant.io/docs/core/entity/
             if self._features[CONF_SHOW_ALL_ALERTS]:
+                alert_index = 0
                 for index, alert in enumerate(self._indego_client.alerts):
                     self.entities[ENTITY_ALERT].add_attributes({
                         ("alert_%i" % index): "%s: %s" % (alert.date.strftime("%Y-%m-%d %H:%M:%S"), alert.message)
-                    })
+                    }, False)
+                    alert_index = index
+
+                # Clear any other alerts that no longer exist.
+                alert_index += 1
+                while self.entities[ENTITY_ALERT].clear_attribute("alert_%i" % alert_index, False):
+                    alert_index += 1
+
+            self.entities[ENTITY_ALERT].async_schedule_update_ha_state()
+
+        else:
+            self.entities[ENTITY_ALERT].set_attributes(
+                {
+                    "alerts_count": self._indego_client.alerts_count
+                }
+            )
 
     async def _update_updates_available(self):
         await self._indego_client.update_updates_available()
