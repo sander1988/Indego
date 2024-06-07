@@ -15,7 +15,8 @@ labels: bug
 
 - [ ] I have updated to the latest available of the Indego component version.
 - [ ] I have updated to the latest available Home Assistant version.
-- [ ] I have read the readme and checked for other open or recently closed issues for similar bugs/issues.
+- [ ] I have read the README https://github.com/jm-73/Indego/blob/master/README.md) and especially read the part about the KNOWN ISSUES (https://github.com/jm-73/Indego/blob/master/README.md#known-issues).
+- [ ] I have checked hecked for other open or recently closed issues for similar bugs/issues.
 
 ## The problem
 
