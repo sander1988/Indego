@@ -28,6 +28,14 @@ class IndegoEntity(RestoreEntity):
         self._should_poll = False
 
     @callback
+    def async_write_ha_state(self) -> None:
+        """Prevent write state calls when the entity is disabled."""
+        if not self.enabled:
+            _LOGGER.debug("%s is disabled, preventing HA state update", self.entity_id)
+            return
+        super().async_write_ha_state()
+
+    @callback
     def _schedule_immediate_update(self):
         """Schedule update."""
         self.async_schedule_update_ha_state(True)

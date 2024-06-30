@@ -7,6 +7,6 @@
   "codeowners": ["@jm-73", "@eavanvalkenburg", "@sander1988"],
   "requirements": ["git+https://github.com/jm-73/pyIndego.git@3.2.0"],
   "iot_class": "cloud_push",
-  "version": "5.7.0",
+  "version": "5.7.1",
   "loggers": ["custom_components.indego", "pyIndego"]
 }

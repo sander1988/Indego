@@ -540,6 +540,7 @@ class IndegoHub:
         except Exception as exc:
             update_failed = True
             _LOGGER.warning("Mower state update failed, reason: %s", str(exc))
+            #_LOGGER.exception(exc)
             self.set_online_state(False)
 
         if self._shutdown:
