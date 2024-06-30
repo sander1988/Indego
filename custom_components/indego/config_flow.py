@@ -11,7 +11,6 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.config_entries import OptionsFlowWithConfigEntry, ConfigEntry
 from homeassistant.core import callback
 
-from pyIndego.const import DEFAULT_HEADERS
 from pyIndego import IndegoAsyncClient
 
 from .const import (
@@ -24,6 +23,8 @@ from .const import (
     CONF_USER_AGENT,
     OAUTH2_CLIENT_ID,
     HTTP_HEADER_USER_AGENT,
+    HTTP_HEADER_USER_AGENT_DEFAULT,
+    HTTP_HEADER_USER_AGENT_DEFAULTS
 )
 
 _LOGGER: Final = logging.getLogger(__name__)
@@ -32,11 +33,19 @@ _LOGGER: Final = logging.getLogger(__name__)
 def default_user_agent_in_config(config: dict) -> bool:
     if CONF_USER_AGENT not in config:
         return True
+
     if config[CONF_USER_AGENT] is None:
         return True
+
     if config[CONF_USER_AGENT] == "":
         return True
-    return config[CONF_USER_AGENT] == DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT]
+
+    for default_header in HTTP_HEADER_USER_AGENT_DEFAULTS:
+        # Not perfect, but the best what we can do...
+        # Test for exact match and header + space, which probably has the version suffix.
+        if config[CONF_USER_AGENT] == default_header or config[CONF_USER_AGENT].startswith(default_header + ' '):
+            return True
+    return False
 
 
 class IndegoOptionsFlowHandler(OptionsFlowWithConfigEntry):
@@ -57,7 +66,7 @@ class IndegoOptionsFlowHandler(OptionsFlowWithConfigEntry):
                 vol.Optional(
                     CONF_USER_AGENT,
                     description={
-                        "suggested_value": self.options.get(CONF_USER_AGENT, DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT])
+                        "suggested_value": self.options.get(CONF_USER_AGENT, HTTP_HEADER_USER_AGENT_DEFAULT)
                     },
                 ): str,
                 vol.Optional(
@@ -77,7 +86,7 @@ class IndegoOptionsFlowHandler(OptionsFlowWithConfigEntry):
     def _save_config(self, data: dict[str, Any]) -> FlowResult:
         """Save the updated options."""
 
-        if default_user_agent_in_config(data):
+        if CONF_USER_AGENT in data and default_user_agent_in_config(data):
             del data[CONF_USER_AGENT]
 
         _LOGGER.debug("Updating config options: '%s'", data)
@@ -177,7 +186,7 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
                 vol.Optional(
                     CONF_USER_AGENT,
                     description={
-                        "suggested_value": DEFAULT_HEADERS[HTTP_HEADER_USER_AGENT]
+                        "suggested_value": HTTP_HEADER_USER_AGENT_DEFAULT
                     },
                 ): str,
                 vol.Optional(
