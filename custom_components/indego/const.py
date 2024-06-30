@@ -57,3 +57,8 @@ ENTITY_VACUUM: Final = "vacuum"
 ENTITY_LAWN_MOWER: Final = "lawn_mower"
 
 HTTP_HEADER_USER_AGENT: Final = "User-Agent"
+HTTP_HEADER_USER_AGENT_DEFAULT: Final = "HA/Indego"
+HTTP_HEADER_USER_AGENT_DEFAULTS: Final = [
+    "HomeAssistant/Indego",
+    "HA/Indego"
+]
