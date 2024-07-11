@@ -62,6 +62,51 @@
                     }
                 }
             }
+        },
+        "sensor": {
+            "mower_state": {
+                "state": {
+                    "Mowing": "Mähen",
+                    "Docked": "Angedockt",
+                    "Sleeping": "Schläft",
+                    "Paused": "Pausiert"
+                }
+            },
+            "mower_state_detail": {
+                "state": {
+                    "Reading status": "Status abrufen",
+                    "Charging": "Laden",
+                    "Docked": "Angedockt",
+                    "Docked - Software update": "Angedockt - Software Update",
+                    "Docked - Loading map": "Angedockt - Karte laden",
+                    "Docked - Saving map": "Angedockt - Karte speichern",
+                    "Docked - Leaving Dock": "Angedockt - Verlässt Ladestation",
+                    "Mowing": "Mähen",
+                    "Mowing - Relocalising": "Mähen - Position bestimmen",
+                    "Mowing - Learning Lawn": "Mähen - Karte lernen",
+                    "Mowing - Learning Lawn paused": "Mähen - Karte lernen pausiert",
+                    "SpotMow": "SpotMow",
+                    "Mowing randomly": "Zufälliges Mähen",
+                    "Diagnostic mode": "Diagnose Modus",
+                    "End of life": "Lebensende",
+                    "Software update": "Software Update",
+                    "Energy save mode": "Energiesparmodus",
+                    "Relocalising": "Position bestimmen",
+                    "Loading map": "Karte laden",
+                    "Learning lawn": "Karte lernen",
+                    "Paused": "Pausiert",
+                    "Border cut": "Kantenmähen",
+                    "Idle in lawn": "Leerlauf",
+                    "Stuck on lawn, help needed": "Festgefahren, Hilfe nötig",
+                    "Returning to Dock": "Zurück zur Ladestation",
+                    "Returning to Dock - Battery low": "Zurück zur Ladestation - Batteriestand niedrig ",
+                    "Returning to dock - Calendar timeslot ended": "Zurück zur Ladestation - Kalender Zeitfenser zu Ende",
+                    "Returning to dock - Battery temp range": "Zurück zur Ladestation - Batterie Temperaturfenster",
+                    "Returning to dock - Lawn complete": "Zurück zur Ladestation - Rasen vollständig gemäht",
+                    "Returning to dock - Relocalising": "Zurück zur Ladestation - Position bestimmen",
+                    "Returning to dock - requested by user/app": "Zurück zur Ladestation - Angefordert vom Benutzer"
+                }
+            }
         }
     },
     "services": {
