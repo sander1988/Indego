@@ -15,7 +15,7 @@ labels: bug
 
 - [ ] I have updated to the latest available of the Indego component version.
 - [ ] I have updated to the latest available Home Assistant version.
-- [ ] I have read the README https://github.com/jm-73/Indego/blob/master/README.md) and especially read the part about the KNOWN ISSUES (https://github.com/jm-73/Indego/blob/master/README.md#known-issues).
+- [ ] I have read the README https://github.com/sander1988/Indego/blob/master/README.md) and especially read the part about the KNOWN ISSUES (https://github.com/sander1988/Indego/blob/master/README.md#known-issues).
 - [ ] I have checked hecked for other open or recently closed issues for similar bugs/issues.
 
 ## The problem
@@ -67,7 +67,7 @@ labels: bug
   Logs are required to investigate this type of issues.
 
   Make sure you add logs in debug mode when there is no clear error message or root cause.
-  See https://github.com/jm-73/Indego/blob/master/README.md#debugging on how to enable the debug logs.
+  See https://github.com/sander1988/Indego/blob/master/README.md#debugging on how to enable the debug logs.
   
 ```yaml
 Paste the logs here.
