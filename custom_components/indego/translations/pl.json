@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Ta kosiarka Bosch Indego została już wcześniej skonfigurowana!",
-            "connection_error": "Błąd połączenia z Bosch Indego API!",
+            "connection_error": "Błąd połączenia z Bosch Indego API! Please use the known issues page (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) for possible solutions.",
             "no_mowers_found": "Na tym koncie Bosch Indego nie znaleziono żadnej kosiarki!"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Wyświetl kosiarkę Indego jako encję kosiarki w HomeAssistant",
                     "expose_vacuum": "Wyświetl kosiarkę Indego jako encję odkurzacza w HomeAssistant"
                 },
-                "description": "Ustawienia zaawansowane komponentu Bosch Indego. Większość użytkowników może pozostawić je bez zmian."
+                "description": "Ustawienia zaawansowane komponentu Bosch Indego."
             },
             "mower": {
                 "data": {

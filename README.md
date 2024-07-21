@@ -183,7 +183,7 @@ If you experience any readings from your mower that the sensor does not read out
 
 ## Known issues
 * A special [Chrome plugin](#installing-the-chrome-extension) is required to complete the account linking in HomeAssistant.
-* The Bosch Cloud (running on Azure) might block this integration from time to time. You might see HTTP 4XX errors like 'The connection to the Bosch Indego API failed!'. This might happen during component setup or during state updates. In that case you might be able to workaround the issue by changing the user agent (in Settings > Devices & services > Bosch Indego Mower > Configure).
+* The Bosch Cloud (running on Azure) might block this integration from time to time. You might see HTTP 4XX errors like 'The connection to the Bosch Indego API failed!'. This might happen during component setup or during state updates. In that case you might be able to workaround the issue by changing the user agent (during initial component setup or for existing components under Settings > Devices & services > Bosch Indego Mower > Configure).
 * You might see HTTP 5XX errors from time to time (most of time once a day). In that case there is a problem on the Bosch Cloud side which is temporary unavailable.
 * HTTP 5XX errors can also occur right after you have sent an impossible command to the mower. Like docking the mower while it's already docked. 
 

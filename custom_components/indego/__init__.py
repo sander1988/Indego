@@ -196,6 +196,16 @@ ENTITY_DEFINITIONS = {
 }
 
 
+def format_indego_date(date: datetime) -> str:
+    return date.astimezone().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def last_updated_now() -> str:
+    return homeassistant.util.dt.as_local(utcnow()).strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+
+
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Load a config entry."""
     hass.data.setdefault(DOMAIN, {})
@@ -640,9 +650,7 @@ class IndegoHub:
 
             self.entities[ENTITY_BATTERY].add_attributes(
                 {
-                    "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
-                        "%Y-%m-%d %H:%M"
-                    ),
+                    "last_updated": last_updated_now(),
                     "voltage_V": self._indego_client.operating_data.battery.voltage,
                     "discharge_Ah": self._indego_client.operating_data.battery.discharge,
                     "cycles": self._indego_client.operating_data.battery.cycles,
@@ -685,17 +693,13 @@ class IndegoHub:
 
         self.entities[ENTITY_MOWER_STATE].add_attributes(
             {
-                "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
-                    "%Y-%m-%d %H:%M"
-                )
+                "last_updated": last_updated_now()
             }
         )
 
         self.entities[ENTITY_MOWER_STATE_DETAIL].add_attributes(
             {
-                "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
-                    "%Y-%m-%d %H:%M"
-                ),
+                "last_updated": last_updated_now(),
                 "state_number": self._indego_client.state.state,
                 "state_description": self._indego_client.state_description_detail,
             }
@@ -703,9 +707,7 @@ class IndegoHub:
 
         self.entities[ENTITY_LAWN_MOWED].add_attributes(
             {
-                "last_updated": homeassistant.util.dt.as_local(utcnow()).strftime(
-                    "%Y-%m-%d %H:%M"
-                ),
+                "last_updated": last_updated_now(),
                 "last_session_operation_min": self._indego_client.state.runtime.session.operate,
                 "last_session_cut_min": self._indego_client.state.runtime.session.cut,
                 "last_session_charge_min": self._indego_client.state.runtime.session.charge,
@@ -749,7 +751,7 @@ class IndegoHub:
                     "alerts_count": self._indego_client.alerts_count,
                     "last_alert_error_code": self._indego_client.alerts[0].error_code,
                     "last_alert_message": self._indego_client.alerts[0].message,
-                    "last_alert_date": self._indego_client.alerts[0].date.strftime("%Y-%m-%d %H:%M:%S"),
+                    "last_alert_date": format_indego_date(self._indego_client.alerts[0].date),
                     "last_alert_read": self._indego_client.alerts[0].read_status,
                 }, False
             )
@@ -760,7 +762,7 @@ class IndegoHub:
                 alert_index = 0
                 for index, alert in enumerate(self._indego_client.alerts):
                     self.entities[ENTITY_ALERT].add_attributes({
-                        ("alert_%i" % index): "%s: %s" % (alert.date.strftime("%Y-%m-%d %H:%M:%S"), alert.message)
+                        ("alert_%i" % index): "%s: %s" % (format_indego_date(alert.date), alert.message)
                     }, False)
                     alert_index = index
 
@@ -791,19 +793,9 @@ class IndegoHub:
                 ENTITY_LAST_COMPLETED
             ].state = self._indego_client.last_completed_mow.isoformat()
 
-            self.entities[ENTITY_LAST_COMPLETED].add_attributes(
-                {
-                    "last_completed_mow": self._indego_client.last_completed_mow.strftime(
-                        "%Y-%m-%d %H:%M"
-                    )
-                }
-            )
-
             self.entities[ENTITY_LAWN_MOWED].add_attributes(
                 {
-                    "last_completed_mow": self._indego_client.last_completed_mow.strftime(
-                        "%Y-%m-%d %H:%M"
-                    )
+                    "last_completed_mow": format_indego_date(self._indego_client.last_completed_mow)
                 }
             )
 
@@ -813,12 +805,14 @@ class IndegoHub:
         if self._indego_client.next_mow:
             self.entities[ENTITY_NEXT_MOW].state = self._indego_client.next_mow.isoformat()
 
+            next_mow = format_indego_date(self._indego_client.next_mow)
+
             self.entities[ENTITY_NEXT_MOW].add_attributes(
-                {"next_mow": self._indego_client.next_mow.strftime("%Y-%m-%d %H:%M")}
+                {"next_mow": next_mow}
             )
 
             self.entities[ENTITY_LAWN_MOWED].add_attributes(
-                {"next_mow": self._indego_client.next_mow.strftime("%Y-%m-%d %H:%M")}
+                {"next_mow": next_mow}
             )
 
     @property
