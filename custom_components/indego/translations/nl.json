@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Deze Bosch Indego robotmaaier is al geconfigureerd!",
-            "connection_error": "De verbinding met de Bosch Indego API is mislukt!",
+            "connection_error": "De verbinding met de Bosch Indego API is mislukt! Gebruik de bekende problemen pagina (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) voor mogelijke oplossingen.",
             "no_mowers_found": "Geen robotmaaiers gevonden in deze Bosch Indego account!"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Voeg de Indego robotmaaier toe als grasmaaier entiteit aan HomeAssistant",
                     "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan HomeAssistant"
                 },
-                "description": "Advanced settings of the Bosch Indego component. Can be left unchanged for most users."
+                "description": "Geavanceerde instellingen van het Bosch Indego component."
             },
             "mower": {
                 "data": {

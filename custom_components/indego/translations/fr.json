@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Cette tondeuse Bosch Indego a déjà été configurée !",
-            "connection_error": "La connexion à l'API Bosch Indego a échoué !",
+            "connection_error": "La connexion à l'API Bosch Indego a échoué ! Please use the known issues page (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) for possible solutions.",
             "no_mowers_found": "Aucune tondeuse n'a été trouvée sur ce compte Bosch Indego !"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Exposer la tondeuse Indego comme une entité tondeuse dans HomeAssistant",
                     "expose_vacuum": "Exposer la tondeuse Indego comme une entité aspirateur dans HomeAssistant"
                 },
-                "description": "Réglages avancés du composant Bosch Indego. Peuvent être laissés inchangés pour la plupart des utilisateurs."
+                "description": "Réglages avancés du composant Bosch Indego."
             },
             "mower": {
                 "data": {

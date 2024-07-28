@@ -1,4 +1,4 @@
-[![GitHub release](https://img.shields.io/github/release/jm-73/Indego.svg)](https://GitHub.com/jm-73/Indego/releases/) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
+[![GitHub release](https://img.shields.io/github/release/sander1988/Indego.svg)](https://github.com/sander1988/Indego/releases/) [![hacs_badge](https://img.shields.io/badge/HACS-Default-orange.svg)](https://github.com/custom-components/hacs)
 
 # Indego
 Join the Discord channel to discuss around this integration and vote for your favourite change to happen!
@@ -27,7 +27,7 @@ Therefore we needed to rewrite the authentication flow.
 
 Currently **only** Google Chrome is the supported for authenticating with the Bosch SingleKey ID servers when adding the integration in HA.
 Also a small extension needs to be installed (temporarily) in Google Chrome to handle the response from the Bosch authentication servers. 
-More (technical) information on the why can be found in this [issue](https://github.com/jm-73/Indego/issues/171).
+More (technical) information on the why can be found in this [issue](https://github.com/sander1988/Indego/issues/171).
 
 Optionally you can remove or disable the extension after adding the Bosch Indego integration to HomeAssistant.
 
@@ -183,14 +183,14 @@ If you experience any readings from your mower that the sensor does not read out
 
 ## Known issues
 * A special [Chrome plugin](#installing-the-chrome-extension) is required to complete the account linking in HomeAssistant.
-* The Bosch Cloud (running on Azure) might block this integration from time to time. You might see HTTP 4XX errors like 'The connection to the Bosch Indego API failed!'. This might happen during component setup or during state updates. In that case you might be able to workaround the issue by changing the user agent (in Settings > Devices & services > Bosch Indego Mower > Configure).
+* The Bosch Cloud (running on Azure) might block this integration from time to time. You might see HTTP 4XX errors like 'The connection to the Bosch Indego API failed!'. This might happen during component setup or during state updates. In that case you might be able to workaround the issue by changing the user agent (during initial component setup or for existing components under Settings > Devices & services > Bosch Indego Mower > Configure).
 * You might see HTTP 5XX errors from time to time (most of time once a day). In that case there is a problem on the Bosch Cloud side which is temporary unavailable.
 * HTTP 5XX errors can also occur right after you have sent an impossible command to the mower. Like docking the mower while it's already docked. 
 
 ## New issues
 If you experience issues/bugs with this the best way to report them is to open an issue in **this** repo.
 
-[Issue link](https://github.com/jm-73/Indego/issues)
+[Issue link](https://github.com/sander1988/Indego/issues)
 
 
 ## Credits

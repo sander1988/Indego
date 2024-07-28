@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Dieser Bosch Indego Mähroboter wurde bereits konfiguriert!",
-            "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen!",
+            "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen! Please use the known issues page (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) for possible solutions.",
             "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mähroboter gefunden!"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Indego Mähroboter als Mower Entität in HomeAssistant anlegen",
                     "expose_vacuum": "Indego Mähroboter als Vacuum Entität in HomeAssistant anlegen"
                 },
-                "description": "Erweiterte Einstellung des Bosch Indego Component. Kann für die meisten Benutzer unverändert gelassen werden."
+                "description": "Erweiterte Einstellung des Bosch Indego Component."
             },
             "mower": {
                 "data": {
