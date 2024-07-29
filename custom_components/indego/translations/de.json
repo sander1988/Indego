@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Dieser Bosch Indego Mähroboter wurde bereits konfiguriert!",
-            "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen! Bitte die Known Issues (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) Seite für möglche Lösungen nutzen.",
+            "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen! Bitte die Known Issues Seite (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) für möglche Lösungen nutzen.",
             "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mähroboter gefunden!"
         },
         "step": {
