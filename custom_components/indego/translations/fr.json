@@ -12,7 +12,7 @@
                     "expose_mower": "Exposer la tondeuse Indego comme une entité tondeuse dans HomeAssistant",
                     "expose_vacuum": "Exposer la tondeuse Indego comme une entité aspirateur dans HomeAssistant"
                 },
-                "description": "Réglages avancés du composant Bosch Indego."
+                "description": "Réglages avancés du composant Bosch Indego. Peuvent être laissés inchangés pour la plupart des utilisateurs."
             },
             "mower": {
                 "data": {
@@ -66,45 +66,45 @@
         "sensor": {
             "mower_state": {
                 "state": {
-                    "Mowing": "Mähen",
-                    "Docked": "Angedockt",
-                    "Sleeping": "Schläft",
-                    "Paused": "Pausiert"
+                    "Mowing": "Tonte en cours",
+                    "Docked": "Dans station de charge",
+                    "Sleeping": "En veille",
+                    "Paused": "En pause"
                 }
             },
             "mower_state_detail": {
                 "state": {
-                    "Reading status": "Status abrufen",
-                    "Charging": "Laden",
-                    "Docked": "Angedockt",
-                    "Docked - Software update": "Angedockt - Software Update",
-                    "Docked - Loading map": "Angedockt - Karte laden",
-                    "Docked - Saving map": "Angedockt - Karte speichern",
-                    "Docked - Leaving Dock": "Angedockt - Verlässt Ladestation",
-                    "Mowing": "Mähen",
-                    "Mowing - Relocalising": "Mähen - Position bestimmen",
-                    "Mowing - Learning Lawn": "Mähen - Karte lernen",
-                    "Mowing - Learning Lawn paused": "Mähen - Karte lernen pausiert",
+                    "Reading status": "Obtention du statut en cours",
+                    "Charging": "Charge en cours",
+                    "Docked": "Dans station de charge",
+                    "Docked - Software update": "Dans station de charge - Mise à jour du logiciel",
+                    "Docked - Loading map": "Dans station de charge - Chargement carte",
+                    "Docked - Saving map": "Dans station de charge - Enregistrement carte",
+                    "Docked - Leaving Dock": "Dans station de charge - Quitte la station",
+                    "Mowing": "Tonte en cours",
+                    "Mowing - Relocalising": "Tonte en cours - Cherche position",
+                    "Mowing - Learning Lawn": "Tonte en cours - Apprentissage de la pelouse",
+                    "Mowing - Learning Lawn paused": "Tonte en cours - Apprentissage de la pelouse en pause",
                     "SpotMow": "SpotMow",
-                    "Mowing randomly": "Zufälliges Mähen",
-                    "Diagnostic mode": "Diagnose Modus",
-                    "End of life": "Lebensende",
-                    "Software update": "Software Update",
-                    "Energy save mode": "Energiesparmodus",
-                    "Relocalising": "Position bestimmen",
-                    "Loading map": "Karte laden",
-                    "Learning lawn": "Karte lernen",
-                    "Paused": "Pausiert",
-                    "Border cut": "Kantenmähen",
-                    "Idle in lawn": "Leerlauf",
-                    "Stuck on lawn, help needed": "Festgefahren, Hilfe nötig",
-                    "Returning to Dock": "Zurück zur Ladestation",
-                    "Returning to Dock - Battery low": "Zurück zur Ladestation - Batteriestand niedrig ",
-                    "Returning to dock - Calendar timeslot ended": "Zurück zur Ladestation - Kalender Zeitfenser zu Ende",
-                    "Returning to dock - Battery temp range": "Zurück zur Ladestation - Batterie Temperaturfenster",
-                    "Returning to dock - Lawn complete": "Zurück zur Ladestation - Rasen vollständig gemäht",
-                    "Returning to dock - Relocalising": "Zurück zur Ladestation - Position bestimmen",
-                    "Returning to dock - requested by user/app": "Zurück zur Ladestation - Angefordert vom Benutzer"
+                    "Mowing randomly": "Tonte aléatoire",
+                    "Diagnostic mode": "Mode diagnostic",
+                    "End of life": "Fin de vie",
+                    "Software update": "Mise à jour du logiciel",
+                    "Energy save mode": "Mode économie d'énergie",
+                    "Relocalising": "Cherche position",
+                    "Loading map": "Chargement carte",
+                    "Learning lawn": "Apprentissage de la pelouse",
+                    "Paused": "En pause",
+                    "Border cut": "Tonte des bords",
+                    "Idle in lawn": "Immobilisée sur pelouse",
+                    "Stuck on lawn, help needed": "Bloquée sur pelouse, intervention nécessaire",
+                    "Returning to Dock": "Retour à la station",
+                    "Returning to Dock - Battery low": "Retour à la station - Batterie faible",
+                    "Returning to dock - Calendar timeslot ended": "Retour à la station - Fin de créneau agenda",
+                    "Returning to dock - Battery temp range": "Retour à la station - Température batterie hors tolérances",
+                    "Returning to dock - Lawn complete": "Retour à la station - Pelouse terminée",
+                    "Returning to dock - Relocalising": "Retour à la station - Cherche position",
+                    "Returning to dock - requested by user/app": "Retour à la station - Demandé par l'utilisateur"
                 }
             }
         }
