@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Cette tondeuse Bosch Indego a déjà été configurée !",
-            "connection_error": "La connexion à l'API Bosch Indego a échoué ! Please use the known issues page (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) for possible solutions.",
+            "connection_error": "La connexion à l'API Bosch Indego a échoué ! Regardez la page des problèmes connus (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) pour trouver une solution éventuelle.",
             "no_mowers_found": "Aucune tondeuse n'a été trouvée sur ce compte Bosch Indego !"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Exposer la tondeuse Indego comme une entité tondeuse dans HomeAssistant",
                     "expose_vacuum": "Exposer la tondeuse Indego comme une entité aspirateur dans HomeAssistant"
                 },
-                "description": "Réglages avancés du composant Bosch Indego."
+                "description": "Réglages avancés du composant Bosch Indego. Peuvent être laissés inchangés pour la plupart des utilisateurs."
             },
             "mower": {
                 "data": {
@@ -60,6 +60,51 @@
                             "unread": "Non lues"
                         }
                     }
+                }
+            }
+        },
+        "sensor": {
+            "mower_state": {
+                "state": {
+                    "Mowing": "Tonte en cours",
+                    "Docked": "Dans station de charge",
+                    "Sleeping": "En veille",
+                    "Paused": "En pause"
+                }
+            },
+            "mower_state_detail": {
+                "state": {
+                    "Reading status": "Obtention du statut en cours",
+                    "Charging": "Charge en cours",
+                    "Docked": "Dans station de charge",
+                    "Docked - Software update": "Dans station de charge - Mise à jour du logiciel",
+                    "Docked - Loading map": "Dans station de charge - Chargement carte",
+                    "Docked - Saving map": "Dans station de charge - Enregistrement carte",
+                    "Docked - Leaving Dock": "Dans station de charge - Quitte la station",
+                    "Mowing": "Tonte en cours",
+                    "Mowing - Relocalising": "Tonte en cours - Cherche position",
+                    "Mowing - Learning Lawn": "Tonte en cours - Apprentissage de la pelouse",
+                    "Mowing - Learning Lawn paused": "Tonte en cours - Apprentissage de la pelouse en pause",
+                    "SpotMow": "SpotMow",
+                    "Mowing randomly": "Tonte aléatoire",
+                    "Diagnostic mode": "Mode diagnostic",
+                    "End of life": "Fin de vie",
+                    "Software update": "Mise à jour du logiciel",
+                    "Energy save mode": "Mode économie d'énergie",
+                    "Relocalising": "Cherche position",
+                    "Loading map": "Chargement carte",
+                    "Learning lawn": "Apprentissage de la pelouse",
+                    "Paused": "En pause",
+                    "Border cut": "Tonte des bords",
+                    "Idle in lawn": "Immobilisée sur pelouse",
+                    "Stuck on lawn, help needed": "Bloquée sur pelouse, intervention nécessaire",
+                    "Returning to Dock": "Retour à la station",
+                    "Returning to Dock - Battery low": "Retour à la station - Batterie faible",
+                    "Returning to dock - Calendar timeslot ended": "Retour à la station - Fin de créneau agenda",
+                    "Returning to dock - Battery temp range": "Retour à la station - Température batterie hors tolérances",
+                    "Returning to dock - Lawn complete": "Retour à la station - Pelouse terminée",
+                    "Returning to dock - Relocalising": "Retour à la station - Cherche position",
+                    "Returning to dock - requested by user/app": "Retour à la station - Demandé par l'utilisateur"
                 }
             }
         }

@@ -1,0 +1,129 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Táto kosačka Bosch Indego je už nakonfigurovaná!",
+            "connection_error": "Pripojenie k Bosch Indego API zlyhalo! Použite stránku so známymi problémami (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) pre možné riešenia.",
+            "no_mowers_found": "V tomto účte Bosch Indego sa nenašli žiadne kosačky!"
+        },
+        "step": {
+            "advanced": {
+                "data": {
+                    "user_agent": "User-Agent",
+                    "expose_mower": "Odhaľte kosačku Indego ako entitu kosačky v aplikácii HomeAssistant",
+                    "expose_vacuum": "Odhaľte kosačku Indego ako vákuovú entitu v aplikácii HomeAssistant"
+                },
+                "description": "Rozšírené nastavenia komponentu Bosch Indego."
+            },
+            "mower": {
+                "data": {
+                    "mower_serial": "Séria kosačky",
+                    "mower_name": "Názov kosačky"
+                },
+                "description": "Vyberte prosím sériové číslo kosačky Bosch, ktorú chcete pridať."
+            }
+        }
+    },
+    "options": {
+      "step": {
+          "init": {
+              "title": "Pokročilé nastavenia",
+              "description": "Rozšírené nastavenia komponentu Bosch Indego. Po zmene týchto nastavení možno budete musieť znova načítať komponent.",
+              "data": {
+                  "user_agent": "User-Agent",
+                  "expose_mower": "Odhaľte kosačku Indego ako entitu kosačky v aplikácii HomeAssistant",
+                  "expose_vacuum": "Odhaľte kosačku Indego ako vákuovú entitu v aplikácii HomeAssistant",
+                  "show_all_alerts": "Zobrazte celú históriu upozornení v aplikácii HomeAssistant. Toto sa neodporúča väčšine používateľov, môže to mať významný vplyv na veľkosť databázy HomeAssistant!"
+              }
+          }
+      }
+    },
+    "entity": {
+        "binary_sensor": {
+            "indego_alert": {
+                "state_attributes": {
+                    "alerts_count": {
+                        "name": "Počet upozornení"
+                    },
+                    "last_alert_error_code": {
+                        "name": "Kód chyby (najnovší)"
+                    },
+                    "last_alert_message": {
+                        "name": "Výstražná správa (najnovšia)"
+                    },
+                    "last_alert_date": {
+                        "name": "Dátum upozornenia (najnovší)"
+                    },
+                    "last_alert_read": {
+                        "name": "Stav upozornenia (najnovší)",
+                        "state": {
+                            "read": "Prečítané",
+                            "unread": "Neprečítané"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "services": {
+        "command": {
+            "description": "Odošlite príkazy kosačke. Povolené príkazy sú teraz, vráťte sa do doku a pozastavte.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériová kosačka. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
+                },
+                "command": {
+                    "description": "Príkaz pre kosačku."
+                }
+            }
+        },
+        "smartmowing": {
+            "description": "Povoliť alebo zakázať funkciu SmartMowing. Povolené príkazy sú true alebo false.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériová kosačka. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
+                },
+                "enable": {
+                    "description": "Povoliť SmartMowing."
+                }
+            }
+        },
+        "delete_alert": {
+            "description": "Odstrániť vybraté upozornenie.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériová kosačka. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
+                },
+                "alert_index": {
+                    "description": "Odstrániť vybraté upozornenia. 0 pre najnovšie upozornenie."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "description": "Odstráňte všetky upozornenia.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériová kosačka. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
+                }
+            }
+        },
+        "read_alert": {
+            "description": "Označte vybrané upozornenie ako prečítané.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériová kosačka. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
+                },
+                "alert_index": {
+                    "description": "Označte vybrané upozornenie ako prečítané. 0 pre najnovšie upozornenie."
+                }
+            }
+        },
+        "read_alert_all": {
+            "description": "Označte všetky upozornenia ako prečítané.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériová kosačka. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
+                }
+            }
+        }
+    }
+}

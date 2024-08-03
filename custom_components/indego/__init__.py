@@ -108,6 +108,7 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: ["last_updated"],
+        CONF_TRANSLATION_KEY: "mower_state",
     },
     ENTITY_MOWER_STATE_DETAIL: {
         CONF_TYPE: SENSOR_TYPE,
@@ -120,6 +121,7 @@ ENTITY_DEFINITIONS = {
             "state_number",
             "state_description",
         ],
+        CONF_TRANSLATION_KEY: "mower_state_detail",
     },
     ENTITY_BATTERY: {
         CONF_TYPE: SENSOR_TYPE,
