@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Ta kosiarka Bosch Indego została już wcześniej skonfigurowana!",
-            "connection_error": "Błąd połączenia z Bosch Indego API!",
+            "connection_error": "Błąd połączenia z Bosch Indego API! Please use the known issues page (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) for possible solutions.",
             "no_mowers_found": "Na tym koncie Bosch Indego nie znaleziono żadnej kosiarki!"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Wyświetl kosiarkę Indego jako encję kosiarki w HomeAssistant",
                     "expose_vacuum": "Wyświetl kosiarkę Indego jako encję odkurzacza w HomeAssistant"
                 },
-                "description": "Ustawienia zaawansowane komponentu Bosch Indego. Większość użytkowników może pozostawić je bez zmian."
+                "description": "Ustawienia zaawansowane komponentu Bosch Indego."
             },
             "mower": {
                 "data": {
@@ -60,6 +60,52 @@
                             "unread": "Nieodczytany"
                         }
                     }
+                }
+            }
+        },
+        "sensor": {
+            "mower_state": {
+                "state": {
+                    "Mowing": "Mowing",
+                    "Docked": "Docked",
+                    "Sleeping": "Sleeping",
+                    "Paused": "Paused"
+                }
+            },
+            "mower_state_detail": {
+                "state": {
+                    "Sleeping": "Sleeping",
+                    "Reading status": "Reading status",
+                    "Charging": "Charging",
+                    "Docked": "Docked",
+                    "Docked - Software update": "Docked - Software update",
+                    "Docked - Loading map": "Docked - Loading map",
+                    "Docked - Saving map": "Docked - Saving map",
+                    "Docked - Leaving Dock": "Docked - Leaving Dock",
+                    "Mowing": "Mowing",
+                    "Mowing - Relocalising": "Mowing - Relocalising",
+                    "Mowing - Learning Lawn": "Mowing - Learning Lawn",
+                    "Mowing - Learning Lawn paused": "Mowing - Learning Lawn paused",
+                    "SpotMow": "SpotMow",
+                    "Mowing randomly": "Mowing randomly",
+                    "Diagnostic mode": "Diagnostic mode",
+                    "End of life": "End of life",
+                    "Software update": "Software update",
+                    "Energy save mode": "Energy save mode",
+                    "Relocalising": "Relocalising",
+                    "Loading map": "Loading map",
+                    "Learning lawn": "Learning lawn",
+                    "Paused": "Paused",
+                    "Border cut": "Border cut",
+                    "Idle in lawn": "Idle in lawn",
+                    "Stuck on lawn, help needed": "Stuck on lawn, help needed",
+                    "Returning to Dock": "Returning to Dock",
+                    "Returning to Dock - Battery low": "Returning to Dock - Battery low",
+                    "Returning to dock - Calendar timeslot ended": "Returning to dock - Calendar timeslot ended",
+                    "Returning to dock - Battery temp range": "Returning to dock - Battery temp range",
+                    "Returning to dock - Lawn complete": "Returning to dock - Lawn complete",
+                    "Returning to dock - Relocalising": "Returning to dock - Relocalising",
+                    "Returning to dock - requested by user/app": "Returning to dock - requested by user/app"
                 }
             }
         }

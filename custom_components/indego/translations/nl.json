@@ -2,7 +2,7 @@
     "config": {
         "abort": {
             "already_configured": "Deze Bosch Indego robotmaaier is al geconfigureerd!",
-            "connection_error": "De verbinding met de Bosch Indego API is mislukt!",
+            "connection_error": "De verbinding met de Bosch Indego API is mislukt! Gebruik de bekende problemen pagina (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) voor mogelijke oplossingen.",
             "no_mowers_found": "Geen robotmaaiers gevonden in deze Bosch Indego account!"
         },
         "step": {
@@ -12,7 +12,7 @@
                     "expose_mower": "Voeg de Indego robotmaaier toe als grasmaaier entiteit aan HomeAssistant",
                     "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan HomeAssistant"
                 },
-                "description": "Advanced settings of the Bosch Indego component. Can be left unchanged for most users."
+                "description": "Geavanceerde instellingen van het Bosch Indego component."
             },
             "mower": {
                 "data": {
@@ -60,6 +60,52 @@
                             "unread": "Ongelezen"
                         }
                     }
+                }
+            }
+        },
+        "sensor": {
+            "mower_state": {
+                "state": {
+                    "Mowing": "Maaien",
+                    "Docked": "Geparkeerd",
+                    "Sleeping": "Inactief",
+                    "Paused": "Gepauzeerd"
+                }
+            },
+            "mower_state_detail": {
+                "state": {
+                    "Sleeping": "Inactief",
+                    "Reading status": "Status ophalen",
+                    "Charging": "Opladen",
+                    "Docked": "Geparkeerd",
+                    "Docked - Software update": "Geparkeerd - Software update",
+                    "Docked - Loading map": "Geparkeerd - Map laden",
+                    "Docked - Saving map": "Geparkeerd - Map opslaan",
+                    "Docked - Leaving Dock": "Station verlaten",
+                    "Mowing": "Maaien",
+                    "Mowing - Relocalising": "Maaien - Herlokaliseren",
+                    "Mowing - Learning Lawn": "Maaien - Gazon leren",
+                    "Mowing - Learning Lawn paused": "Maaien - Gazon leren gepauzeerd",
+                    "SpotMow": "Plek maaien",
+                    "Mowing randomly": "Willekeurig maaien",
+                    "Diagnostic mode": "Onderhoudsmodus",
+                    "End of life": "Geen ondersteuning (EOL)",
+                    "Software update": "Software update",
+                    "Energy save mode": "Energiespaarstand",
+                    "Relocalising": "Herlokaliseren",
+                    "Loading map": "Map laden map",
+                    "Learning lawn": "Gazon leren",
+                    "Paused": "Gepauzeerd",
+                    "Border cut": "Rand maaien",
+                    "Idle in lawn": "Inactief op gazon",
+                    "Stuck on lawn, help needed": "Vastgelopen op gazon, hulp nodig",
+                    "Returning to Dock": "Terugkeren naar basisstation",
+                    "Returning to Dock - Battery low": "Terugkeren naar basisstation - Batterij bijna leeg",
+                    "Returning to dock - Calendar timeslot ended": "Terugkeren naar basisstation - Kalender tijdslot eindigd",
+                    "Returning to dock - Battery temp range": "Terugkeren naar basisstation - Batterij temperatuur",
+                    "Returning to dock - Lawn complete": "Terugkeren naar basisstation - Maaien voltooid",
+                    "Returning to dock - Relocalising": "Terugkeren naar basisstation - Herlokaliseren",
+                    "Returning to dock - requested by user/app": "Terugkeren naar basisstation - verzocht door gebruiker"
                 }
             }
         }
