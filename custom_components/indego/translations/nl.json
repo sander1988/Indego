@@ -74,6 +74,7 @@
             },
             "mower_state_detail": {
                 "state": {
+                    "Sleeping": "Inactief",
                     "Reading status": "Status ophalen",
                     "Charging": "Opladen",
                     "Docked": "Geparkeerd",

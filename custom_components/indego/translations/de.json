@@ -74,6 +74,7 @@
             },
             "mower_state_detail": {
                 "state": {
+                    "Sleeping": "Schläft",
                     "Reading status": "Status abrufen",
                     "Charging": "Laden",
                     "Docked": "Angedockt",

@@ -74,6 +74,7 @@
             },
             "mower_state_detail": {
                 "state": {
+                    "Sleeping": "En veille",
                     "Reading status": "Obtention du statut en cours",
                     "Charging": "Charge en cours",
                     "Docked": "Dans station de charge",
