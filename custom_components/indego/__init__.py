@@ -229,12 +229,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def load_platforms():
         _LOGGER.debug("Loading platforms")
-        await asyncio.gather(
-            *(
-                hass.config_entries.async_forward_entry_setup(entry, platform)
-                for platform in INDEGO_PLATFORMS
-            )
-        )
+        await hass.config_entries.async_forward_entry_setups(entry, INDEGO_PLATFORMS)
 
     try:
         await indego_hub.update_generic_data_and_load_platforms(load_platforms)
