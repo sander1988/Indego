@@ -6,7 +6,7 @@ import voluptuous as vol
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 from homeassistant.helpers import config_entry_oauth2_flow
-from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential, DOMAIN as AC_DOMAIN, DATA_STORAGE as AC_DATA_STORAGE
+from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential, DOMAIN as AC_DOMAIN, DATA_COMPONENT as AC_DATA_STORAGE
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.config_entries import OptionsFlowWithConfigEntry, ConfigEntry
 from homeassistant.core import callback
