@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "Deze Bosch Indego robotmaaier is al geconfigureerd!",
             "connection_error": "De verbinding met de Bosch Indego API is mislukt! Gebruik de bekende problemen pagina (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) voor mogelijke oplossingen.",
-            "no_mowers_found": "Geen robotmaaiers gevonden in deze Bosch Indego account!"
+            "no_mowers_found": "Geen robotmaaiers gevonden in deze Bosch Indego account!",
+            "reauth_successful": "Herauthenticatie is gelukt. De toegang tot de Bosch API is hersteld."
         },
         "step": {
             "advanced": {
@@ -20,6 +21,10 @@
                     "mower_name": "Robotmaaier naam"
                 },
                 "description": "Selecteer het serienummer van de Bosch Indego robotmaaier die je toe wilt voegen."
+            },
+            "reauth_confirm": {
+                "title": "Authenticatie verlopen",
+                "description": "De Bosch Indego API authenticatie is verlopen. Log a.u.b. opnieuw in m.b.v. je Bosch SingleKey ID."
             }
         }
     },
