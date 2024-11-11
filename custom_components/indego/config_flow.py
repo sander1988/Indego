@@ -6,7 +6,7 @@ import voluptuous as vol
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import selector
 from homeassistant.helpers import config_entry_oauth2_flow
-from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential, DOMAIN as AC_DOMAIN, DATA_STORAGE as AC_DATA_STORAGE
+from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.config_entries import OptionsFlowWithConfigEntry, ConfigEntry
 from homeassistant.core import callback
@@ -126,23 +126,17 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
 
         # Create the OAuth application credentials entry in HA.
         # No need to ask the user for input, settings are the same for everyone.
-        credentials = self.hass.data[AC_DOMAIN][AC_DATA_STORAGE].async_client_credentials(DOMAIN)
-        if DOMAIN not in credentials:
-            try:
-                _LOGGER.debug("Application credentials do NOT exist, creating...")
-                await async_import_client_credential(
-                    self.hass,
-                    DOMAIN,
-                    ClientCredential(OAUTH2_CLIENT_ID, "", DOMAIN)
-                )
-                _LOGGER.debug("OK: Imported OAuth client credentials")
+        try:
+            await async_import_client_credential(
+                self.hass,
+                DOMAIN,
+                ClientCredential(OAUTH2_CLIENT_ID, "", DOMAIN)
+            )
+            _LOGGER.debug("OK: Imported OAuth client credentials (or are already exists)")
 
-            except Exception as exc:
-                _LOGGER.error("Failed to create application credentials! Reason: %s", str(exc))
-                raise
-
-        else:
-            _LOGGER.debug("Application credentials found, NOT creating")
+        except Exception as exc:
+            _LOGGER.error("Failed to create application credentials! Reason: %s", str(exc))
+            raise
 
         # This will launch the HA OAuth (external webpage) opener.
         return await super().async_step_pick_implementation(user_input)
