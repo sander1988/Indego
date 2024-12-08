@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "This Bosch Indego mower has already been configured!",
             "connection_error": "The connection to the Bosch Indego API failed! Please use the known issues page (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) for possible solutions.",
-            "no_mowers_found": "No mowers found in this Bosch Indego account!"
+            "no_mowers_found": "No mowers found in this Bosch Indego account!",
+            "reauth_successful": "Re-authentication was successful. Access to the Bosch API has been restored."
         },
         "step": {
             "advanced": {
@@ -20,6 +21,10 @@
                     "mower_name": "Mower name"
                 },
                 "description": "Please select the serial of the Bosch Mower your would like to add."
+            },
+            "reauth_confirm": {
+                "title": "Authentication expired",
+                "description": "The Bosch Indego API authentication has expired. Please re-authenticate using your Bosch SingleKey ID."
             }
         }
     },

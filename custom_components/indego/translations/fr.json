@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "Cette tondeuse Bosch Indego a déjà été configurée !",
             "connection_error": "La connexion à l'API Bosch Indego a échoué ! Regardez la page des problèmes connus (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) pour trouver une solution éventuelle.",
-            "no_mowers_found": "Aucune tondeuse n'a été trouvée sur ce compte Bosch Indego !"
+            "no_mowers_found": "Aucune tondeuse n'a été trouvée sur ce compte Bosch Indego !",
+            "reauth_successful": "Ré-authentication réussie. L'accès à l'API Bosch a été rétabli."
         },
         "step": {
             "advanced": {
@@ -20,6 +21,10 @@
                     "mower_name": "Nom de la tondeuse"
                 },
                 "description": "Sélectionez le numéro de série de la tondeuse Bosch que vous souhaitez ajouter."
+            },
+            "reauth_confirm": {
+                "title": "Authentication expirée",
+                "description": "L'authentification de l'API Bosch Indego a expiré. Re-authentifiez-vous avec votre Bosch SingleKey ID."
             }
         }
     },

@@ -1,4 +1,5 @@
 from typing import Final, Any
+from collections.abc import Mapping
 import logging
 
 import voluptuous as vol
@@ -8,7 +9,7 @@ from homeassistant.helpers import selector
 from homeassistant.helpers import config_entry_oauth2_flow
 from homeassistant.components.application_credentials import ClientCredential, async_import_client_credential
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.config_entries import OptionsFlowWithConfigEntry, ConfigEntry
+from homeassistant.config_entries import OptionsFlowWithConfigEntry, ConfigEntry, ConfigFlowResult, SOURCE_REAUTH, UnknownEntry
 from homeassistant.core import callback
 
 from pyIndego import IndegoAsyncClient
@@ -103,7 +104,7 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
 
     DOMAIN = DOMAIN
     VERSION = 1
-    _config = {}
+    _data = {}
     _options = {}
     _mower_serials = None
 
@@ -143,7 +144,10 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
 
     async def async_oauth_create_entry(self, data: dict[str, Any]) -> FlowResult:
         """Test connection and load the available mowers."""
-        self._config = data
+        if self.source == SOURCE_REAUTH:
+            self._data.update(data)
+        else:
+            self._data = data
         return await self.async_step_advanced()
 
     async def async_step_advanced(
@@ -154,13 +158,16 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
             _LOGGER.debug("Testing API access by retrieving available mowers...")
 
             api_client = IndegoAsyncClient(
-                token=self._config["token"]["access_token"],
+                token=self._data["token"]["access_token"],
                 session=async_get_clientsession(self.hass),
                 raise_request_exceptions=True
             )
             if not default_user_agent_in_config(user_input):
                 self._options[CONF_USER_AGENT] = user_input[CONF_USER_AGENT]
                 api_client.set_default_header(HTTP_HEADER_USER_AGENT, user_input[CONF_USER_AGENT])
+
+            self._options[CONF_EXPOSE_INDEGO_AS_MOWER] = user_input[CONF_EXPOSE_INDEGO_AS_MOWER]
+            self._options[CONF_EXPOSE_INDEGO_AS_VACUUM] = user_input[CONF_EXPOSE_INDEGO_AS_VACUUM]
 
             try:
                 self._mower_serials = await api_client.get_mowers()
@@ -173,6 +180,22 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
                 _LOGGER.error("Error while retrieving mower serial in account! Reason: %s", str(exc))
                 return self.async_abort(reason="connection_error")
 
+            if self.source == SOURCE_REAUTH:
+                if self._data[CONF_MOWER_SERIAL] not in self._mower_serials:
+                    return self.async_abort(reason="mower_not_found")
+
+                self.async_set_unique_id(self._data[CONF_MOWER_SERIAL])
+                self._abort_if_unique_id_mismatch()
+
+                _LOGGER.debug("Reauth entry with data: '%s'", self._data)
+                _LOGGER.debug("Reauth entry with options: '%s'", self._options)
+
+                return self.async_update_reload_and_abort(
+                    self._get_reauth_entry(),
+                    data_updates=self._data,
+                    options=self._options,
+                )
+
             return await self.async_step_mower()
 
         schema = vol.Schema(
@@ -180,14 +203,14 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
                 vol.Optional(
                     CONF_USER_AGENT,
                     description={
-                        "suggested_value": HTTP_HEADER_USER_AGENT_DEFAULT
+                        "suggested_value": (self._options[CONF_USER_AGENT] if CONF_USER_AGENT in self._options else HTTP_HEADER_USER_AGENT_DEFAULT)
                     },
                 ): str,
                 vol.Optional(
-                    CONF_EXPOSE_INDEGO_AS_MOWER, default=False
+                    CONF_EXPOSE_INDEGO_AS_MOWER, default=(self._options[CONF_EXPOSE_INDEGO_AS_MOWER] if CONF_EXPOSE_INDEGO_AS_MOWER in self._options else False)
                 ): bool,
                 vol.Optional(
-                    CONF_EXPOSE_INDEGO_AS_VACUUM, default=False
+                    CONF_EXPOSE_INDEGO_AS_VACUUM, default=(self._options[CONF_EXPOSE_INDEGO_AS_VACUUM] if CONF_EXPOSE_INDEGO_AS_VACUUM in self._options else False)
                 ): bool,
             }
         )
@@ -203,18 +226,17 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
             await self.async_set_unique_id(user_input[CONF_MOWER_SERIAL])
             self._abort_if_unique_id_configured()
 
-            self._config[CONF_MOWER_SERIAL] = user_input[CONF_MOWER_SERIAL]
-            self._config[CONF_MOWER_NAME] = user_input[CONF_MOWER_NAME]
+            self._data[CONF_MOWER_SERIAL] = user_input[CONF_MOWER_SERIAL]
+            self._data[CONF_MOWER_NAME] = user_input[CONF_MOWER_NAME]
 
-            _LOGGER.debug("Creating entry with config: '%s'", self._config)
+            _LOGGER.debug("Creating entry with data: '%s'", self._data)
             _LOGGER.debug("Creating entry with options: '%s'", self._options)
 
-            result = self.async_create_entry(
+            return self.async_create_entry(
                 title=("%s (%s)" % (user_input[CONF_MOWER_NAME], user_input[CONF_MOWER_SERIAL])),
-                data=self._config
+                data=self._data,
+                options=self._options,
             )
-            result["options"] = self._options
-            return result
 
         return self.async_show_form(
             step_id="mower",
@@ -222,6 +244,31 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
             errors=errors,
             last_step=True
         )
+
+    async def async_step_reauth(
+        self, entry_data: Mapping[str, Any]
+    ) -> ConfigFlowResult:
+        """Perform reauth upon an API authentication error."""
+        current_config = self._get_reauth_entry()
+
+        self._data = dict(current_config.data)
+        self._options = dict(current_config.options)
+
+        _LOGGER.debug("Loaded reauth with data: '%s'", self._data)
+        _LOGGER.debug("Loaded reauth with options: '%s'", self._options)
+
+        return await self.async_step_reauth_confirm()
+
+    async def async_step_reauth_confirm(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Dialog that informs the user that reauth is required."""
+        if user_input is None:
+            return self.async_show_form(
+                step_id="reauth_confirm",
+                data_schema=vol.Schema({}),
+            )
+        return await self.async_step_user()
 
     def _build_mower_options_schema(self):
         return vol.Schema(
