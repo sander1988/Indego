@@ -236,7 +236,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await indego_hub.update_generic_data_and_load_platforms(load_platforms)
 
     except ClientResponseError as exc:
-        if exc.status == 401:
+        if 400 <= exc.status < 500:
             _LOGGER.debug("Received 401, triggering ConfigEntryAuthFailed in HA...")
             raise ConfigEntryAuthFailed from exc
 
