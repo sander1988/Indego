@@ -33,6 +33,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
+from svgutils.transform import fromstring
 
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
