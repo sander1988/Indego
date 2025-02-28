@@ -36,11 +36,12 @@ SERVICE_NAME_DELETE_ALERT_ALL: Final = "delete_alert_all"
 SERVICE_NAME_READ_ALERT_ALL: Final = "read_alert_all"
 SERVER_DATA_ALERT_INDEX: Final = "alert_index"
 
+CAMERA_TYPE: Final = "camera"
 SENSOR_TYPE: Final = "sensor"
 BINARY_SENSOR_TYPE: Final = "binary_sensor"
 VACUUM_TYPE: Final = "vacuum"
 LAWN_MOWER_TYPE: Final = "lawn_mower"
-INDEGO_PLATFORMS: Final = [SENSOR_TYPE, BINARY_SENSOR_TYPE, VACUUM_TYPE, LAWN_MOWER_TYPE]
+INDEGO_PLATFORMS: Final = [SENSOR_TYPE, BINARY_SENSOR_TYPE, VACUUM_TYPE, LAWN_MOWER_TYPE, CAMERA_TYPE]
 
 ENTITY_ONLINE: Final = "online"
 ENTITY_UPDATE_AVAILABLE: Final = "update_available"
