@@ -33,6 +33,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
+from svgutils.transform import fromstring
 
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
@@ -40,6 +41,7 @@ from .vacuum import IndegoVacuum
 from .lawn_mower import IndegoLawnMower
 from .const import *
 from .sensor import IndegoSensor
+from .camera import IndegoCamera
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -139,6 +141,9 @@ ENTITY_DEFINITIONS = {
             f"ambient_temp_{UnitOfTemperature.CELSIUS}",
         ],
     },
+    ENTITY_CAMERA: {
+        CONF_TYPE: CAMERA_TYPE,
+    },
     ENTITY_LAWN_MOWED: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_NAME: "lawn mowed",
@@ -195,6 +200,14 @@ ENTITY_DEFINITIONS = {
     },
     ENTITY_LAWN_MOWER: {
         CONF_TYPE: LAWN_MOWER_TYPE,
+    },
+    ENTITY_GARDEN_SIZE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "garden size",
+        CONF_ICON: "mdi:ruler-square",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: "m²",
+        CONF_ATTR: [],
     },
 }
 
@@ -408,6 +421,7 @@ class IndegoHub:
         self._refresh_24h_remover = None
         self._shutdown = False
         self._latest_alert = None
+        self._lawn_map = None
         self.entities = {}
         self._update_fail_count = None
 
@@ -475,6 +489,14 @@ class IndegoHub:
                         device_info,
                         self
                     )
+                    
+            elif entity[CONF_TYPE] == CAMERA_TYPE:
+                self.entities[entity_key] = IndegoCamera(
+                    f"indego_{self._serial}",
+                    self._mower_name,
+                    device_info,
+                    self
+                )
 
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
@@ -644,6 +666,15 @@ class IndegoHub:
 
         self._refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
+    async def download_map(self, force_refresh_map=False):
+        if self._lawn_map is None or force_refresh_map:
+            try:
+                self._lawn_map = await self._indego_client.get(f"alms/{self._indego_client.serial}/map")
+            except Exception as e:
+                _LOGGER.info("Get map got an exception: %s", e)
+
+        return self._lawn_map
+
     async def _update_operating_data(self):
         await self._indego_client.update_operating_data()
 
@@ -653,6 +684,8 @@ class IndegoHub:
 
             if ENTITY_VACUUM in self.entities:
                 self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
+                
+            self.entities[ENTITY_GARDEN_SIZE].state = self._indego_client.operating_data.garden.size
 
             self.entities[ENTITY_BATTERY].add_attributes(
                 {
@@ -684,56 +717,72 @@ class IndegoHub:
         if self._shutdown:
             return
 
-        if not self._indego_client.state:
+        state = self._indego_client.state
+        if not state:
             self.set_online_state(False)
-            return  # State update failed
+            return
+
+        mower_state = getattr(state, "mower_state", "unknown")
+
+        for entity in self.entities.values():
+            if hasattr(entity, "refresh_map") and callable(getattr(entity, "refresh_map")):
+                await entity.refresh_map(mower_state)
 
         self.set_online_state(self._indego_client.online)
-        self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
-        self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
-        self.entities[ENTITY_LAWN_MOWED].state = self._indego_client.state.mowed
-        self.entities[ENTITY_RUNTIME].state = self._indego_client.state.runtime.total.cut
-        self.entities[ENTITY_BATTERY].charging = (
-            True if self._indego_client.state_description_detail == "Charging" else False
-        )
 
-        self.entities[ENTITY_MOWER_STATE].add_attributes(
-            {
+        # Mower state text
+        if ENTITY_MOWER_STATE in self.entities:
+            self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
+            self.entities[ENTITY_MOWER_STATE].add_attributes({
                 "last_updated": last_updated_now()
-            }
-        )
+            })
 
-        self.entities[ENTITY_MOWER_STATE_DETAIL].add_attributes(
-            {
+        if ENTITY_MOWER_STATE_DETAIL in self.entities:
+            self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
+            self.entities[ENTITY_MOWER_STATE_DETAIL].add_attributes({
                 "last_updated": last_updated_now(),
-                "state_number": self._indego_client.state.state,
+                "state_number": getattr(state, "state", -1),
                 "state_description": self._indego_client.state_description_detail,
-            }
-        )
+            })
 
-        self.entities[ENTITY_LAWN_MOWED].add_attributes(
-            {
-                "last_updated": last_updated_now(),
-                "last_session_operation_min": self._indego_client.state.runtime.session.operate,
-                "last_session_cut_min": self._indego_client.state.runtime.session.cut,
-                "last_session_charge_min": self._indego_client.state.runtime.session.charge,
-            }
-        )
+        if ENTITY_LAWN_MOWED in self.entities:
+            runtime = getattr(state, "runtime", None)
+            session = getattr(runtime, "session", None)
+            self.entities[ENTITY_LAWN_MOWED].state = getattr(state, "mowed", 0)
+            if session:
+                self.entities[ENTITY_LAWN_MOWED].add_attributes({
+                    "last_updated": last_updated_now(),
+                    "last_session_operation_min": getattr(session, "operate", 0),
+                    "last_session_cut_min": getattr(session, "cut", 0),
+                    "last_session_charge_min": getattr(session, "charge", 0),
+                })
 
-        self.entities[ENTITY_RUNTIME].add_attributes(
-            {
-                "total_operation_time_h": self._indego_client.state.runtime.total.operate,
-                "total_mowing_time_h": self._indego_client.state.runtime.total.cut,
-                "total_charging_time_h": self._indego_client.state.runtime.total.charge,
-            }
-        )
+        if ENTITY_RUNTIME in self.entities and runtime:
+            total = getattr(runtime, "total", None)
+            if total:
+                self.entities[ENTITY_RUNTIME].state = getattr(total, "cut", 0)
+                self.entities[ENTITY_RUNTIME].add_attributes({
+                    "total_operation_time_h": getattr(total, "operate", 0),
+                    "total_mowing_time_h": getattr(total, "cut", 0),
+                    "total_charging_time_h": getattr(total, "charge", 0),
+                })
+
+        if ENTITY_BATTERY in self.entities:
+            charging = self._indego_client.state_description_detail == "Charging"
+            self.entities[ENTITY_BATTERY].charging = charging
+
+        if ENTITY_CAMERA in self.entities:
+            self.entities[ENTITY_CAMERA].is_streaming = (
+                False if self._indego_client.state_description == "Docked" else True
+            )
 
         if ENTITY_VACUUM in self.entities:
-            self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
+            self.entities[ENTITY_VACUUM].indego_state = getattr(state, "state", -1)
             self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
 
         if ENTITY_LAWN_MOWER in self.entities:
-            self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
+            self.entities[ENTITY_LAWN_MOWER].indego_state = getattr(state, "state", -1)
+
 
     async def _update_generic_data(self):
         await self._indego_client.update_generic_data()
@@ -821,6 +870,7 @@ class IndegoHub:
                 {"next_mow": next_mow}
             )
 
+    
     @property
     def serial(self) -> str:
         return self._serial
