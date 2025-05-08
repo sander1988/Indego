@@ -729,8 +729,6 @@ class IndegoHub:
                 await entity.refresh_map(mower_state)
 
         self.set_online_state(self._indego_client.online)
-
-        self.set_online_state(self._indego_client.online)
         self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
         self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
         self.entities[ENTITY_LAWN_MOWED].state = self._indego_client.state.mowed
