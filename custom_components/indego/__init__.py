@@ -730,58 +730,57 @@ class IndegoHub:
 
         self.set_online_state(self._indego_client.online)
 
-        # Mower state text
-        if ENTITY_MOWER_STATE in self.entities:
-            self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
-            self.entities[ENTITY_MOWER_STATE].add_attributes({
+        self.set_online_state(self._indego_client.online)
+        self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
+        self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
+        self.entities[ENTITY_LAWN_MOWED].state = self._indego_client.state.mowed
+        self.entities[ENTITY_RUNTIME].state = self._indego_client.state.runtime.total.cut
+        self.entities[ENTITY_BATTERY].charging = (
+            True if self._indego_client.state_description_detail == "Charging" else False
+        )
+
+        self.entities[ENTITY_MOWER_STATE].add_attributes(
+            {
                 "last_updated": last_updated_now()
-            })
+            }
+        )
 
-        if ENTITY_MOWER_STATE_DETAIL in self.entities:
-            self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
-            self.entities[ENTITY_MOWER_STATE_DETAIL].add_attributes({
+        self.entities[ENTITY_MOWER_STATE_DETAIL].add_attributes(
+            {
                 "last_updated": last_updated_now(),
-                "state_number": getattr(state, "state", -1),
+                "state_number": self._indego_client.state.state,
                 "state_description": self._indego_client.state_description_detail,
-            })
+            }
+        )
 
-        if ENTITY_LAWN_MOWED in self.entities:
-            runtime = getattr(state, "runtime", None)
-            session = getattr(runtime, "session", None)
-            self.entities[ENTITY_LAWN_MOWED].state = getattr(state, "mowed", 0)
-            if session:
-                self.entities[ENTITY_LAWN_MOWED].add_attributes({
-                    "last_updated": last_updated_now(),
-                    "last_session_operation_min": getattr(session, "operate", 0),
-                    "last_session_cut_min": getattr(session, "cut", 0),
-                    "last_session_charge_min": getattr(session, "charge", 0),
-                })
+        self.entities[ENTITY_LAWN_MOWED].add_attributes(
+            {
+                "last_updated": last_updated_now(),
+                "last_session_operation_min": self._indego_client.state.runtime.session.operate,
+                "last_session_cut_min": self._indego_client.state.runtime.session.cut,
+                "last_session_charge_min": self._indego_client.state.runtime.session.charge,
+            }
+        )
 
-        if ENTITY_RUNTIME in self.entities and runtime:
-            total = getattr(runtime, "total", None)
-            if total:
-                self.entities[ENTITY_RUNTIME].state = getattr(total, "cut", 0)
-                self.entities[ENTITY_RUNTIME].add_attributes({
-                    "total_operation_time_h": getattr(total, "operate", 0),
-                    "total_mowing_time_h": getattr(total, "cut", 0),
-                    "total_charging_time_h": getattr(total, "charge", 0),
-                })
+        self.entities[ENTITY_RUNTIME].add_attributes(
+            {
+                "total_operation_time_h": self._indego_client.state.runtime.total.operate,
+                "total_mowing_time_h": self._indego_client.state.runtime.total.cut,
+                "total_charging_time_h": self._indego_client.state.runtime.total.charge,
+            }
+        )
 
-        if ENTITY_BATTERY in self.entities:
-            charging = self._indego_client.state_description_detail == "Charging"
-            self.entities[ENTITY_BATTERY].charging = charging
+        if ENTITY_VACUUM in self.entities:
+            self.entities[ENTITY_VACUUM].indego_state = self._indego_client.state.state
+            self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
+
+        if ENTITY_LAWN_MOWER in self.entities:
+            self.entities[ENTITY_LAWN_MOWER].indego_state = self._indego_client.state.state
 
         if ENTITY_CAMERA in self.entities:
             self.entities[ENTITY_CAMERA].is_streaming = (
                 False if self._indego_client.state_description == "Docked" else True
             )
-
-        if ENTITY_VACUUM in self.entities:
-            self.entities[ENTITY_VACUUM].indego_state = getattr(state, "state", -1)
-            self.entities[ENTITY_VACUUM].battery_charging = self.entities[ENTITY_BATTERY].charging
-
-        if ENTITY_LAWN_MOWER in self.entities:
-            self.entities[ENTITY_LAWN_MOWER].indego_state = getattr(state, "state", -1)
 
 
     async def _update_generic_data(self):
