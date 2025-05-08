@@ -46,9 +46,6 @@ class IndegoCamera(IndegoEntity, Camera):
         await asyncio.sleep(3)
         await self.refresh_map("unknown")
 
-    @property
-    def frame_interval(self) -> float:
-        return 5.0
 
     async def async_camera_image(self, width: int | None = None, height: int | None = None) -> bytes | None:
         if self._svg_map is None:
