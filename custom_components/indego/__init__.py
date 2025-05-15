@@ -32,6 +32,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
+from homeassistant.helpers.event import async_track_time_interval
 from pyIndego import IndegoAsyncClient
 from svgutils.transform import fromstring
 
@@ -240,6 +241,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass,
         entry.options.get(CONF_USER_AGENT)
     )
+    await indego_hub.start_periodic_map_download()
 
     async def load_platforms():
         _LOGGER.debug("Loading platforms")
@@ -424,6 +426,7 @@ class IndegoHub:
         self._lawn_map = None
         self.entities = {}
         self._update_fail_count = None
+        self._unsub_map_timer = None
 
         async def async_token_refresh() -> str:
             await session.async_ensure_token_valid()
@@ -563,6 +566,10 @@ class IndegoHub:
         if self._refresh_24h_remover:
             self._refresh_24h_remover()
 
+        if self._unsub_map_timer:
+            self._unsub_map_timer()
+            self._unsub_map_timer = None
+
         await self._indego_client.close()
         _LOGGER.debug("Shutdown finished.")
 
@@ -673,7 +680,37 @@ class IndegoHub:
             except Exception as e:
                 _LOGGER.info("Get map got an exception: %s", e)
 
+        if self._lawn_map and self._indego_client.state:
+            try:
+                await self._indego_client.update_state(force=True)
+            except Exception as e:
+                _LOGGER.info("Update state force got an exception: %s", e)
+
         return self._lawn_map
+
+    async def start_periodic_map_download(self):
+        """Start periodic map download every 10 seconds."""
+        self._unsub_map_timer = async_track_time_interval(
+            self._hass, self._download_map_interval, timedelta(seconds=10)
+        )
+
+    async def _download_map_interval(self, now):
+        """Call download_map periodically and handover map to camera."""
+        try:
+            await self.download_map(force_refresh_map=True)
+            mower_state = getattr(self._indego_client.state, "mower_state", "unknown")
+
+            for entity in self.entities.values():
+                if hasattr(entity, "refresh_map"):
+                    await entity.refresh_map(mower_state)
+
+        except Exception as e:
+            _LOGGER.warning("Error during periodical map download: %s", e)
+
+    async def stop_periodic_map_download(self):
+        if self._unsub_map_timer:
+            self._unsub_map_timer()
+            self._unsub_map_timer = None
 
     async def _update_operating_data(self):
         await self._indego_client.update_operating_data()
