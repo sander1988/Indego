@@ -200,6 +200,17 @@ ENTITY_DEFINITIONS = {
     ENTITY_LAWN_MOWER: {
         CONF_TYPE: LAWN_MOWER_TYPE,
     },
+    ENTITY_GARDEN_SIZE: {
+        CONF_TYPE: SENSOR_TYPE,
+        CONF_NAME: "garden size",
+        CONF_ICON: "mdi:ruler-square",
+        CONF_DEVICE_CLASS: None,
+        CONF_UNIT_OF_MEASUREMENT: "m²",
+        CONF_ATTR: [],
+    },
+    ENTITY_CAMERA: {
+        CONF_TYPE: CAMERA_TYPE,
+    },
 }
 
 
@@ -735,6 +746,8 @@ class IndegoHub:
 
             if ENTITY_VACUUM in self.entities:
                 self.entities[ENTITY_VACUUM].battery_level = self._indego_client.operating_data.battery.percent_adjusted
+
+            self.entities[ENTITY_GARDEN_SIZE].state = self._indego_client.operating_data.garden.size
 
             self.entities[ENTITY_BATTERY].add_attributes(
                 {
