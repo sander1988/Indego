@@ -71,6 +71,10 @@ SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string
 })
 
+SERVICE_SCHEMA_DOWNLOAD_MAP = vol.Schema({
+    vol.Optional(CONF_MOWER_SERIAL): cv.string
+})
+
 
 def FUNC_ICON_MOWER_ALERT(state):
     if state:
@@ -318,6 +322,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         await instance._indego_client.put_all_alerts_read()
         await instance._update_alerts()
 
+    async def async_download_map(call):
+        """Handle the download_map service call."""
+        instance = find_instance_for_mower_service_call(call)
+        _LOGGER.debug("Indego.download_map service called for serial: %s", instance.serial)
+        await instance.download_and_store_map()
+
     # In HASS we can have multiple Indego component instances as long as the mower serial is unique.
     # So the mower services should only need to be registered for the first instance.
     if CONF_SERVICES_REGISTERED not in hass.data[DOMAIN]:
@@ -359,6 +369,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             SERVICE_NAME_READ_ALERT_ALL, 
             async_read_alert_all, 
             schema=SERVICE_SCHEMA_READ_ALERT_ALL
+        )
+        hass.services.async_register(
+            DOMAIN,
+            SERVICE_NAME_DOWNLOAD_MAP,
+            async_download_map,
+            schema=SERVICE_SCHEMA_DOWNLOAD_MAP
         )
 
         hass.data[DOMAIN][CONF_SERVICES_REGISTERED] = entry.entry_id
@@ -410,6 +426,10 @@ class IndegoHub:
         self._latest_alert = None
         self.entities = {}
         self._update_fail_count = None
+        self._lawn_map = None
+        self._unsub_map_timer = None
+        self._last_position = (None, None)
+        self._last_state = None
 
         async def async_token_refresh() -> str:
             await session.async_ensure_token_valid()
@@ -476,6 +496,14 @@ class IndegoHub:
                         self
                     )
 
+            elif entity[CONF_TYPE] == CAMERA_TYPE:
+            self.entities[entity_key] = IndegoCamera(
+                f"indego_{self._serial}",
+                self._mower_name,
+                device_info,
+                self
+            )
+
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
         _LOGGER.debug("Getting generic data for device info.")
@@ -540,6 +568,10 @@ class IndegoHub:
 
         if self._refresh_24h_remover:
             self._refresh_24h_remover()
+
+        if self._unsub_map_timer:
+            self._unsub_map_timer()
+            self._unsub_map_timer = None
 
         await self._indego_client.close()
         _LOGGER.debug("Shutdown finished.")
@@ -644,6 +676,56 @@ class IndegoHub:
 
         self._refresh_24h_remover = async_call_later(self._hass, 86400, self.refresh_24h)
 
+    def map_path(self):
+        return f"/config/www/indego_map_{self._serial}.svg"
+
+    async def download_and_store_map(self):
+        try:
+            svg_bytes = await self._indego_client.get(f"alms/{self._serial}/map")
+            if svg_bytes:
+                async with aiofiles.open(self.map_path(), "wb") as f:
+                    await f.write(svg_bytes)
+                _LOGGER.info("Map saved in %s", self.map_path())
+        except Exception as e:
+            _LOGGER.warning("Error during saving the map [%s]: %s", self._serial, e)
+
+    async def start_periodic_position_update(self):
+        self._unsub_map_timer = async_track_time_interval(
+            self._hass, self._check_position_and_state, timedelta(seconds=60)
+        )
+
+    async def _check_position_and_state(self, now):
+        try:
+            await self._indego_client.update_state(force=True)
+        except asyncio.TimeoutError:
+            _LOGGER.warning("Timeout on update_state() – Mower not available or too slow")
+            return
+        except Exception as e:
+            _LOGGER.exception("Fehler on update_state() – actual mower_state=%s", self._last_state)
+            return
+
+        state = self._indego_client.state
+        if not state:
+            _LOGGER.warning("Received invalid state from mower")
+            return
+
+        mower_state = getattr(state, "mower_state", "unknown")
+        xpos = getattr(state, "svg_xPos", None)
+        ypos = getattr(state, "svg_yPos", None)
+        self._last_state = mower_state
+
+        if mower_state == "docked":
+            _LOGGER.debug("Mower is docked - no position updates")
+            return
+
+        if xpos is not None and ypos is not None:
+            if (xpos, ypos) != self._last_position:
+                _LOGGER.info("Position geändert: x=%s, y=%s", xpos, ypos)
+                self._last_position = (xpos, ypos)
+                for entity in self.entities.values():
+                    if hasattr(entity, "refresh_map"):
+                        await entity.refresh_map(mower_state)
+    
     async def _update_operating_data(self):
         await self._indego_client.update_operating_data()
 
@@ -688,6 +770,16 @@ class IndegoHub:
             self.set_online_state(False)
             return  # State update failed
 
+        # Refresh Camera map if Position is available
+        new_x = self._indego_client.state.svg_xPos
+        new_y = self._indego_client.state.svg_yPos
+        mower_state = self._indego_client.state_description
+
+        if new_x is not None and new_y is not None:
+            for entity in self.entities.values():
+                if hasattr(entity, "refresh_map"):
+                    await entity.refresh_map(mower_state)
+        
         self.set_online_state(self._indego_client.online)
         self.entities[ENTITY_MOWER_STATE].state = self._indego_client.state_description
         self.entities[ENTITY_MOWER_STATE_DETAIL].state = self._indego_client.state_description_detail
