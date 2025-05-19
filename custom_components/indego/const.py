@@ -58,6 +58,7 @@ ENTITY_RUNTIME: Final = "runtime_total"
 ENTITY_VACUUM: Final = "vacuum"
 ENTITY_LAWN_MOWER: Final = "lawn_mower"
 ENTITY_GARDEN_SIZE: Final = "garden_size"
+ENTITY_CAMERA: Final = "camera"
 
 HTTP_HEADER_USER_AGENT: Final = "User-Agent"
 HTTP_HEADER_USER_AGENT_DEFAULT: Final = "HA/Indego"
