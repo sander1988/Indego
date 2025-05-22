@@ -2,6 +2,8 @@
 from typing import Optional
 import asyncio
 import logging
+import time
+import aiofiles
 from datetime import datetime, timedelta
 from aiohttp.client_exceptions import ClientResponseError
 
@@ -32,6 +34,7 @@ from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
+from homeassistant.helpers.event import async_track_time_interval
 from pyIndego import IndegoAsyncClient
 from svgutils.transform import fromstring
 
