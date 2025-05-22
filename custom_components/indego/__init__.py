@@ -33,6 +33,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.config_entry_oauth2_flow import async_get_config_entry_implementation
 from homeassistant.helpers.event import async_track_point_in_time
 from pyIndego import IndegoAsyncClient
+from svgutils.transform import fromstring
 
 from .api import IndegoOAuth2Session
 from .binary_sensor import IndegoBinarySensor
@@ -40,6 +41,7 @@ from .vacuum import IndegoVacuum
 from .lawn_mower import IndegoLawnMower
 from .const import *
 from .sensor import IndegoSensor
+from .camera import IndegoCamera
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -242,6 +244,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass,
         entry.options.get(CONF_USER_AGENT)
     )
+
+    await indego_hub.start_periodic_position_update()
 
     async def load_platforms():
         _LOGGER.debug("Loading platforms")
@@ -508,12 +512,12 @@ class IndegoHub:
                     )
 
             elif entity[CONF_TYPE] == CAMERA_TYPE:
-            self.entities[entity_key] = IndegoCamera(
-                f"indego_{self._serial}",
-                self._mower_name,
-                device_info,
-                self
-            )
+                self.entities[entity_key] = IndegoCamera(
+                    f"indego_{self._serial}",
+                    self._mower_name,
+                    device_info,
+                    self
+                )
 
     async def update_generic_data_and_load_platforms(self, load_platforms):
         """Update the generic mower data, so we can create the HA platforms for the Indego component."""
