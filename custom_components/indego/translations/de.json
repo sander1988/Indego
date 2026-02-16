@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "Dieser Bosch Indego Mähroboter wurde bereits konfiguriert!",
             "connection_error": "Die Verbindung zur Bosch Indego API ist fehlgeschlagen! Bitte die Known Issues Seite (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) für möglche Lösungen nutzen.",
-            "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mähroboter gefunden!"
+            "no_mowers_found": "In diesem Bosch Indego Account wurden keine Mähroboter gefunden!",
+            "reauth_successful": "Re-Authentifizierung war erfolgreich. Zugang zur Bosch API wurde wiederhergestellt."
         },
         "step": {
             "advanced": {
@@ -20,6 +21,10 @@
                     "mower_name": "Mähroboter Name"
                 },
                 "description": "Bitte die Seriennummer des Bosch Mähroboters, der hinzugefügt werden soll, auswählen."
+            },
+            "reauth_confirm": {
+                "title": "Authentifizierung abgelaufen",
+                "description": "Die Bosch Indego API Authentifizierung ist abgelaufen. Bitte mit der Bosch SingleKey ID neu Authentifizieren."
             }
         }
     },

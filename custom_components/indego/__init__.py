@@ -3,11 +3,12 @@ from typing import Optional
 import asyncio
 import logging
 from datetime import datetime, timedelta
+from aiohttp.client_exceptions import ClientResponseError
 
 import homeassistant.util.dt
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, CoreState
-from homeassistant.exceptions import HomeAssistantError
+from homeassistant.exceptions import HomeAssistantError, ConfigEntryAuthFailed
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
@@ -229,15 +230,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     async def load_platforms():
         _LOGGER.debug("Loading platforms")
-        await asyncio.gather(
-            *(
-                hass.config_entries.async_forward_entry_setup(entry, platform)
-                for platform in INDEGO_PLATFORMS
-            )
-        )
+        await hass.config_entries.async_forward_entry_setups(entry, INDEGO_PLATFORMS)
 
     try:
         await indego_hub.update_generic_data_and_load_platforms(load_platforms)
+
+    except ClientResponseError as exc:
+        if 400 <= exc.status < 500:
+            _LOGGER.debug("Received 401, triggering ConfigEntryAuthFailed in HA...")
+            raise ConfigEntryAuthFailed from exc
+
+        _LOGGER.warning("Login unsuccessful: %s", str(exc))
+        return False
+
     except AttributeError as exc:
         _LOGGER.warning("Login unsuccessful: %s", str(exc))
         return False
@@ -552,7 +557,6 @@ class IndegoHub:
         except Exception as exc:
             update_failed = True
             _LOGGER.warning("Mower state update failed, reason: %s", str(exc))
-            #_LOGGER.exception(exc)
             self.set_online_state(False)
 
         if self._shutdown:
