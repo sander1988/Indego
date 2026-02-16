@@ -3,7 +3,8 @@
         "abort": {
             "already_configured": "Táto kosačka Bosch Indego je už nakonfigurovaná!",
             "connection_error": "Pripojenie k Bosch Indego API zlyhalo! Použite stránku so známymi problémami (https://github.com/sander1988/Indego?tab=readme-ov-file#known-issues) pre možné riešenia.",
-            "no_mowers_found": "V tomto účte Bosch Indego sa nenašli žiadne kosačky!"
+            "no_mowers_found": "V tomto účte Bosch Indego sa nenašli žiadne kosačky!",
+            "reauth_successful": "Opätovné overenie bolo úspešné. Prístup k rozhraniu Bosch API bol obnovený."
         },
         "step": {
             "advanced": {
@@ -20,6 +21,10 @@
                     "mower_name": "Názov kosačky"
                 },
                 "description": "Vyberte prosím sériové číslo kosačky Bosch, ktorú chcete pridať."
+            },
+            "reauth_confirm": {
+                "title": "Overenie vypršalo",
+                "description": "Platnosť overenia rozhrania API pre systém Bosch Indego vypršala. Znova sa overte pomocou svojho identifikátora Bosch SingleKey."
             }
         }
     },
