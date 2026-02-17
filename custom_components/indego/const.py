@@ -34,13 +34,16 @@ SERVICE_NAME_DELETE_ALERT: Final = "delete_alert"
 SERVICE_NAME_READ_ALERT: Final = "read_alert"
 SERVICE_NAME_DELETE_ALERT_ALL: Final = "delete_alert_all"
 SERVICE_NAME_READ_ALERT_ALL: Final = "read_alert_all"
+SERVICE_NAME_DOWNLOAD_MAP: Final = "download_map"
 SERVER_DATA_ALERT_INDEX: Final = "alert_index"
 
+CAMERA_TYPE: Final = "camera"
 SENSOR_TYPE: Final = "sensor"
 BINARY_SENSOR_TYPE: Final = "binary_sensor"
 VACUUM_TYPE: Final = "vacuum"
 LAWN_MOWER_TYPE: Final = "lawn_mower"
-INDEGO_PLATFORMS: Final = [SENSOR_TYPE, BINARY_SENSOR_TYPE, VACUUM_TYPE, LAWN_MOWER_TYPE]
+CAMERA_TYPE: Final = "camera"
+INDEGO_PLATFORMS: Final = [SENSOR_TYPE, BINARY_SENSOR_TYPE, VACUUM_TYPE, LAWN_MOWER_TYPE, CAMERA_TYPE]
 
 ENTITY_ONLINE: Final = "online"
 ENTITY_UPDATE_AVAILABLE: Final = "update_available"
@@ -55,6 +58,8 @@ ENTITY_MOWING_MODE: Final = "mowing_mode"
 ENTITY_RUNTIME: Final = "runtime_total"
 ENTITY_VACUUM: Final = "vacuum"
 ENTITY_LAWN_MOWER: Final = "lawn_mower"
+ENTITY_GARDEN_SIZE: Final = "garden_size"
+ENTITY_CAMERA: Final = "camera"
 
 HTTP_HEADER_USER_AGENT: Final = "User-Agent"
 HTTP_HEADER_USER_AGENT_DEFAULT: Final = "HA/Indego"
