@@ -241,7 +241,7 @@ For Home Assistant administrators to analyze integration health:
 
 Bosch Indego integrates with Home Assistant System Health for service monitoring:
 
-**Access at:** Settings → System → System Health → Bosch Indego
+**Access at:** Settings -> System -> Repairs -> System information (top right three dots menu)
 
 Monitors:
 - **Bosch API Health**: Detects HTTP 5xx errors and service availability

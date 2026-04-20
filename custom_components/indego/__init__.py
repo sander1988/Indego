@@ -480,8 +480,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     # Register repairs and initialize diagnostics/system health
     try:
         # Diagnostics are automatically discovered by HA - no manual registration needed
-        # System health is automatically discovered by HA when system_health.py exists
-
         # Register repairs flow
         from .repairs import async_create_fix_flow
 
@@ -819,7 +817,7 @@ class IndegoHub:
         """Do the initial update and create all entities."""
         _LOGGER.info("Starting initial state synchronization for: %s", self._serial)
 
-        self.set_online_state(False)
+        # Don't set offline during startup - let the first successful API call set the state
         self.set_service_status(True)  # Service is up by default until we detect an error
         await self._create_refresh_state_task()
         await asyncio.gather(*[self.refresh_10m(), self.refresh_24h()])

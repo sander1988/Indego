@@ -311,8 +311,8 @@
         }
     },
     "system_health": {
-        "can_reach_bosch_api": "Can reach Bosch Indego API",
         "can_reach_auth_service": "Can reach Bosch authentication service",
+        "bosch_api_status": "Bosch API connectivity",
         "bosch_service_status": "Bosch service status",
         "mower_online": "Mower online status",
         "last_api_response": "Last successful API response"

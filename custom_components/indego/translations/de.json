@@ -308,8 +308,8 @@
         }
     },
     "system_health": {
-        "can_reach_bosch_api": "Kann Bosch Indego API erreichen",
         "can_reach_auth_service": "Kann Bosch Authentifizierungsdienst erreichen",
+        "bosch_api_status": "Bosch API Verbindung",
         "bosch_service_status": "Bosch-Dienststatus",
         "mower_online": "Mähroboter Online-Status",
         "last_api_response": "Letzte erfolgreiche API-Antwort"

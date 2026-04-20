@@ -35,6 +35,7 @@ delete_alert:
     alert_index:
       description: Index of the alert to delete. 0 = most recent, 1 = second most recent, and so on.
       example: "0"
+      required: true
 delete_alert_all:
   description: Deletes all existing alerts for the mower at once.
   fields:
@@ -52,6 +53,7 @@ read_alert:
     alert_index:
       description: Index of the alert to mark as read. 0 = most recent, 1 = second most recent, and so on.
       example: "0"
+      required: true
 read_alert_all:
   description: Marks all existing alerts for the mower as read.
   fields:
