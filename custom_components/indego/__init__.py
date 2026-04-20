@@ -1303,8 +1303,25 @@ class IndegoHub:
                 runtime = getattr(self._indego_client.state, 'runtime', None)
                 if runtime and hasattr(runtime, 'total'):
                     cut_time = getattr(runtime.total, 'cut', None)
-                    self.entities[ENTITY_RUNTIME].state = cut_time if cut_time is not None else STATE_UNKNOWN
-                    _LOGGER.debug("Total mowing time: %d hours", cut_time if cut_time is not None else 0)
+
+                    # Ensure runtime never decreases (TOTAL_INCREASING constraint)
+                    current_state = self.entities[ENTITY_RUNTIME].state
+                    if cut_time is not None:
+                        # Convert current state to number if possible
+                        try:
+                            current_value = float(current_state) if current_state and current_state != STATE_UNKNOWN else 0
+                        except (ValueError, TypeError):
+                            current_value = 0
+
+                        # Only update if new value is >= current value or current is unknown
+                        if cut_time >= current_value:
+                            self.entities[ENTITY_RUNTIME].state = cut_time
+                            _LOGGER.debug("Total mowing time: %d hours", cut_time)
+                        else:
+                            _LOGGER.warning("Ignoring runtime decrease from %s to %s hours (API inconsistency)",
+                                          current_value, cut_time)
+                    else:
+                        self.entities[ENTITY_RUNTIME].state = STATE_UNKNOWN
                 else:
                     self.entities[ENTITY_RUNTIME].state = STATE_UNKNOWN
             except Exception as exc:
