@@ -1316,7 +1316,7 @@ class IndegoHub:
                             self.entities[ENTITY_RUNTIME].state = cut_time
                             _LOGGER.debug("Total mowing time: %s hours", cut_time)
                         else:
-                            _LOGGER.warning("Ignoring runtime decrease from %s to %s hours (API inconsistency)",
+                            _LOGGER.debug("Ignoring runtime decrease from %s to %s hours (API inconsistency)",
                                           current_value, cut_time)
                     else:
                         self.entities[ENTITY_RUNTIME].state = STATE_UNKNOWN
