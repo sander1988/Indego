@@ -307,11 +307,3 @@
             "description": "Your mower has not responded to API requests for an extended period. This may indicate network issues, the Bosch service is experiencing problems, or your mower is offline. Please check your internet connection and mower status."
         }
     },
-    "system_health": {
-        "can_reach_bosch_api": "Can reach Bosch Indego API",
-        "can_reach_auth_service": "Can reach Bosch authentication service",
-        "bosch_service_status": "Bosch service status",
-        "mower_online": "Mower online status",
-        "last_api_response": "Last successful API response"
-    }
-}

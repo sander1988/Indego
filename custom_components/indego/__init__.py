@@ -51,7 +51,7 @@ from .camera import IndegoCamera
 from .error_codes import ERROR_CODE_MAP, get_error_description
 from .button import IndegoAlertButton
 from .switch import IndegoSwitch
-from . import diagnostics, system_health, repairs
+from . import diagnostics, repairs
 
 _LOGGER = logging.getLogger(__name__)
 

@@ -237,20 +237,6 @@ For Home Assistant administrators to analyze integration health:
 - Session counter data
 - Configuration details (redacted for security)
 
-### 🏥 System Health
-
-Bosch Indego integrates with Home Assistant System Health for service monitoring:
-
-**Access at:** Settings -> System -> Repairs -> System information (top right three dots menu)
-
-Monitors:
-- **Bosch API Health**: Detects HTTP 5xx errors and service availability
-- **Mower Connectivity**: Shows online/offline status of connected mowers
-- **Last Update**: Time of last successful API response (with warnings if >10 minutes stale)
-- **Authentication Status**: OAuth2 token validation
-
-Helps distinguish between Bosch Cloud outages vs. local connectivity problems.
-
 ### 🔧 Auto Repairs
 
 Automatic issue detection and resolution:
