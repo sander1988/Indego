@@ -1314,7 +1314,7 @@ class IndegoHub:
                         # Only update if new value is >= current value or current is unknown
                         if cut_time >= current_value:
                             self.entities[ENTITY_RUNTIME].state = cut_time
-                            _LOGGER.debug("Total mowing time: %d hours", cut_time)
+                            _LOGGER.debug("Total mowing time: %s hours", cut_time)
                         else:
                             _LOGGER.warning("Ignoring runtime decrease from %s to %s hours (API inconsistency)",
                                           current_value, cut_time)
