@@ -911,7 +911,7 @@ class IndegoHub:
             _LOGGER.info("Connection restored - clearing repair issue")
             try:
                 issue_registry = ir.async_get(self._hass)
-                issue_registry.async_delete(f"{DOMAIN}/connection_failure")
+                issue_registry.async_delete(DOMAIN, "connection_failure")
                 self._hass.data[DOMAIN]["connection_issue_reported"] = False
             except Exception as err:
                 _LOGGER.warning("Error deleting connection issue: %s", err)
