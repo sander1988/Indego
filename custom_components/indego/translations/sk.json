@@ -14,10 +14,7 @@
                     "expose_vacuum": "Zobraziť kosačku Indego ako entitu vysávača v Home Assistant"
                 },
                 "data_description": {
-                    "user_agent": "Vlastná hlavička User-Agent pre požiadavky API na Bosch Indego Cloud. Nechajte prázdne na použitie štandardnej hodnoty. Niektorí používatelia budú musieť nastaviť vlastnú hodnotu, ak má ich účet obmedzenia prístupu k API."
-                },
-                "data_description": {
-                    "user_agent": "V prípade chýb HTTP 4XX (najmä Reason: 403, message=‚Forbidden‘) môže pomôcť zmena User Agent. Nemal by obsahovať Homeassistant ani HA."
+                    "user_agent": "V prípade chýb HTTP 4XX (najmä Reason: 403, message=‚Forbidden’) môže pomôcť zmena User Agent. Nemal by obsahovať Homeassistant ani HA."
                 },
                 "description": "Rozšírené nastavenia komponentu Bosch Indego."
             },

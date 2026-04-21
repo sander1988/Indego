@@ -14,10 +14,7 @@
                     "expose_vacuum": "Voeg de Indego robotmaaier toe als stofzuiger entiteit aan Home Assistant"
                 },
                 "data_description": {
-                    "user_agent": "Custom User-Agent header voor API-verzoeken naar Bosch Indego Cloud. Leeg laten om de standaardwaarde te gebruiken. Sommige gebruikers moeten mogelijk een aangepaste waarde instellen als hun account API-toegangsbeperkingen heeft."
-                },
-                "data_description": {
-                    "user_agent": "Bij HTTP 4XX-fouten (met name Reason: 403, message=‘Forbidden’) kan het helpen om de User Agent aan te passen. Deze mag geen Homeassistant of HA bevatten."
+                    "user_agent": "Bij HTTP 4XX-fouten (met name Reason: 403, message=’Forbidden’) kan het helpen om de User Agent aan te passen. Deze mag geen Homeassistant of HA bevatten."
                 },
                 "description": "Geavanceerde instellingen van het Bosch Indego component."
             },

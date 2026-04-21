@@ -13,11 +13,8 @@
                     "expose_mower": "Wyświetl kosiarkę Indego jako encję kosiarki w Home Assistant",
                     "expose_vacuum": "Wyświetl kosiarkę Indego jako encję odkurzacza w Home Assistant"
                 },
-                "data_description": {
-                    "user_agent": "Niestandardowy nagłówek User-Agent dla żądań API do Bosch Indego Cloud. Pozostaw puste, aby użyć wartości domyślnej. Niektórzy użytkownicy mogą potrzebować ustawić wartość niestandardową, jeśli ich konto ma ograniczenia dostępu do API."
-                },
-                "data_description": {
-                    "user_agent": "W przypadku błędów HTTP 4XX (zwłaszcza Reason: 403, message=»Forbidden«) pomocna może okazać się zmiana agenta użytkownika. Nie powinien on zawierać słów „Homeassistant” ani „HA”."
+                “data_description”: {
+                    “user_agent”: “W przypadku błędów HTTP 4XX (zwłaszcza Reason: 403, message=»Forbidden«) pomocna może okazać się zmiana agenta użytkownika. Nie powinien on zawierać słów „Homeassistant” ani „HA”.”
                 },
                 "description": "Ustawienia zaawansowane komponentu Bosch Indego."
             },

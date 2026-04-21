@@ -14,9 +14,6 @@
                     "expose_vacuum": "Expose Indego mower as vacuum entity in Home Assistant"
                 },
                 "data_description": {
-                    "user_agent": "Custom User-Agent header for API requests to Bosch Indego Cloud. Leave empty to use default. Some users may need to set a custom value if their account has API access restrictions."
-                },
-                "data_description": {
                     "user_agent": "In case of HTTP 4XX errors (especially Reason: 403, message='Forbidden') it might help to change the User Agent. Should not contain Homeassistant or HA."
                 },
                 "description": "Advanced settings of the Bosch Indego component."

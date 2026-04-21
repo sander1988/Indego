@@ -14,9 +14,6 @@
                     "expose_vacuum": "Exposer la tondeuse Indego comme une entité aspirateur dans Home Assistant"
                 },
                 "data_description": {
-                    "user_agent": "En-tête User-Agent personnalisé pour les requêtes API vers Bosch Indego Cloud. Laisser vide pour utiliser la valeur par défaut. Certains utilisateurs devront peut-être définir une valeur personnalisée si leur compte a des restrictions d'accès à l'API."
-                },
-                "data_description": {
                     "user_agent": "En cas d'erreurs HTTP 4XX (notamment avec le code 403 et le message « Forbidden »), il peut être utile de modifier l'agent utilisateur. Celui-ci ne doit pas contenir les termes « Homeassistant » ou « HA »."
                 },
                 "description": "Réglages avancés du composant Bosch Indego. Peuvent être laissés inchangés pour la plupart des utilisateurs."
