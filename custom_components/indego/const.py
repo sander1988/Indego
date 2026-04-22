@@ -88,6 +88,23 @@ ENTITY_READ_ALL_ALERTS_BUTTON: Final = "read_all_alerts"
 ENTITY_READ_LAST_ALERT_BUTTON: Final = "read_last_alert"
 ENTITY_SMARTMOWING_SWITCH: Final = "smartmowing_switch"
 
+# Smart Mowing Sensors (Phase 1)
+ENTITY_WEATHER: Final = "weather"
+ENTITY_WEATHER_TEMPERATURE: Final = "weather_temperature"
+ENTITY_WEATHER_HUMIDITY: Final = "weather_humidity"
+ENTITY_WEATHER_FORECAST: Final = "weather_forecast"
+ENTITY_WEATHER_WIND: Final = "weather_wind"
+ENTITY_LAST_CUTTING: Final = "last_cutting"
+ENTITY_GARDEN_LOCATION: Final = "garden_location"
+ENTITY_SMARTMOW_ENABLED: Final = "smartmow_enabled"
+ENTITY_SMARTMOW_SETUP: Final = "smartmow_setup"
+ENTITY_SMARTMOW_SCHEDULE: Final = "smartmow_schedule"
+
+# Smart Mowing Services (Phase 2)
+SERVICE_NAME_SET_LOCATION: Final = "set_smart_mowing_location"
+SERVICE_NAME_CONFIGURE_SETUP: Final = "configure_smart_mowing"
+SERVICE_NAME_RESET_SMART_MOWING: Final = "reset_smart_mowing"
+
 DELETE_ALERTS_BATCH_DELAY_SECONDS: Final = 10
 DELETE_ALERTS_BATCH_MAX_ROUNDS: Final = 20
 READ_ALERTS_BATCH_DELAY_SECONDS: Final = 10

@@ -306,4 +306,5 @@
             "title": "Bosch Indego connection problems",
             "description": "Your mower has not responded to API requests for an extended period. This may indicate network issues, the Bosch service is experiencing problems, or your mower is offline. Please check your internet connection and mower status."
         }
-    },
+    }
+}

@@ -48,7 +48,14 @@ from .lawn_mower import IndegoLawnMower
 from .const import *
 from .sensor import IndegoSensor
 from .camera import IndegoCamera
-from .error_codes import ERROR_CODE_MAP, get_error_description
+from .error_codes import (
+    ERROR_CODE_MAP,
+    get_error_description,
+    get_error_severity,
+    parse_composite_error,
+    format_error_message,
+    ErrorSeverity,
+)
 from .button import IndegoAlertButton
 from .switch import IndegoSwitch
 from . import diagnostics, repairs
@@ -1212,6 +1219,22 @@ class IndegoHub:
             _LOGGER.warning("Timeout while fetching mower state - mower may be offline or API is slow")
             self.set_online_state(False)
             return
+        except ClientResponseError as exc:
+            # Enhanced error handling with specific error code information
+            error_code = str(exc.status)
+            error_desc = get_error_description(f"{error_code}_timeout")
+            error_severity = get_error_severity(f"{error_code}_timeout")
+
+            log_msg = f"Failed to fetch mower state from Bosch API: {error_desc} (HTTP {exc.status})"
+            if error_severity == ErrorSeverity.ERROR:
+                _LOGGER.error(log_msg)
+            elif error_severity == ErrorSeverity.WARNING:
+                _LOGGER.warning(log_msg)
+            else:
+                _LOGGER.debug(log_msg)
+
+            self.set_online_state(False)
+            return
         except Exception as exc:
             _LOGGER.error("Failed to fetch mower state from Bosch API: %s", str(exc))
             self.set_online_state(False)
@@ -1504,7 +1527,7 @@ class IndegoHub:
         self.entities[ENTITY_ALERT].state = unread_count > 0
 
         if self._indego_client.alerts:
-            # Build complete alert attributes
+            # Build complete alert attributes with enhanced error descriptions
             alert_attributes = {
                 "alerts_count": self._indego_client.alerts_count,
                 "last_alert_error_code": self._indego_client.alerts[0].error_code,
@@ -1516,15 +1539,18 @@ class IndegoHub:
             # Always store all alerts as individual attributes for easy extraction in automations
             for index, alert in enumerate(self._indego_client.alerts):
                 error_code = str(alert.error_code)
+                # Use new comprehensive error description
                 error_desc = get_error_description(error_code)
+                error_severity = get_error_severity(error_code)
                 alert_time = format_indego_date(alert.date)
 
-                # Format: "ERROR_CODE: Error Description - 2024-01-01 12:34:56"
-                alert_attributes[f"error_{index}"] = f"{error_code}: {error_desc} - {alert_time}"
+                # Format: "ERROR_CODE: Error Description - 2024-01-01 12:34:56 [SEVERITY]"
+                alert_attributes[f"error_{index}"] = f"{error_code}: {error_desc} - {alert_time} [{error_severity.name}]"
 
                 # Also store individual components for advanced use cases
                 alert_attributes[f"error_{index}_code"] = error_code
                 alert_attributes[f"error_{index}_description"] = error_desc
+                alert_attributes[f"error_{index}_severity"] = error_severity.name
                 alert_attributes[f"error_{index}_timestamp"] = alert_time
                 alert_attributes[f"error_{index}_message"] = alert.message
                 alert_attributes[f"error_{index}_read"] = alert.read_status
@@ -1539,6 +1565,8 @@ class IndegoHub:
             # Also clear individual components if alerts were removed
             error_index = len(self._indego_client.alerts)
             while self.entities[ENTITY_ALERT].clear_attribute(f"error_{error_index}_code", False):
+                error_index += 1
+            while self.entities[ENTITY_ALERT].clear_attribute(f"error_{error_index}_severity", False):
                 error_index += 1
 
             self.entities[ENTITY_ALERT].async_schedule_update_ha_state()
@@ -1648,7 +1676,10 @@ class IndegoHub:
             if self._indego_client.alerts and len(self._indego_client.alerts) > 0:
                 latest_alert = self._indego_client.alerts[0]
                 error_code = str(latest_alert.error_code)
+
+                # Use new comprehensive error description
                 error_description = get_error_description(error_code)
+                error_severity = get_error_severity(error_code)
 
                 self._last_error_code = error_code
                 self._last_error_time = latest_alert.date
@@ -1657,13 +1688,24 @@ class IndegoHub:
                 self.entities[ENTITY_LAST_ERROR_CODE].add_attributes({
                     "error_code": error_code,
                     "error_time": format_indego_date(latest_alert.date),
+                    "error_severity": error_severity.name,
                 })
-                _LOGGER.warning("Latest mower error: %s (Code: %s)", error_description, error_code)
+
+                # Log with appropriate level based on severity
+                if error_severity == ErrorSeverity.CRITICAL:
+                    _LOGGER.critical("🔴 CRITICAL mower error: %s (Code: %s)", error_description, error_code)
+                elif error_severity == ErrorSeverity.ERROR:
+                    _LOGGER.error("❌ Mower error: %s (Code: %s)", error_description, error_code)
+                elif error_severity == ErrorSeverity.WARNING:
+                    _LOGGER.warning("⚠️ Mower warning: %s (Code: %s)", error_description, error_code)
+                else:
+                    _LOGGER.info("ℹ️ Mower info: %s (Code: %s)", error_description, error_code)
             else:
                 self.entities[ENTITY_LAST_ERROR_CODE].state = "No errors"
                 self.entities[ENTITY_LAST_ERROR_CODE].add_attributes({
                     "error_code": "0",
                     "error_time": "N/A",
+                    "error_severity": ErrorSeverity.INFO.name,
                 })
         except Exception as exc:
             _LOGGER.error("Failed to process error tracking: %s", str(exc))
