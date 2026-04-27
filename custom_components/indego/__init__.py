@@ -544,8 +544,48 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.info("Deleting all alerts from mower: %s", instance._serial)
 
         await instance._update_alerts()
-        await instance._indego_client.delete_all_alerts()
-        await instance._update_alerts()
+
+        # Loop to delete all alerts (API may return only ~10 at a time)
+        max_attempts = 10  # Prevent infinite loops
+        attempt = 0
+        while attempt < max_attempts:
+            alerts_before = len(instance._indego_client.alerts)
+            _LOGGER.debug(
+                "Delete attempt %d/%d - Current alert count: %d",
+                attempt + 1,
+                max_attempts,
+                alerts_before,
+            )
+
+            if alerts_before == 0:
+                _LOGGER.info("All alerts successfully deleted")
+                break
+
+            await instance._indego_client.delete_all_alerts()
+            await asyncio.sleep(5)  # Wait 5 seconds between deletions
+            await instance._update_alerts()
+
+            alerts_after = len(instance._indego_client.alerts)
+            _LOGGER.debug(
+                "Delete attempt %d/%d - Alert count after: %d",
+                attempt + 1,
+                max_attempts,
+                alerts_after,
+            )
+
+            attempt += 1
+
+            # If no progress, stop trying
+            if alerts_after >= alerts_before:
+                _LOGGER.warning("No progress in alert deletion after %d attempts", attempt)
+                break
+
+        if attempt >= max_attempts and len(instance._indego_client.alerts) > 0:
+            _LOGGER.error(
+                "Failed to delete all alerts after %d attempts (%d alerts remaining)",
+                max_attempts,
+                len(instance._indego_client.alerts),
+            )
 
     async def async_read_alert(call):
         """Handle the service call."""
@@ -1573,7 +1613,10 @@ class IndegoHub:
         await self._indego_client.update_alerts()
 
         # Show "Problem" only if there are unread alerts
-        unread_count = sum(1 for alert in self._indego_client.alerts if not alert.read_status)
+        unread_count = sum(
+            1 for alert in self._indego_client.alerts
+            if str(alert.read_status).strip().lower() == "unread"
+        )
         self.entities[ENTITY_ALERT].state = unread_count > 0
 
         if self._indego_client.alerts:
