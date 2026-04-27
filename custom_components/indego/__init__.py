@@ -354,11 +354,12 @@ ENTITY_DEFINITIONS = {
     ENTITY_BATTERY_DISCHARGE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:battery-minus",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "Ah",
+        CONF_DEVICE_CLASS: SensorDeviceClass.ENERGY,
+        CONF_UNIT_OF_MEASUREMENT: "Wh",
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        CONF_STATE_CLASS: SensorStateClass.TOTAL_INCREASING,
         CONF_TRANSLATION_KEY: "battery_discharge",
     },
     ENTITY_BATTERY_CHARGING: {
@@ -1127,7 +1128,12 @@ class IndegoHub:
                         self.entities[ENTITY_BATTERY_VOLTAGE].state = voltage if voltage is not None else STATE_UNKNOWN
 
                     if ENTITY_BATTERY_DISCHARGE in self.entities:
-                        self.entities[ENTITY_BATTERY_DISCHARGE].state = discharge if discharge is not None else STATE_UNKNOWN
+                        if discharge is not None and voltage is not None:
+                            # Convert Ah to Wh (Watt-hours) and make absolute
+                            discharge_wh = abs(discharge) * voltage
+                            self.entities[ENTITY_BATTERY_DISCHARGE].state = round(discharge_wh, 2)
+                        else:
+                            self.entities[ENTITY_BATTERY_DISCHARGE].state = STATE_UNKNOWN
 
                     if ENTITY_BATTERY_CYCLES in self.entities:
                         self.entities[ENTITY_BATTERY_CYCLES].state = cycles if cycles is not None else STATE_UNKNOWN
