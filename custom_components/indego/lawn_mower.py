@@ -128,8 +128,17 @@ class IndegoLawnMower(IndegoEntity, LawnMowerEntity):
         """Update activity based on state and state detail."""
         state_detail = self.indego_state_detail or ""
 
+        # Check if there are active errors/alerts - if so, activity should be ERROR
+        has_active_error = False
+        if self._indego_hub and hasattr(self._indego_hub, '_indego_client'):
+            alerts = getattr(self._indego_hub._indego_client, 'alerts', [])
+            # Check if there are any unread alerts (active errors)
+            has_active_error = any(not alert.read_status for alert in alerts) if alerts else False
+
+        if has_active_error:
+            new_activity = LawnMowerActivity.ERROR
         # Check if returning to dock based on state description
-        if state_detail.startswith("Returning to"):
+        elif state_detail.startswith("Returning to"):
             new_activity = LawnMowerActivity.RETURNING
         else:
             new_activity = INDEGO_STATE_TO_LAWN_MOWER_MAPPING.get(self._attr_indego_state)
@@ -138,10 +147,11 @@ class IndegoLawnMower(IndegoEntity, LawnMowerEntity):
             self._attr_activity = new_activity
             self.async_schedule_update_ha_state()
             _LOGGER.debug(
-                "Lawn mower activity: %s (mower state: %d, detail: %s)",
+                "Lawn mower activity: %s (mower state: %d, detail: %s, has_error: %s)",
                 self._attr_activity,
                 self._attr_indego_state,
                 state_detail,
+                has_active_error,
             )
 
             if self._attr_activity is None:

@@ -354,11 +354,12 @@ ENTITY_DEFINITIONS = {
     ENTITY_BATTERY_DISCHARGE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:battery-minus",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "Ah",
+        CONF_DEVICE_CLASS: SensorDeviceClass.ENERGY,
+        CONF_UNIT_OF_MEASUREMENT: "Wh",
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        CONF_STATE_CLASS: SensorStateClass.TOTAL_INCREASING,
         CONF_TRANSLATION_KEY: "battery_discharge",
     },
     ENTITY_BATTERY_CHARGING: {
@@ -543,8 +544,48 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.info("Deleting all alerts from mower: %s", instance._serial)
 
         await instance._update_alerts()
-        await instance._indego_client.delete_all_alerts()
-        await instance._update_alerts()
+
+        # Loop to delete all alerts (API may return only ~10 at a time)
+        max_attempts = 10  # Prevent infinite loops
+        attempt = 0
+        while attempt < max_attempts:
+            alerts_before = len(instance._indego_client.alerts)
+            _LOGGER.debug(
+                "Delete attempt %d/%d - Current alert count: %d",
+                attempt + 1,
+                max_attempts,
+                alerts_before,
+            )
+
+            if alerts_before == 0:
+                _LOGGER.info("All alerts successfully deleted")
+                break
+
+            await instance._indego_client.delete_all_alerts()
+            await asyncio.sleep(5)  # Wait 5 seconds between deletions
+            await instance._update_alerts()
+
+            alerts_after = len(instance._indego_client.alerts)
+            _LOGGER.debug(
+                "Delete attempt %d/%d - Alert count after: %d",
+                attempt + 1,
+                max_attempts,
+                alerts_after,
+            )
+
+            attempt += 1
+
+            # If no progress, stop trying
+            if alerts_after >= alerts_before:
+                _LOGGER.warning("No progress in alert deletion after %d attempts", attempt)
+                break
+
+        if attempt >= max_attempts and len(instance._indego_client.alerts) > 0:
+            _LOGGER.error(
+                "Failed to delete all alerts after %d attempts (%d alerts remaining)",
+                max_attempts,
+                len(instance._indego_client.alerts),
+            )
 
     async def async_read_alert(call):
         """Handle the service call."""
@@ -648,6 +689,22 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 class IndegoHub:
     """Class for the IndegoHub, which controls the sensors and binary sensors."""
 
+    # State-specific stuck detection timeouts (in seconds)
+    # Maps mower state codes to how long to wait before marking as stuck
+    STUCK_DETECTION_TIMEOUTS = {
+        513: 60,    # IN_LAWN_MOWING - Normal mowing
+        516: 120,   # IN_LAWN_MAPPING - Learning lawn (slow, covers entire area)
+        518: 70,    # IN_LAWN_BORDER_CUT - Border cut (precise, but faster than mapping)
+        520: 120,   # IN_LAWN_MAPPING_PAUSED - Learning paused (still slow)
+        521: 70,    # IN_LAWN_BORDER_CUTTING - Border cutting (precise, but faster than mapping)
+        523: 120,   # IN_LAWN_SPOT_MOWING - Spot mowing (very precise, small area)
+        524: 120,   # IN_LAWN_RANDOM_MOWING - Random mowing
+        525: 120,   # IN_LAWN_SPOT_MOWING_COMPLETE - Spot mowing complete
+    }
+
+    # Grace period after mowing session starts (in seconds)
+    MOWING_SESSION_GRACE_PERIOD = 60
+
     def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, features: dict, hass: HomeAssistant, user_agent: Optional[str] = None):
         """Initialize the IndegoHub.
 
@@ -675,6 +732,7 @@ class IndegoHub:
         self._last_position = (None, None)
         self._last_state = None
         self._last_position_change_time = None
+        self._mowing_session_start_time = None  # Track when mowing session starts (for grace period)
         self._last_svg_x = None
         self._last_svg_y = None
         self._map_svg = None
@@ -1127,7 +1185,12 @@ class IndegoHub:
                         self.entities[ENTITY_BATTERY_VOLTAGE].state = voltage if voltage is not None else STATE_UNKNOWN
 
                     if ENTITY_BATTERY_DISCHARGE in self.entities:
-                        self.entities[ENTITY_BATTERY_DISCHARGE].state = discharge if discharge is not None else STATE_UNKNOWN
+                        if discharge is not None and voltage is not None:
+                            # Convert Ah to Wh (Watt-hours) and make absolute
+                            discharge_wh = abs(discharge) * voltage
+                            self.entities[ENTITY_BATTERY_DISCHARGE].state = round(discharge_wh, 2)
+                        else:
+                            self.entities[ENTITY_BATTERY_DISCHARGE].state = STATE_UNKNOWN
 
                     if ENTITY_BATTERY_CYCLES in self.entities:
                         self.entities[ENTITY_BATTERY_CYCLES].state = cycles if cycles is not None else STATE_UNKNOWN
@@ -1434,9 +1497,18 @@ class IndegoHub:
                     if ENTITY_MOWER_SVG_Y in self.entities:
                         self.entities[ENTITY_MOWER_SVG_Y].state = svg_y
 
-                    is_mowing = 500 <= self._indego_client.state.state <= 799
+                    current_state_code = self._indego_client.state.state
+                    is_mowing = 500 <= current_state_code <= 799
                     now = datetime.now()
 
+                    # Track mowing session start
+                    if is_mowing and self._mowing_session_start_time is None:
+                        self._mowing_session_start_time = now
+                        _LOGGER.debug("Mowing session started - activating stuck detection after grace period")
+                    elif not is_mowing and self._mowing_session_start_time is not None:
+                        self._mowing_session_start_time = None
+
+                    # Detect position movement (5px threshold)
                     moved = self._last_svg_x is None or math.sqrt(
                         (svg_x - self._last_svg_x) ** 2 + (svg_y - self._last_svg_y) ** 2
                     ) > 5
@@ -1446,16 +1518,34 @@ class IndegoHub:
                         self._last_svg_y = svg_y
                         self._last_position_change_time = now
 
-                    stuck = (
-                        is_mowing
-                        and self._last_position_change_time is not None
-                        and (now - self._last_position_change_time).total_seconds() > 60
-                    )
+                    # Determine stuck status with adaptive timeout
+                    stuck = False
+                    if is_mowing and self._last_position_change_time is not None:
+                        # Get timeout for current state (default 60s if state not in map)
+                        timeout_seconds = self.STUCK_DETECTION_TIMEOUTS.get(current_state_code, 60)
+
+                        # Check if grace period is active (first 60s of session)
+                        grace_period_active = False
+                        if self._mowing_session_start_time is not None:
+                            session_duration = (now - self._mowing_session_start_time).total_seconds()
+                            grace_period_active = session_duration < self.MOWING_SESSION_GRACE_PERIOD
+
+                        # Only check for stuck after grace period ends
+                        if not grace_period_active:
+                            stuck = (now - self._last_position_change_time).total_seconds() > timeout_seconds
 
                     if ENTITY_MOWER_STUCK in self.entities:
                         self.entities[ENTITY_MOWER_STUCK].state = stuck
                         if stuck:
-                            _LOGGER.warning("Mower appears to be stuck - no movement detected for > 60 seconds")
+                            timeout_seconds = self.STUCK_DETECTION_TIMEOUTS.get(current_state_code, 60)
+                            state_detail = self._indego_client.state_description_detail or "unknown"
+                            _LOGGER.warning(
+                                "Mower appears to be stuck - no movement detected for > %d seconds "
+                                "(state: %d, detail: %s)",
+                                timeout_seconds,
+                                current_state_code,
+                                state_detail,
+                            )
                             self.entities[ENTITY_MOWER_STUCK].add_attributes({
                                 "stuck_since": self._last_position_change_time.strftime("%Y-%m-%d %H:%M:%S"),
                                 "stuck_x": svg_x,
@@ -1523,7 +1613,10 @@ class IndegoHub:
         await self._indego_client.update_alerts()
 
         # Show "Problem" only if there are unread alerts
-        unread_count = sum(1 for alert in self._indego_client.alerts if not alert.read_status)
+        unread_count = sum(
+            1 for alert in self._indego_client.alerts
+            if str(alert.read_status).strip().lower() == "unread"
+        )
         self.entities[ENTITY_ALERT].state = unread_count > 0
 
         if self._indego_client.alerts:
