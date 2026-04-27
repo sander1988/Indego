@@ -1693,13 +1693,13 @@ class IndegoHub:
 
                 # Log with appropriate level based on severity
                 if error_severity == ErrorSeverity.CRITICAL:
-                    _LOGGER.critical("🔴 CRITICAL mower error: %s (Code: %s)", error_description, error_code)
+                    _LOGGER.critical("CRITICAL mower error: %s (Code: %s)", error_description, error_code)
                 elif error_severity == ErrorSeverity.ERROR:
-                    _LOGGER.error("❌ Mower error: %s (Code: %s)", error_description, error_code)
+                    _LOGGER.error("Mower error: %s (Code: %s)", error_description, error_code)
                 elif error_severity == ErrorSeverity.WARNING:
-                    _LOGGER.warning("⚠️ Mower warning: %s (Code: %s)", error_description, error_code)
+                    _LOGGER.warning("Mower warning: %s (Code: %s)", error_description, error_code)
                 else:
-                    _LOGGER.info("ℹ️ Mower info: %s (Code: %s)", error_description, error_code)
+                    _LOGGER.info("Mower info: %s (Code: %s)", error_description, error_code)
             else:
                 self.entities[ENTITY_LAST_ERROR_CODE].state = "No errors"
                 self.entities[ENTITY_LAST_ERROR_CODE].add_attributes({
