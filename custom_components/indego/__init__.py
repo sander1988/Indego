@@ -703,7 +703,7 @@ class IndegoHub:
     }
 
     # Grace period after mowing session starts (in seconds)
-    MOWING_SESSION_GRACE_PERIOD = 60
+    MOWING_SESSION_GRACE_PERIOD = 90
 
     def __init__(self, name: str, session: IndegoOAuth2Session, serial: str, features: dict, hass: HomeAssistant, user_agent: Optional[str] = None):
         """Initialize the IndegoHub.
@@ -1504,7 +1504,11 @@ class IndegoHub:
                     # Track mowing session start
                     if is_mowing and self._mowing_session_start_time is None:
                         self._mowing_session_start_time = now
-                        _LOGGER.debug("Mowing session started - activating stuck detection after grace period")
+                        # Reset position tracking for new session to avoid false stuck detection
+                        self._last_position_change_time = now
+                        self._last_svg_x = svg_x
+                        self._last_svg_y = svg_y
+                        _LOGGER.debug("Mowing session started - resetting position tracking for stuck detection grace period")
                     elif not is_mowing and self._mowing_session_start_time is not None:
                         self._mowing_session_start_time = None
 
