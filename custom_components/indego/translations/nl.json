@@ -295,6 +295,33 @@
                     "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Kalenderslot activeren/deactiveren",
+            "description": "Wijzig een kalenderslot (tijden wijzigen, activeren of deactiveren)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Serienummer van de grasmaaier. Alleen nodig als er meerdere grasmaaiers zijn geconfigureerd."
+                },
+                "calendar_type": {
+                    "description": "Selecteer de kalender ('calendar' voor de handmatige kalender of 'predictive' voor gedeactiveerde tijden in SmartMowing-modus)."
+                },
+                "day": {
+                    "description": "Naam van de weekdag die moet worden geconfigureerd."
+                },
+                "slot": {
+                    "description": "Welk tijdslot moet worden gewijzigd (1 of 2)."
+                },
+                "enabled": {
+                    "description": "Activeer of deactiveer de geselecteerde dag/het geselecteerde slot."
+                },
+                "start": {
+                    "description": "Starttijd van het geselecteerde slot. Alleen nodig als een tijdslot moet worden geactiveerd."
+                },
+                "end": {
+                    "description": "Eindtijd van het geselecteerde slot. Alleen nodig als een tijdslot moet worden geactiveerd."
+                }
+            }
         }
     },
     "issues": {
