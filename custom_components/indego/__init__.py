@@ -573,9 +573,16 @@ DAY_NAME_TO_INDEX = {
 
 
 def _parse_slot_time(value: str) -> tuple[int, int]:
-    hour, minute = value.split(":", 1)
-    hour = int(hour)
-    minute = int(minute)
+    parts = str(value).split(":")
+
+    if len(parts) not in (2, 3):
+        raise ValueError("Time must be in HH:MM or HH:MM:SS format")
+
+    hour = int(parts[0])
+    minute = int(parts[1])
+
+    if len(parts) == 3 and int(parts[2]) != 0:
+        raise ValueError("Seconds must be 00")
 
     if hour < 0 or hour > 23 or minute < 0 or minute > 59:
         raise ValueError("Time must be between 00:00 and 23:59")
