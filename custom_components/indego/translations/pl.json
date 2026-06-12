@@ -295,6 +295,33 @@
                     "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Aktywuj/dezaktywuj przedział kalendarza",
+            "description": "Zmień przedział kalendarza (zmień godziny, aktywuj lub dezaktywuj)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano kilka kosiarek."
+                },
+                "calendar_type": {
+                    "description": "Wybierz kalendarz ('calendar' dla kalendarza ręcznego lub 'predictive' dla dezaktywowanych okresów w trybie SmartMowing)."
+                },
+                "day": {
+                    "description": "Nazwa dnia tygodnia, który ma zostać skonfigurowany."
+                },
+                "slot": {
+                    "description": "Który przedział czasowy ma zostać zmieniony (1 lub 2)."
+                },
+                "enabled": {
+                    "description": "Aktywuj lub dezaktywuj wybrany dzień/przedział."
+                },
+                "start": {
+                    "description": "Godzina rozpoczęcia wybranego przedziału. Wymagana tylko wtedy, gdy przedział czasowy ma zostać aktywowany."
+                },
+                "end": {
+                    "description": "Godzina zakończenia wybranego przedziału. Wymagana tylko wtedy, gdy przedział czasowy ma zostać aktywowany."
+                }
+            }
         }
     },
     "issues": {
