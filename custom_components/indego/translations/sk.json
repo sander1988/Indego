@@ -295,6 +295,33 @@
                     "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Aktivovať/deaktivovať časový slot kalendára",
+            "description": "Upraviť časový slot kalendára (zmeniť časy, aktivovať alebo deaktivovať)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "calendar_type": {
+                    "description": "Vyberte kalendár ('calendar' pre manuálny kalendár alebo 'predictive' pre deaktivované časové obdobia v režime SmartMowing)."
+                },
+                "day": {
+                    "description": "Názov dňa v týždni, ktorý sa má nakonfigurovať."
+                },
+                "slot": {
+                    "description": "Ktorý časový slot sa má zmeniť (1 alebo 2)."
+                },
+                "enabled": {
+                    "description": "Aktivovať alebo deaktivovať vybraný deň/časový slot."
+                },
+                "start": {
+                    "description": "Čas začiatku vybraného slotu. Vyžaduje sa iba v prípade, že sa má časový slot aktivovať."
+                },
+                "end": {
+                    "description": "Čas ukončenia vybraného slotu. Vyžaduje sa iba v prípade, že sa má časový slot aktivovať."
+                }
+            }
         }
     },
     "issues": {
