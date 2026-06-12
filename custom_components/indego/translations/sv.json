@@ -295,6 +295,33 @@
                     "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Aktivera/inaktivera kalenderintervall",
+            "description": "Ändra en kalenderplats (ändra tider, aktivera eller inaktivera)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "calendar_type": {
+                    "description": "Välj kalender ('calendar' för den manuella kalendern eller 'predictive' för inaktiverade tidsperioder i SmartMowing-läge)."
+                },
+                "day": {
+                    "description": "Namnet på veckodagen som ska konfigureras."
+                },
+                "slot": {
+                    "description": "Vilken tidsintervall som ska ändras (1 eller 2)."
+                },
+                "enabled": {
+                    "description": "Aktivera eller inaktivera vald dag/tidsplats."
+                },
+                "start": {
+                    "description": "Starttid för den valda tidsplatsen. Krävs endast om tidsplatsen ska aktiveras."
+                },
+                "end": {
+                    "description": "Sluttid för den valda tidsplatsen. Krävs endast om tidsplatsen ska aktiveras."
+                }
+            }
         }
     },
     "issues": {
