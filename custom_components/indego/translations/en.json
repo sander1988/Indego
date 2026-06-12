@@ -295,6 +295,33 @@
                     "description": "Mower serial. Only needed when you have configured multiple mowers."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Activar/desactivar intervalo del calendario",
+            "description": "Set a calender slot when you use the manual calendar instead of SmartMowing.",
+            "fields": {
+                "mower_serial": {
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "calendar_type": {
+                    "description": "Type of calendar to use. Use 'calendar' for manual calendar or 'predictive' for the forbidden time slots in SmartMowing mode."
+                },
+                "day": {
+                    "description": "Which day to configure."
+                },
+                "slot": {
+                    "description": "Which Slot of the selected day should be configured (1 or 2)."
+                },
+                "enabled": {
+                    "description": "Should the selected slot be enabled or disabled."
+                },
+                "start": {
+                    "description": "Set Start Time of the selected slot and day. Only needed if you want to enable a slot."
+                },
+                "end": {
+                    "description": "Set End Time of the selected slot and day. Only needed if you want to enable a slot."
+                }
+            }
         }
     },
     "issues": {
