@@ -295,6 +295,33 @@
                     "description": "Gressklipperens serienummer. Bare nødvendig hvis du har konfigurert flere gressklippere."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Aktiver/deaktiver kalenderspor",
+            "description": "Endre et kalenderspor (endre tider, aktiver eller deaktiver)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Serienummeret til gressklipperen. Kun nødvendig hvis flere gressklippere er konfigurert."
+                },
+                "calendar_type": {
+                    "description": "Velg kalender ('calendar' for manuell kalender eller 'predictive' for deaktiverte tidsrom i SmartMowing-modus)."
+                },
+                "day": {
+                    "description": "Navnet på ukedagen som skal konfigureres."
+                },
+                "slot": {
+                    "description": "Hvilket tidsrom som skal endres (1 eller 2)."
+                },
+                "enabled": {
+                    "description": "Aktiver eller deaktiver valgt dag/tidsrom."
+                },
+                "start": {
+                    "description": "Starttid for valgt tidsrom. Kun nødvendig hvis tidsrommet skal aktiveres."
+                },
+                "end": {
+                    "description": "Sluttid for valgt tidsrom. Kun nødvendig hvis tidsrommet skal aktiveres."
+                }
+            }
         }
     },
     "issues": {
