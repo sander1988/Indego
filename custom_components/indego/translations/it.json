@@ -295,6 +295,66 @@
                     "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Attiva/disattiva slot del calendario",
+            "description": "Modifica uno slot del calendario (cambia orari, attiva o disattiva)",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "calendar_type": {
+                    "name": "Tipo di calendario",
+                    "description": "Seleziona il calendario ('calendar' per il calendario manuale o 'predictive' per i periodi disattivati in modalità SmartMowing)."
+                },
+                "day": {
+                    "name": "Giorno",
+                    "description": "Nome del giorno della settimana da configurare."
+                },
+                "slot": {
+                    "name": "Fascia oraria",
+                    "description": "Quale fascia oraria deve essere modificata (1 o 2)."
+                },
+                "enabled": {
+                    "name": "Attiva/disattiva",
+                    "description": "Attiva o disattiva il giorno/la fascia oraria selezionata."
+                },
+                "start": {
+                    "name": "Inizio",
+                    "description": "Ora di inizio della fascia selezionata. Necessaria solo se la fascia deve essere attivata. Vengono utilizzate solo ore e minuti."
+                },
+                "end": {
+                    "name": "Fine",
+                    "description": "Ora di fine della fascia selezionata. Necessaria solo se la fascia deve essere attivata. Vengono utilizzate solo ore e minuti."
+                }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Calendario manuale",
+                "predictive": "Periodi bloccati SmartMowing"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Lunedì",
+                "tuesday": "Martedì",
+                "wednesday": "Mercoledì",
+                "thursday": "Giovedì",
+                "friday": "Venerdì",
+                "saturday": "Sabato",
+                "sunday": "Domenica"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Taglia l'erba",
+                "returnToDock": "Ritorna alla stazione di ricarica",
+                "pause": "Pausa"
+            }
         }
     },
     "issues": {

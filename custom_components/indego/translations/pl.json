@@ -13,8 +13,8 @@
                     "expose_mower": "Wyświetl kosiarkę Indego jako encję kosiarki w Home Assistant",
                     "expose_vacuum": "Wyświetl kosiarkę Indego jako encję odkurzacza w Home Assistant"
                 },
-                “data_description”: {
-                    “user_agent”: “W przypadku błędów HTTP 4XX (zwłaszcza Reason: 403, message=»Forbidden«) pomocna może okazać się zmiana agenta użytkownika. Nie powinien on zawierać słów „Homeassistant” ani „HA”.”
+                "data_description": {
+                    "user_agent": "W przypadku błędów HTTP 4XX (zwłaszcza Reason: 403, message=»Forbidden«) pomocna może okazać się zmiana agenta użytkownika. Nie powinien on zawierać słów „Homeassistant” ani „HA”."
                 },
                 "description": "Ustawienia zaawansowane komponentu Bosch Indego."
             },
@@ -294,6 +294,66 @@
                 "mower_serial": {
                     "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek."
                 }
+            }
+        },
+        "set_calendar_slot": {
+            "name": "Aktywuj/dezaktywuj przedział kalendarza",
+            "description": "Zmień przedział kalendarza (zmień godziny, aktywuj lub dezaktywuj)",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano kilka kosiarek."
+                },
+                "calendar_type": {
+                    "name": "Typ kalendarza",
+                    "description": "Wybierz kalendarz ('calendar' dla kalendarza ręcznego lub 'predictive' dla dezaktywowanych okresów w trybie SmartMowing)."
+                },
+                "day": {
+                    "name": "Dzień",
+                    "description": "Nazwa dnia tygodnia, który ma zostać skonfigurowany."
+                },
+                "slot": {
+                    "name": "Przedział czasowy",
+                    "description": "Który przedział czasowy ma zostać zmieniony (1 lub 2)."
+                },
+                "enabled": {
+                    "name": "Aktywuj/dezaktywuj",
+                    "description": "Aktywuj lub dezaktywuj wybrany dzień/przedział czasowy."
+                },
+                "start": {
+                    "name": "Start",
+                    "description": "Godzina rozpoczęcia wybranego przedziału. Wymagana tylko wtedy, gdy przedział ma zostać aktywowany. Używane są tylko godziny i minuty."
+                },
+                "end": {
+                    "name": "Koniec",
+                    "description": "Godzina zakończenia wybranego przedziału. Wymagana tylko wtedy, gdy przedział ma zostać aktywowany. Używane są tylko godziny i minuty."
+                }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Kalendarz ręczny",
+                "predictive": "Okresy blokady SmartMowing"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Poniedziałek",
+                "tuesday": "Wtorek",
+                "wednesday": "Środa",
+                "thursday": "Czwartek",
+                "friday": "Piątek",
+                "saturday": "Sobota",
+                "sunday": "Niedziela"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Koszenie",
+                "returnToDock": "Powrót do stacji dokującej",
+                "pause": "Pauza"
             }
         }
     },

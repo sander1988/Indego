@@ -295,6 +295,66 @@
                     "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Kalenderslot activeren/deactiveren",
+            "description": "Wijzig een kalenderslot (tijden wijzigen, activeren of deactiveren)",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de grasmaaier. Alleen nodig als er meerdere grasmaaiers zijn geconfigureerd."
+                },
+                "calendar_type": {
+                    "name": "Kalendertype",
+                    "description": "Selecteer de kalender ('calendar' voor de handmatige kalender of 'predictive' voor gedeactiveerde tijden in SmartMowing-modus)."
+                },
+                "day": {
+                    "name": "Dag",
+                    "description": "Naam van de weekdag die moet worden geconfigureerd."
+                },
+                "slot": {
+                    "name": "Tijdslot",
+                    "description": "Welk tijdslot moet worden gewijzigd (1 of 2)."
+                },
+                "enabled": {
+                    "name": "Activeren/deactiveren",
+                    "description": "Activeer of deactiveer de geselecteerde dag/het geselecteerde tijdslot."
+                },
+                "start": {
+                    "name": "Start",
+                    "description": "Starttijd van het geselecteerde tijdslot. Alleen nodig als het tijdslot geactiveerd moet worden. Alleen uren en minuten worden gebruikt."
+                },
+                "end": {
+                    "name": "Einde",
+                    "description": "Eindtijd van het geselecteerde tijdslot. Alleen nodig als het tijdslot geactiveerd moet worden. Alleen uren en minuten worden gebruikt."
+                }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Handmatige kalender",
+                "predictive": "SmartMowing-blokkeertijden"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Maandag",
+                "tuesday": "Dinsdag",
+                "wednesday": "Woensdag",
+                "thursday": "Donderdag",
+                "friday": "Vrijdag",
+                "saturday": "Zaterdag",
+                "sunday": "Zondag"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Maaien",
+                "returnToDock": "Terug naar het laadstation",
+                "pause": "Pauze"
+            }
         }
     },
     "issues": {

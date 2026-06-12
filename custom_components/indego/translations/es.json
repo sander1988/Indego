@@ -295,6 +295,66 @@
                     "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Activar/desactivar intervalo del calendario",
+            "description": "Modificar un intervalo del calendario (cambiar horarios, activar o desactivar)",
+            "fields": {
+                "mower_serial": {
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "calendar_type": {
+                    "name": "Tipo de calendario",
+                    "description": "Selecciona el calendario ('calendar' para el calendario manual o 'predictive' para los períodos desactivados en el modo SmartMowing)."
+                },
+                "day": {
+                    "name": "Día",
+                    "description": "Nombre del día de la semana que se va a configurar."
+                },
+                "slot": {
+                    "name": "Intervalo de tiempo",
+                    "description": "Qué intervalo de tiempo se debe modificar (1 o 2)."
+                },
+                "enabled": {
+                    "name": "Activar/desactivar",
+                    "description": "Activar o desactivar el día/intervalo seleccionado."
+                },
+                "start": {
+                    "name": "Inicio",
+                    "description": "Hora de inicio del intervalo seleccionado. Solo es necesaria si se va a activar un intervalo. Solo se utilizan horas y minutos."
+                },
+                "end": {
+                    "name": "Fin",
+                    "description": "Hora de finalización del intervalo seleccionado. Solo es necesaria si se va a activar un intervalo. Solo se utilizan horas y minutos."
+                }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Calendario manual",
+                "predictive": "Períodos bloqueados de SmartMowing"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Lunes",
+                "tuesday": "Martes",
+                "wednesday": "Miércoles",
+                "thursday": "Jueves",
+                "friday": "Viernes",
+                "saturday": "Sábado",
+                "sunday": "Domingo"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Cortar césped",
+                "returnToDock": "Volver a la estación de carga",
+                "pause": "Pausa"
+            }
         }
     },
     "issues": {

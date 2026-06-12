@@ -29,6 +29,13 @@ CONF_POLLING: Final = "polling"
 CONF_ENABLED_BY_DEFAULT: Final = "enabled_by_default"
 CONF_ENTITY_CATEGORY: Final = "entity_category"
 
+CONF_CALENDAR_TYPE: Final = "calendar_type"
+CONF_DAY: Final = "day"
+CONF_SLOT: Final = "slot"
+CONF_ENABLED: Final = "enabled"
+CONF_START: Final = "start"
+CONF_END: Final = "end"
+
 CONF_SERVICE: Final = "service"
 CONF_SERVICE_DATA: Final = "service_data"
 
@@ -104,6 +111,14 @@ ENTITY_SMARTMOW_SCHEDULE: Final = "smartmow_schedule"
 SERVICE_NAME_SET_LOCATION: Final = "set_smart_mowing_location"
 SERVICE_NAME_CONFIGURE_SETUP: Final = "configure_smart_mowing"
 SERVICE_NAME_RESET_SMART_MOWING: Final = "reset_smart_mowing"
+
+# Calendar
+ENTITY_PREDICTIVE_CALENDAR_SLOTS: Final = "predictive_calendar_slots"
+ENTITY_CALENDAR_SLOTS: Final = "calendar_slots"
+
+# Calendar services
+SERVICE_NAME_SET_CALENDAR_SLOT: Final = "set_calendar_slot"
+
 
 DELETE_ALERTS_BATCH_DELAY_SECONDS: Final = 10
 DELETE_ALERTS_BATCH_MAX_ROUNDS: Final = 20

@@ -295,6 +295,66 @@
                     "description": "Gressklipperens serienummer. Bare nødvendig hvis du har konfigurert flere gressklippere."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Aktiver/deaktiver kalenderspor",
+            "description": "Endre et kalenderspor (endre tider, aktiver eller deaktiver)",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummeret til gressklipperen. Kun nødvendig hvis flere gressklippere er konfigurert."
+                },
+                "calendar_type": {
+                    "name": "Kalendertype",
+                    "description": "Velg kalender ('calendar' for manuell kalender eller 'predictive' for deaktiverte tidsrom i SmartMowing-modus)."
+                },
+                "day": {
+                    "name": "Dag",
+                    "description": "Navnet på ukedagen som skal konfigureres."
+                },
+                "slot": {
+                    "name": "Tidsrom",
+                    "description": "Hvilket tidsrom som skal endres (1 eller 2)."
+                },
+                "enabled": {
+                    "name": "Aktiver/deaktiver",
+                    "description": "Aktiver eller deaktiver valgt dag/tidsrom."
+                },
+                "start": {
+                    "name": "Start",
+                    "description": "Starttid for valgt tidsrom. Kun nødvendig hvis tidsrommet skal aktiveres. Kun timer og minutter brukes."
+                },
+                "end": {
+                    "name": "Slutt",
+                    "description": "Sluttid for valgt tidsrom. Kun nødvendig hvis tidsrommet skal aktiveres. Kun timer og minutter brukes."
+                }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Manuell kalender",
+                "predictive": "SmartMowing-blokkerte tider"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Mandag",
+                "tuesday": "Tirsdag",
+                "wednesday": "Onsdag",
+                "thursday": "Torsdag",
+                "friday": "Fredag",
+                "saturday": "Lørdag",
+                "sunday": "Søndag"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Klipp gress",
+                "returnToDock": "Tilbake til ladestasjonen",
+                "pause": "Pause"
+            }
         }
     },
     "issues": {
