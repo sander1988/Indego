@@ -295,6 +295,33 @@
                     "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Aktivér/deaktivér kalender-slot",
+            "description": "Rediger en kalender-slot (ændr tider, aktivér eller deaktivér)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Serienummer på plæneklipperen. Kun nødvendig, hvis der er konfigureret flere plæneklippere."
+                },
+                "calendar_type": {
+                    "description": "Vælg kalender ('calendar' for manuel kalender eller 'predictive' for deaktiverede tidsrum i SmartMowing-tilstand)."
+                },
+                "day": {
+                    "description": "Navnet på den ugedag, der skal konfigureres."
+                },
+                "slot": {
+                    "description": "Hvilken tidsslot skal ændres (1 eller 2)."
+                },
+                "enabled": {
+                    "description": "Aktivér eller deaktivér den valgte dag/slot."
+                },
+                "start": {
+                    "description": "Starttidspunkt for den valgte slot. Kun nødvendigt, hvis tidsslotten skal aktiveres."
+                },
+                "end": {
+                    "description": "Sluttidspunkt for den valgte slot. Kun nødvendigt, hvis tidsslotten skal aktiveres."
+                }
+            }
         }
     },
     "issues": {
