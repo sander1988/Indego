@@ -2,14 +2,19 @@ command:
   description: Sends a control command to the mower. Valid commands are "mow" (start mowing), "returnToDock" (return to charging station) and "pause" (pause mowing).
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"012345789"'
       required: false
+      selector:
+        text: {}
     command:
+      name: Command
       description: Command to send to the mower.
       required: true
       selector:
         select:
+          translation_key: command_options
           options:
             - "mow"
             - "returnToDock"
@@ -18,84 +23,150 @@ smartmowing:
   description: Enables or disables the SmartMowing feature, which automatically adjusts the mowing schedule based on weather conditions and lawn growth.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"012345789"'
       required: false
+      selector:
+        text: {}
     enable:
+      name: Activate/Deactivate
       description: Sets the SmartMowing state. Use "true" to enable or "false" to disable the feature.
       example: "true"
       required: true
+      selector:
+        boolean: {}
 delete_alert:
   description: Deletes a specific alert by its index. Index 0 refers to the most recent alert.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"0123456789"'
       required: false
+      selector:
+        text: {}
     alert_index:
+      name: Alert index
       description: Index of the alert to delete. 0 = most recent, 1 = second most recent, and so on.
       example: "0"
       required: true
+      selector:
+        text: {}
 delete_alert_all:
   description: Deletes all existing alerts for the mower at once.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"0123456789"'
       required: false
+      selector:
+        text: {}
 read_alert:
   description: Marks a specific alert as read by its index. Index 0 refers to the most recent alert.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"0123456789"'
       required: false
+      selector:
+        text: {}
     alert_index:
+      name: Alert Index
       description: Index of the alert to mark as read. 0 = most recent, 1 = second most recent, and so on.
       example: "0"
       required: true
+      selector:
+        text: {}
 read_alert_all:
   description: Marks all existing alerts for the mower as read.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"0123456789"'
       required: false
+      selector:
+        text: {}
 download_map:
   description: Downloads the current mowing map from the Bosch Cloud API and saves it locally as "www/indego_map_base.svg". The map reflects the most recently recorded mowing route.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"0123456789"'
       required: false
+      selector:
+        text: {}
 set_calendar_slot:
   description: Set a calender slot when you use the manual calendar instead of SmartMowing.
   fields:
     mower_serial:
+      name: Serialnumber
       description: Serial number of the mower. Only required if multiple mowers are configured.
       example: '"0123456789"'
       required: false
+      selector:
+        text: {}
     calendar_type:
+      name: Calendar type
       description: Type of calendar to use. Use "calendar for manual calendar or "predictive" for the forbidden time slots in SmartMowing mode.
       example: "calendar"
       required: false
+      default: "calendar"
+      selector:
+        select:
+          translation_key: calendar_type_options
+          options:
+            - "calendar"
+            - "predictive"
     day:
+      name: Day
       description: Which day to configure.
       example: "monday"
       required: true
+      selector:
+        select:
+          translation_key: day_options
+          options:
+            - "monday"
+            - "tuesday"
+            - "wednesday"
+            - "thursday"
+            - "friday"
+            - "saturday"
+            - "sunday"
     slot:
+      name: Slot
       description: Which Slot of the selected day should be configured (1 or 2).
       example: "1"
       required: true
+      selector:
+        number:
+          min: 1
+          max: 2
+          step: 1
+          mode: box
     enabled:
+      name: Activate/Deactivate
       description: Should the selected slot be enabled or disabled.
       example: "true"
       required: false
+      selector:
+        boolean: {}
     start:
-      description: Set Start Time of the selected slot and day. Only needed if you want to enable a slot.
+      name: Start time
+      description: Set Start Time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used.
       example: '"08:00"'
       required: false
+      selector:
+        time: {}
     end:
-      description: Set End Time of the selected slot and day. Only needed if you want to enable a slot.
+      name: End time
+      description: Set End Time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used.
       example: '"20:00"'
       required: false
+      selector:
+        time: {}
