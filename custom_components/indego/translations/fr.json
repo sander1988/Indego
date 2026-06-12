@@ -295,6 +295,33 @@
                     "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Activer/désactiver un créneau du calendrier",
+            "description": "Modifier un créneau du calendrier (changer les horaires, activer ou désactiver)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numéro de série de la tondeuse. Nécessaire uniquement si plusieurs tondeuses sont configurées."
+                },
+                "calendar_type": {
+                    "description": "Sélectionnez le calendrier ('calendar' pour le calendrier manuel ou 'predictive' pour les périodes désactivées en mode SmartMowing)."
+                },
+                "day": {
+                    "description": "Nom du jour de la semaine à configurer."
+                },
+                "slot": {
+                    "description": "Créneau horaire à modifier (1 ou 2)."
+                },
+                "enabled": {
+                    "description": "Activer ou désactiver le jour/créneau sélectionné."
+                },
+                "start": {
+                    "description": "Heure de début du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé."
+                },
+                "end": {
+                    "description": "Heure de fin du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé."
+                }
+            }
         }
     },
     "issues": {
