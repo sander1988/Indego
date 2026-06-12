@@ -933,9 +933,7 @@ class IndegoHub:
     # Maps mower state codes to how long to wait before marking as stuck
     STUCK_DETECTION_TIMEOUTS = {
         513: 60,
-        517: 120,
         518: 70,
-        519: 120,
         521: 70,
         523: 120,
         524: 120,
@@ -955,8 +953,11 @@ class IndegoHub:
         514,  # Relocalising
         515,  # Loading map
         516,  # Learning lawn / calibrating-like
+        517,  # Paused (intentional stand-still)
+        519,  # Idle in lawn (intentional stand-still)
         520,  # Mapping paused
         525,  # Spot mowing complete
+        526,  # Random mowing complete (Pendant zu 525, fehlte bisher)
     }
 
     # Grace period after mowing session starts (in seconds)
