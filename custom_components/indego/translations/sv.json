@@ -298,29 +298,62 @@
         },
         "set_calendar_slot": {
             "name": "Aktivera/inaktivera kalenderintervall",
-            "description": "Ändra en kalenderplats (ändra tider, aktivera eller inaktivera)",
+            "description": "Ändra ett kalenderintervall (ändra tider, aktivera eller inaktivera)",
             "fields": {
                 "mower_serial": {
+                    "name": "Serienummer",
                     "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
                 },
                 "calendar_type": {
+                    "name": "Kalendertyp",
                     "description": "Välj kalender ('calendar' för den manuella kalendern eller 'predictive' för inaktiverade tidsperioder i SmartMowing-läge)."
                 },
                 "day": {
+                    "name": "Dag",
                     "description": "Namnet på veckodagen som ska konfigureras."
                 },
                 "slot": {
-                    "description": "Vilken tidsintervall som ska ändras (1 eller 2)."
+                    "name": "Tidsintervall",
+                    "description": "Vilket tidsintervall som ska ändras (1 eller 2)."
                 },
                 "enabled": {
-                    "description": "Aktivera eller inaktivera vald dag/tidsplats."
+                    "name": "Aktivera/inaktivera",
+                    "description": "Aktivera eller inaktivera vald dag/tidsintervall."
                 },
                 "start": {
-                    "description": "Starttid för den valda tidsplatsen. Krävs endast om tidsplatsen ska aktiveras."
+                    "name": "Start",
+                    "description": "Starttid för valt tidsintervall. Krävs endast om tidsintervallet ska aktiveras. Endast timmar och minuter används."
                 },
                 "end": {
-                    "description": "Sluttid för den valda tidsplatsen. Krävs endast om tidsplatsen ska aktiveras."
+                    "name": "Slut",
+                    "description": "Sluttid för valt tidsintervall. Krävs endast om tidsintervallet ska aktiveras. Endast timmar och minuter används."
                 }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Manuell kalender",
+                "predictive": "SmartMowing-blockerade tider"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Måndag",
+                "tuesday": "Tisdag",
+                "wednesday": "Onsdag",
+                "thursday": "Torsdag",
+                "friday": "Fredag",
+                "saturday": "Lördag",
+                "sunday": "Söndag"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Klipp gräs",
+                "returnToDock": "Återvänd till laddstationen",
+                "pause": "Paus"
             }
         }
     },

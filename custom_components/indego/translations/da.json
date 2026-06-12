@@ -301,26 +301,58 @@
             "description": "Rediger en kalender-slot (ændr tider, aktivér eller deaktivér)",
             "fields": {
                 "mower_serial": {
+                    "name": "Serienummer",
                     "description": "Serienummer på plæneklipperen. Kun nødvendig, hvis der er konfigureret flere plæneklippere."
                 },
                 "calendar_type": {
+                    "name": "Kalendertype",
                     "description": "Vælg kalender ('calendar' for manuel kalender eller 'predictive' for deaktiverede tidsrum i SmartMowing-tilstand)."
                 },
                 "day": {
+                    "name": "Dag",
                     "description": "Navnet på den ugedag, der skal konfigureres."
                 },
                 "slot": {
+                    "name": "Tidsslot",
                     "description": "Hvilken tidsslot skal ændres (1 eller 2)."
                 },
                 "enabled": {
+                    "name": "Aktivér/deaktivér",
                     "description": "Aktivér eller deaktivér den valgte dag/slot."
                 },
                 "start": {
-                    "description": "Starttidspunkt for den valgte slot. Kun nødvendigt, hvis tidsslotten skal aktiveres."
+                    "name": "Start",
+                    "description": "Starttidspunkt for den valgte slot. Kun nødvendigt hvis slotten skal aktiveres. Kun timer og minutter anvendes."
                 },
                 "end": {
-                    "description": "Sluttidspunkt for den valgte slot. Kun nødvendigt, hvis tidsslotten skal aktiveres."
+                    "name": "Slut",
+                    "description": "Sluttidspunkt for den valgte slot. Kun nødvendigt hvis slotten skal aktiveres. Kun timer og minutter anvendes."
                 }
+            }
+        },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Manuel kalender",
+                "predictive": "SmartMowing-spærretider"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Mandag",
+                "tuesday": "Tirsdag",
+                "wednesday": "Onsdag",
+                "thursday": "Torsdag",
+                "friday": "Fredag",
+                "saturday": "Lørdag",
+                "sunday": "Søndag"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Klip græs",
+                "returnToDock": "Tilbage til ladestationen",
+                "pause": "Pause"
             }
         }
     },

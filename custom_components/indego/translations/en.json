@@ -297,30 +297,57 @@
             }
         },
         "set_calendar_slot": {
-            "name": "Activar/desactivar intervalo del calendario",
+            "name": "Activate/Deactivate calendar slot",
             "description": "Set a calender slot when you use the manual calendar instead of SmartMowing.",
             "fields": {
                 "mower_serial": {
+                    "name": "Serialnumber",
                     "description": "Serial number of the mower. Only required if multiple mowers are configured."
                 },
                 "calendar_type": {
+                    "name": "Calendar Type",
                     "description": "Type of calendar to use. Use 'calendar' for manual calendar or 'predictive' for the forbidden time slots in SmartMowing mode."
                 },
                 "day": {
-                    "description": "Which day to configure."
+                    "name": "Day",
+                    "description": "Which day to configure.",
+                    "example": "Montag"
                 },
                 "slot": {
+                    "name": "Time slot",
                     "description": "Which Slot of the selected day should be configured (1 or 2)."
                 },
                 "enabled": {
+                    "name": "Activate/Deactivate",
                     "description": "Should the selected slot be enabled or disabled."
                 },
                 "start": {
+                    "name": "Start",
                     "description": "Set Start Time of the selected slot and day. Only needed if you want to enable a slot."
                 },
                 "end": {
+                    "name": "End",
                     "description": "Set End Time of the selected slot and day. Only needed if you want to enable a slot."
                 }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Manual Calendar",
+                "predictive": "SmartMowing predicted slots"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "saturday",
+                "sunday": "Sunday"
             }
         }
     },

@@ -301,26 +301,59 @@
             "description": "Modifier un créneau du calendrier (changer les horaires, activer ou désactiver)",
             "fields": {
                 "mower_serial": {
+                    "name": "Numéro de série",
                     "description": "Numéro de série de la tondeuse. Nécessaire uniquement si plusieurs tondeuses sont configurées."
                 },
                 "calendar_type": {
+                    "name": "Type de calendrier",
                     "description": "Sélectionnez le calendrier ('calendar' pour le calendrier manuel ou 'predictive' pour les périodes désactivées en mode SmartMowing)."
                 },
                 "day": {
+                    "name": "Jour",
                     "description": "Nom du jour de la semaine à configurer."
                 },
                 "slot": {
-                    "description": "Créneau horaire à modifier (1 ou 2)."
+                    "name": "Créneau horaire",
+                    "description": "Créneau à modifier (1 ou 2)."
                 },
                 "enabled": {
+                    "name": "Activer/désactiver",
                     "description": "Activer ou désactiver le jour/créneau sélectionné."
                 },
                 "start": {
-                    "description": "Heure de début du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé."
+                    "name": "Début",
+                    "description": "Heure de début du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé. Seules les heures et les minutes sont utilisées."
                 },
                 "end": {
-                    "description": "Heure de fin du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé."
+                    "name": "Fin",
+                    "description": "Heure de fin du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé. Seules les heures et les minutes sont utilisées."
                 }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Calendrier manuel",
+                "predictive": "Périodes bloquées SmartMowing"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Lundi",
+                "tuesday": "Mardi",
+                "wednesday": "Mercredi",
+                "thursday": "Jeudi",
+                "friday": "Vendredi",
+                "saturday": "Samedi",
+                "sunday": "Dimanche"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Tondre",
+                "returnToDock": "Retour à la station de charge",
+                "pause": "Pause"
             }
         }
     },

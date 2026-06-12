@@ -301,26 +301,59 @@
             "description": "Upraviť časový slot kalendára (zmeniť časy, aktivovať alebo deaktivovať)",
             "fields": {
                 "mower_serial": {
+                    "name": "Sériové číslo",
                     "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
                 "calendar_type": {
+                    "name": "Typ kalendára",
                     "description": "Vyberte kalendár ('calendar' pre manuálny kalendár alebo 'predictive' pre deaktivované časové obdobia v režime SmartMowing)."
                 },
                 "day": {
+                    "name": "Deň",
                     "description": "Názov dňa v týždni, ktorý sa má nakonfigurovať."
                 },
                 "slot": {
+                    "name": "Časový slot",
                     "description": "Ktorý časový slot sa má zmeniť (1 alebo 2)."
                 },
                 "enabled": {
+                    "name": "Aktivovať/deaktivovať",
                     "description": "Aktivovať alebo deaktivovať vybraný deň/časový slot."
                 },
                 "start": {
-                    "description": "Čas začiatku vybraného slotu. Vyžaduje sa iba v prípade, že sa má časový slot aktivovať."
+                    "name": "Začiatok",
+                    "description": "Čas začiatku vybraného slotu. Vyžaduje sa iba v prípade, že sa má slot aktivovať. Použijú sa iba hodiny a minúty."
                 },
                 "end": {
-                    "description": "Čas ukončenia vybraného slotu. Vyžaduje sa iba v prípade, že sa má časový slot aktivovať."
+                    "name": "Koniec",
+                    "description": "Čas ukončenia vybraného slotu. Vyžaduje sa iba v prípade, že sa má slot aktivovať. Použijú sa iba hodiny a minúty."
                 }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Manuálny kalendár",
+                "predictive": "Blokované časy SmartMowing"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Pondelok",
+                "tuesday": "Utorok",
+                "wednesday": "Streda",
+                "thursday": "Štvrtok",
+                "friday": "Piatok",
+                "saturday": "Sobota",
+                "sunday": "Nedeľa"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Kosiť",
+                "returnToDock": "Návrat do dokovacej stanice",
+                "pause": "Pauza"
             }
         }
     },

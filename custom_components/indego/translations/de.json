@@ -459,6 +459,7 @@
             "description": "Befehle an den Mähroboter senden. Wählen Sie einen Befehl aus.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "command": {
@@ -472,9 +473,11 @@
             "description": "SmartMowing aktivieren oder deaktivieren. Mögliche Werte sind true oder false.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "enable": {
+                    "name": "Aktivieren/Deaktivieren",
                     "description": "SmartMowing aktivieren."
                 }
             }
@@ -484,9 +487,11 @@
             "description": "Löscht den ausgewählten Fehler.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "alert_index": {
+                    "name": "Fehler Index",
                     "description": "Den ausgewählten Fehler löschen. Mit 0 wird der letzte/aktuellste Fehler gelöscht."
                 }
             }
@@ -496,6 +501,7 @@
             "description": "Löscht alle Fehler.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 }
             }
@@ -505,9 +511,11 @@
             "description": "Markiert den ausgewählten Fehler als gelesen.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "alert_index": {
+                    "name": "Fehler Index",
                     "description": "Den ausgewählten Fehler als gelesen markieren. Mit 0 wird der letzte/aktuellste Fehler ausgewählt."
                 }
             }
@@ -517,6 +525,7 @@
             "description": "Markiert alle Fehler als gelesen.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 }
             }
@@ -526,6 +535,7 @@
             "description": "Lädt die aktuelle Mähkarte von der Bosch Cloud API herunter und speichert diese lokal unter \"www/indego_map_base.svg\". Die Karte zeigt die zuletzt aufgezeichnete Mähroute.",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 }
             }
@@ -535,26 +545,59 @@
             "description": "Einen Kalender Slot verändern (Zeiten ändern, aktivieren oder deaktivieren)",
             "fields": {
                 "mower_serial": {
+                    "name": "Seriennummer",
                     "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
                 },
                 "calendar_type": {
+                    "name": "Kalender Typ",
                     "description": "Kalender auswählen ('calendar' für manuellen Kalender oder 'predictive' für deaktivierte Zeiten im SmartMowing Modus)."
                 },
                 "day": {
+                    "name": "Tag",
                     "description": "Name des Wochentags der konfiguriert werden soll"
                 },
                 "slot": {
+                    "name": "Zeitfenster",
                     "description": "Welcher Zeitslot soll geändert werden (1 oder 2)"
                 },
                 "enabled": {
+                    "name": "Aktivieren/Deaktivieren",
                     "description": "Gewhälten Tag/Slot aktivieren/deaktivieren"
                 },
                 "start": {
-                    "description": "Startzeit des gewählten Slots. Wird nur benötigt wenn ein Zeitslot aktiviert werden soll."
+                    "name": "Start",
+                    "description": "Startzeit des gewählten Slots. Wird nur benötigt wenn ein Zeitslot aktiviert werden soll. Nur Stunden und Minuten werden übernommen."
                 },
                 "end": {
-                    "description": "Endzeit des gewählten Slots. Wird nur benötigt wenn ein Zeitslot aktiviert werden soll."
+                    "name": "Ende",
+                    "description": "Endzeit des gewählten Slots. Wird nur benötigt wenn ein Zeitslot aktiviert werden soll. Nur Stunden und Minuten werden übernommen."
                 }
+            }
+        }
+    },
+    "selector": {
+        "calendar_type_options": {
+            "options": {
+                "calendar": "Manueller Kalender",
+                "predictive": "SmartMowing Sperrzeiten"
+            }
+        },
+        "day_options": {
+            "options": {
+                "monday": "Montag",
+                "tuesday": "Dienstag",
+                "wednesday": "Mittwoch",
+                "thursday": "Donnerstag",
+                "friday": "Freitag",
+                "saturday": "Samstag",
+                "sunday": "Sonntag"
+            }
+        },
+        "command_options": {
+            "options": {
+                "mow": "Mähen",
+                "returnToDock": "Zurück zur Docking Station",
+                "pause": "Pause"
             }
         }
     },
