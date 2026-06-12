@@ -676,16 +676,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass,
         entry.options.get(CONF_USER_AGENT)
     )
-
-    await indego_hub.start_periodic_position_update()
-
+    
     async def load_platforms():
         _LOGGER.debug("Loading Home Assistant platforms: %s", INDEGO_PLATFORMS)
         await hass.config_entries.async_forward_entry_setups(entry, INDEGO_PLATFORMS)
 
     try:
         await indego_hub.update_generic_data_and_load_platforms(load_platforms)
-        _LOGGER.info("Successfully set up Indego integration for: %s", entry.data[CONF_MOWER_NAME])
 
     except ClientResponseError as exc:
         if 400 <= exc.status < 500:
@@ -1038,6 +1035,17 @@ class IndegoHub:
             self._serial,
         )
 
+        # Validierung der Zeiten, falls enabled
+        if enabled:
+            if not start or not end:
+                raise ValueError("start and end are required when enabled is true")
+            try:
+                _parse_slot_time(start)
+                _parse_slot_time(end)
+            except ValueError as e:
+                _LOGGER.error("Invalid time format for slot: %s", e)
+                raise HomeAssistantError(f"Invalid time format: {e}") from e
+
         if calendar_type == "predictive":
             await self._indego_client.update_predictive_calendar()
             calendar = getattr(self._indego_client, "predictive_calendar", None)
@@ -1170,6 +1178,8 @@ class IndegoHub:
 
         self._create_entities(device_info)
         await load_platforms()
+
+        await self.start_periodic_position_update()
 
         if self._hass.state == CoreState.running:
             # HA has already been started (this probably an integration reload).
@@ -1787,19 +1797,16 @@ class IndegoHub:
                 _LOGGER.error("Failed to update runtime data: %s", str(exc))
                 self.entities[ENTITY_RUNTIME].state = STATE_UNKNOWN
 
-            # Update battery charging state
+            
+            # Update battery charging state - use separate binary sensor only
             try:
-                self.entities[ENTITY_BATTERY].charging = (
-                    self._indego_client.state_description_detail == "Charging"
-                )
-                # Also update battery charging binary sensor if it exists
+                is_charging = (self._indego_client.state_description_detail == "Charging")
+                # Update battery charging binary sensor
                 if ENTITY_BATTERY_CHARGING in self.entities:
-                    self.entities[ENTITY_BATTERY_CHARGING].state = (
-                        self._indego_client.state_description_detail == "Charging"
-                    )
+                    self.entities[ENTITY_BATTERY_CHARGING].state = is_charging
+                # Note: ENTITY_BATTERY does NOT have a 'charging' attribute; only use binary sensor
             except Exception as exc:
                 _LOGGER.error("Failed to update battery charging state: %s", str(exc))
-                self.entities[ENTITY_BATTERY].charging = False
                 if ENTITY_BATTERY_CHARGING in self.entities:
                     self.entities[ENTITY_BATTERY_CHARGING].state = False
 
