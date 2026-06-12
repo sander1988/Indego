@@ -295,6 +295,33 @@
                     "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba."
                 }
             }
+        },
+        "set_calendar_slot": {
+            "name": "Attiva/disattiva slot del calendario",
+            "description": "Modifica uno slot del calendario (cambia orari, attiva o disattiva)",
+            "fields": {
+                "mower_serial": {
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "calendar_type": {
+                    "description": "Seleziona il calendario ('calendar' per il calendario manuale o 'predictive' per i periodi disattivati in modalità SmartMowing)."
+                },
+                "day": {
+                    "description": "Nome del giorno della settimana da configurare."
+                },
+                "slot": {
+                    "description": "Slot orario da modificare (1 o 2)."
+                },
+                "enabled": {
+                    "description": "Attiva o disattiva il giorno/slot selezionato."
+                },
+                "start": {
+                    "description": "Ora di inizio dello slot selezionato. Necessaria solo se lo slot deve essere attivato."
+                },
+                "end": {
+                    "description": "Ora di fine dello slot selezionato. Necessaria solo se lo slot deve essere attivato."
+                }
+            }
         }
     },
     "issues": {
