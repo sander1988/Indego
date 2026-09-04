@@ -19,6 +19,7 @@ CONF_EXPOSE_INDEGO_AS_VACUUM: Final = "expose_vacuum"
 CONF_SHOW_ALL_ALERTS: Final = "show_all_alerts"
 CONF_USER_AGENT: Final = "user_agent"
 CONF_SERVICES_REGISTERED: Final = "services_registered"
+CONF_MAP_ROTATION: Final = "map_rotation"
 
 CONF_TRANSLATION_KEY: Final = "translation_key"
 CONF_ATTR: Final = "attributes"
@@ -36,6 +37,7 @@ CONF_START: Final = "start"
 CONF_END: Final = "end"
 CONF_EARLIEST_START: Final = "earliest_start"
 CONF_LATEST_END: Final = "latest_end"
+
 
 CONF_SERVICE: Final = "service"
 CONF_SERVICE_DATA: Final = "service_data"
