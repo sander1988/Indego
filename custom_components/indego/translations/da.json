@@ -190,7 +190,7 @@
             "mowing_mode": {
                 "name": "Klippemode",
                 "state": {
-                    "Calendar": "Manuel kalender"
+                    "calendar": "Manuel kalender"
                 }
             },
             "runtime_total": {
@@ -682,167 +682,207 @@
     "services": {
         "command": {
             "name": "Send kommando",
-            "description": "Send kommandoer til græsslåmaskinen. Vælg en kommando.",
+            "description": "Send kommandoer til græsslåmaskinen. Gyldige kommandoer er \"mow\" (start klipning), \"returnToDock\" (retur til ladestation) og \"pause\" (pause klipning).",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
                 "command": {
-                    "name": "Send kommando",
-                    "description": "Send kommandoer til græsslåmaskinen. Vælg en kommando."
+                    "name": "Kommando",
+                    "description": "Kommando, der skal sendes til græsslåmaskinen."
                 }
             }
         },
         "smartmowing": {
             "name": "Skift SmartMowing",
-            "description": "Aktivér eller deaktivér SmartMowing. Tilladte værdier er true eller false.",
+            "description": "Aktivér eller deaktivér SmartMowing-funktionen, som automatisk justerer klipningsplanen baseret på vejrforhold og græsvækst.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
                 "enable": {
-                    "name": "Aktivér",
-                    "description": "Aktivér SmartMowing."
+                    "name": "Aktivér/deaktivér",
+                    "description": "Angiv SmartMowing-tilstand. Brug \"true\" for at aktivere eller \"false\" for at deaktivere funktionen."
                 }
             }
         },
         "delete_alert": {
             "name": "Slet advarsel",
-            "description": "Slet den valgte advarsel.",
+            "description": "Sletter en specifik advarsel baseret på dens indeks. Indeks 0 refererer til den seneste advarsel.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
                 "alert_index": {
                     "name": "Advarselsindeks",
-                    "description": "Slet den valgte advarsel. 0 for den seneste advarsel."
+                    "description": "Indeks for den advarsel, der skal slettes. 0 = seneste, 1 = næstseneste osv."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Slet alle advarsler",
-            "description": "Slet alle advarsler.",
+            "description": "Sletter alle eksisterende advarsler for græsslåmaskinen på én gang.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 }
             }
         },
         "read_alert": {
             "name": "Marker advarsel som læst",
-            "description": "Markér den valgte advarsel som læst.",
+            "description": "Markerer en specifik advarsel som læst baseret på dens indeks. Indeks 0 refererer til den seneste advarsel.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
                 "alert_index": {
                     "name": "Advarselsindeks",
-                    "description": "Markér den valgte advarsel som læst. 0 for den seneste advarsel."
+                    "description": "Indeks for den advarsel, der skal markeres som læst. 0 = seneste, 1 = næstseneste osv."
                 }
             }
         },
         "read_alert_all": {
             "name": "Marker alle advarsler som læst",
-            "description": "Markér alle advarsler som læste.",
+            "description": "Markerer alle eksisterende advarsler for græsslåmaskinen som læst.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 }
             }
         },
         "download_map": {
-            "name": "Download klippekort",
-            "description": "Henter det aktuelle slåningskort fra Bosch Cloud API'en og gemmer det lokalt som \"www/indego_map_base.svg\". Kortet afspejler den senest optegnede slåningsrute.",
+            "name": "Download klipningskort",
+            "description": "Henter det aktuelle klipningskort fra Bosch Cloud API og gemmer det lokalt som \"www/indego_map_base.svg\". Kortet afspejler den senest registrerede klipningsrute.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Græsslåmaskine serienummer. Kun nødvendigt, når du har konfigureret flere græsslåmaskiner."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 }
             }
         },
         "set_calendar_slot": {
             "name": "Aktivér/deaktivér kalender-slot",
-            "description": "Rediger en kalender-slot (ændr tider, aktivér eller deaktivér)",
+            "description": "Angiv et kalender-slot, når du bruger en manuel tidsplan i stedet for SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Serienummer på plæneklipperen. Kun nødvendig, hvis der er konfigureret flere plæneklippere."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
-                "calendar_type": {
-                    "name": "Kalendertype",
-                    "description": "Vælg kalender ('calendar' for manuel kalender oder 'predictive' for deaktiverede tidsrum i SmartMowing-tilstand)."
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
                 "days": {
-                    "name": "Dag",
-                    "description": "Navnet på den ugedag, der skal konfigureres."
+                    "name": "Dage",
+                    "description": "Hvilken dag der skal konfigureres."
                 },
                 "slot": {
-                    "name": "Tidsslot",
-                    "description": "Hvilken tidsslot skal ændres (1 eller 2)."
+                    "name": "Slot",
+                    "description": "Hvilket slot på den valgte dag der skal konfigureres (1 eller 2)."
                 },
                 "enabled": {
                     "name": "Aktivér/deaktivér",
-                    "description": "Aktivér eller deaktivér den valgte dag/slot."
+                    "description": "Skal det valgte slot være aktiveret eller deaktiveret."
                 },
                 "start": {
-                    "name": "Start",
-                    "description": "Starttidspunkt for den valgte slot. Kun nødvendigt hvis slotten skal aktiveres. Kun timer og minutter anvendes."
+                    "name": "Starttidspunkt",
+                    "description": "Angiv starttidspunkt for det valgte slot og dag. Kun nødvendigt, hvis du vil aktivere et slot. Kun time og minut bruges."
                 },
                 "end": {
-                    "name": "Slut",
-                    "description": "Sluttidspunkt for den valgte slot. Kun nødvendigt hvis slotten skal aktiveres. Kun timer og minutter anvendes."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Indstil plæneforhold for plæneklipperen",
-            "description": "Indstil plæneforholdene for plæneklipperen",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serienummer",
-                    "description": "Plæneklipperens serienummer. Kun påkrævet hvis flere plæneklippere er konfigureret."
-                },
-                "bump_sensitivity": {
-                    "name": "Plæneforhold",
-                    "description": "Plæneforhold for plæneklipperen"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "PIN-kode",
-            "description": "Skift plæneklipperens PIN-kode",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serienummer",
-                    "description": "Plæneklipperens serienummer. Kun nødvendigt hvis flere plæneklippere er konfigureret."
-                },
-                "pin": {
-                    "name": "PIN-kode",
-                    "description": "Ny firecifret PIN-kode til plæneklipperen"
+                    "name": "Sluttidspunkt",
+                    "description": "Angiv sluttidspunkt for det valgte slot og dag. Kun nødvendigt, hvis du vil aktivere et slot. Kun time og minut bruges."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "Indstil tidsvindue for SmartMowing",
-            "description": "Tidsvinduet, hvor plæneklipperen må klippe i SmartMowing-tilstand.",
+            "description": "Angiv det tilladte klipningsvindue for SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Plæneklipperens serienummer. Kun nødvendigt, hvis flere plæneklippere er konfigureret."
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
                 },
                 "earliest_start": {
                     "name": "Tidligste start",
-                    "description": "Det tidligste tidspunkt, hvor plæneklipperen skal starte."
+                    "description": "Tidligste tidspunkt, hvor SmartMowing må klippe. Kun timer og minutter bruges."
                 },
                 "latest_end": {
                     "name": "Seneste slut",
-                    "description": "Det seneste tidspunkt, hvor plæneklipperen skal være færdig."
+                    "description": "Seneste tidspunkt, hvor SmartMowing må klippe. Kun timer og minutter bruges."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Indstil plæneforhold",
+            "description": "Indstil plæneklipperens stødfølsomhed.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "bump_sensitivity": {
+                    "name": "Stødfølsomhed",
+                    "description": "Plæneklipperens stødfølsomhed."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Skift PIN-kode",
+            "description": "Skift plæneklipperens PIN-kode.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer på græsslåmaskinen. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "mower_entity": {
+                    "name": "Enhed",
+                    "description": "Vælg græsslåmaskine-enheden. Kun nødvendigt, hvis flere græsslåmaskiner er konfigureret."
+                },
+                "pin": {
+                    "name": "PIN-kode",
+                    "description": "Ny 4-cifret PIN-kode til plæneklipperen."
                 }
             }
         }
@@ -869,8 +909,7 @@
             "options": {
                 "mow": "Klip græs",
                 "return_to_dock": "Tilbage til ladestationen",
-                "pause": "Pause",
-                "returnToDock": "Tilbage til ladestationen"
+                "pause": "Pause"
             }
         },
         "bump_sensitivity_options": {

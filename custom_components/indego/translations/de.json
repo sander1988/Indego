@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Mähmodus",
                 "state": {
-                    "Calendar": "Kalender"
+                    "calendar": "Kalender"
                 }
             },
             "runtime_total": {
@@ -646,167 +646,207 @@
     "services": {
         "command": {
             "name": "Befehl senden",
-            "description": "Befehle an den Mähroboter senden. Wählen Sie einen Befehl aus.",
+            "description": "Sendet einen Steuerbefehl an den Mähroboter. Gültige Befehle sind \"mow\" (Mähen starten), \"returnToDock\" (Rückkehr zur Ladestation) und \"pause\" (Mähen pausieren).",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "command": {
-                    "name": "Befehl senden",
-                    "description": "Befehle an den Mähroboter senden. Wählen Sie einen Befehl aus."
+                    "name": "Befehl",
+                    "description": "Der an den Mähroboter zu sendende Befehl."
                 }
             }
         },
         "smartmowing": {
             "name": "SmartMowing umschalten",
-            "description": "SmartMowing aktivieren oder deaktivieren. Mögliche Werte sind true oder false.",
+            "description": "Aktiviert oder deaktiviert die SmartMowing-Funktion, die den Mähplan automatisch an Wetterbedingungen und Rasenwachstum anpasst.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "enable": {
                     "name": "Aktivieren/Deaktivieren",
-                    "description": "SmartMowing aktivieren."
+                    "description": "Legt den SmartMowing-Status fest. Verwenden Sie \"true\" zum Aktivieren oder \"false\" zum Deaktivieren."
                 }
             }
         },
         "delete_alert": {
-            "name": "Alert löschen",
-            "description": "Löscht den ausgewählten Fehler.",
+            "name": "Fehler löschen",
+            "description": "Löscht einen bestimmten Fehler anhand seines Index. Index 0 bezieht sich auf den neuesten Fehler.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "alert_index": {
                     "name": "Fehler Index",
-                    "description": "Den ausgewählten Fehler löschen. Mit 0 wird der letzte/aktuellste Fehler gelöscht."
+                    "description": "Index des zu löschenden Fehlers. 0 = neuester, 1 = zweitneuester, usw."
                 }
             }
         },
         "delete_alert_all": {
-            "name": "Alle Alerts löschen",
-            "description": "Löscht alle Fehler.",
+            "name": "Alle Fehler löschen",
+            "description": "Löscht alle vorhandenen Fehler des Mähroboters auf einmal.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 }
             }
         },
         "read_alert": {
-            "name": "Alert als gelesen markieren",
-            "description": "Markiert den ausgewählten Fehler als gelesen.",
+            "name": "Fehler als gelesen markieren",
+            "description": "Markiert einen bestimmten Fehler anhand seines Index als gelesen. Index 0 bezieht sich auf den neuesten Fehler.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "alert_index": {
                     "name": "Fehler Index",
-                    "description": "Den ausgewählten Fehler als gelesen markieren. Mit 0 wird der letzte/aktuellste Fehler ausgewählt."
+                    "description": "Index des als gelesen zu markierenden Fehlers. 0 = neuester, 1 = zweitneuester, usw."
                 }
             }
         },
         "read_alert_all": {
-            "name": "Alle Alerts als gelesen markieren",
-            "description": "Markiert alle Fehler als gelesen.",
+            "name": "Alle Fehler als gelesen markieren",
+            "description": "Markiert alle vorhandenen Fehler des Mähroboters als gelesen.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 }
             }
         },
         "download_map": {
             "name": "Mähkarte herunterladen",
-            "description": "Lädt die aktuelle Mähkarte von der Bosch Cloud API herunter und speichert diese lokal unter \"www/indego_map_base.svg\". Die Karte zeigt die zuletzt aufgezeichnete Mähroute.",
+            "description": "Lädt die aktuelle Mähkarte von der Bosch Cloud API herunter und speichert sie lokal unter \"www/indego_map_base.svg\". Die Karte zeigt die zuletzt aufgezeichnete Mähroute.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Kalender Slot aktivieren/deaktivieren",
-            "description": "Einen Kalender Slot verändern (Zeiten ändern, aktivieren oder deaktivieren)",
+            "name": "Kalender-Slot einstellen",
+            "description": "Legt einen Kalender-Slot fest, wenn Sie einen manuellen Zeitplan anstelle von SmartMowing verwenden.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
-                "calendar_type": {
-                    "name": "Kalender Typ",
-                    "description": "Kalender auswählen ('calendar' für manuellen Kalender oder 'predictive' für deaktivierte Zeiten im SmartMowing Modus)."
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "days": {
-                    "name": "Tag",
-                    "description": "Name des Wochentags der konfiguriert werden soll"
+                    "name": "Tage",
+                    "description": "Welcher Wochentag konfiguriert werden soll."
                 },
                 "slot": {
-                    "name": "Zeitfenster",
-                    "description": "Welcher Zeitslot soll geändert werden (1 oder 2)"
+                    "name": "Slot",
+                    "description": "Welcher Slot des ausgewählten Tages konfiguriert werden soll (1 oder 2)."
                 },
                 "enabled": {
                     "name": "Aktivieren/Deaktivieren",
-                    "description": "Gewhälten Tag/Slot aktivieren/deaktivieren"
+                    "description": "Soll der ausgewählte Slot aktiviert oder deaktiviert werden."
                 },
                 "start": {
-                    "name": "Start",
-                    "description": "Startzeit des gewählten Slots. Wird nur benötigt wenn ein Zeitslot aktiviert werden soll. Nur Stunden und Minuten werden übernommen."
+                    "name": "Startzeit",
+                    "description": "Startzeit für den ausgewählten Slot und Tag. Nur erforderlich, wenn der Slot aktiviert werden soll. Es werden nur Stunden und Minuten verwendet."
                 },
                 "end": {
-                    "name": "Ende",
-                    "description": "Endzeit des gewählten Slots. Wird nur benötigt wenn ein Zeitslot aktiviert werden soll. Nur Stunden und Minuten werden übernommen."
+                    "name": "Endzeit",
+                    "description": "Endzeit für den ausgewählten Slot und Tag. Nur erforderlich, wenn der Slot aktiviert werden soll. Es werden nur Stunden und Minuten verwendet."
                 }
             }
         },
         "set_predictive_mowing_window": {
-            "name": "Zeitfenster für SmartMowing Zeiten setzen",
-            "description": "Das Zeitfenster in dem der Mäher im SmartMowing Modus mähen darf.",
+            "name": "SmartMowing-Zeitfenster festlegen",
+            "description": "Legt das erlaubte Mähzeitfenster für SmartMowing fest.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "earliest_start": {
                     "name": "Frühester Start",
-                    "description": "Um wie viel Uhr soll der Mäher frühestens beginnen."
+                    "description": "Früheste Uhrzeit, zu der SmartMowing mähen darf. Es werden nur Stunden und Minuten verwendet."
                 },
                 "latest_end": {
                     "name": "Spätestes Ende",
-                    "description": "Um wie viel uhr soll der Mäher spätestens beenden."
+                    "description": "Späteste Uhrzeit, zu der SmartMowing mähen darf. Es werden nur Stunden und Minuten verwendet."
                 }
             }
         },
         "set_bump_sensitivity": {
-            "name": "Rasenbedingungen des Mähers einstellen",
-            "description": "Die Rasenbedingungen des Mähers einstellen",
+            "name": "Rasenbedingungen einstellen",
+            "description": "Stellt die Stoßempfindlichkeit des Mähroboters ein.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "bump_sensitivity": {
                     "name": "Rasenbedingungen",
-                    "description": "Rasenbedingungen des Mähers"
+                    "description": "Die Rasenbedingungen des Mähroboters."
                 }
             }
         },
         "set_pin": {
-            "name": "PIN Code",
-            "description": "PIN Code des Mähers ändern",
+            "name": "PIN-Code ändern",
+            "description": "Ändert den PIN-Code des Mähroboters.",
             "fields": {
                 "mower_serial": {
                     "name": "Seriennummer",
-                    "description": "Seriennummer des Mähroboters. Wird nur benötigt, wenn mehrere Mähroboter eingerichtet sind."
+                    "description": "Seriennummer des Mähroboters. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
+                },
+                "mower_entity": {
+                    "name": "Entität",
+                    "description": "Wählen Sie die Mähroboter-Entität aus. Nur erforderlich, wenn mehrere Mähroboter konfiguriert sind."
                 },
                 "pin": {
-                    "name": "PIN Code",
-                    "description": "Neuer vierstelliger PIN Code des Mähers"
+                    "name": "PIN-Code",
+                    "description": "Neuer vierstelliger PIN-Code für den Mähroboter."
                 }
             }
         }
@@ -832,7 +872,7 @@
         "command_options": {
             "options": {
                 "mow": "Mähen",
-                "returnToDock": "Zurück zur Docking Station",
+                "return_to_dock": "Zurück zur Ladestation",
                 "pause": "Pause"
             }
         },

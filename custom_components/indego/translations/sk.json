@@ -124,7 +124,7 @@
                     "Loading map": "Načítavanie mapy",
                     "Learning lawn": "Učenie sa záhrady",
                     "Paused": "Pozastavené",
-                    "Border cut": "Косenie okrajov",
+                    "Border cut": "Кosenie okrajov",
                     "Idle in lawn": "Nečinnosť na trávniku",
                     "Stuck on lawn, help needed": "Uviaznuté na trávniku, potrebná pomoc",
                     "Returning to dock": "Návrat do stanice",
@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Režim kosenia",
                 "state": {
-                    "Calendar": "Manuálny kalendár"
+                    "calendar": "Manuálny kalendár"
                 }
             },
             "runtime_total": {
@@ -647,167 +647,207 @@
     "services": {
         "command": {
             "name": "Poslať príkaz",
-            "description": "Poslať príkazy kosačke. Vyberte príkaz.",
+            "description": "Odošle riadiaci príkaz kosačke. Platné príkazy sú \"mow\" (spustiť kosenie), \"returnToDock\" (návrat do nabíjacej stanice) a \"pause\" (pozastaviť kosenie).",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
                 "command": {
-                    "name": "Poslať príkaz",
-                    "description": "Poslať príkazy kosačke. Vyberte príkaz."
+                    "name": "Príkaz",
+                    "description": "Príkaz, ktorý sa má odoslať kosačke."
                 }
             }
         },
         "smartmowing": {
             "name": "Prepnúť SmartMowing",
-            "description": "Povoliť alebo zakázať funkciu SmartMowing. Povolené hodnoty sú true alebo false.",
+            "description": "Zapína alebo vypína funkciu SmartMowing, ktorá automaticky upravuje plán kosenia na základe poveternostných podmienok a rastu trávy.",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
                 "enable": {
-                    "description": "Povoliť SmartMowing.",
-                    "name": "Aktivovať/deaktivovať"
+                    "name": "Aktivovať/deaktivovať",
+                    "description": "Nastaví stav SmartMowing. Použite \"true\" na aktiváciu alebo \"false\" na deaktiváciu funkcie."
                 }
             }
         },
         "delete_alert": {
             "name": "Odstrániť výstrahu",
-            "description": "Odstrániť vybraté upozornenie.",
+            "description": "Odstráni konkrétne upozornenie na základe jeho indexu. Index 0 označuje najnovšie upozornenie.",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
                 "alert_index": {
-                    "description": "Odstrániť vybraté upozornenie. 0 pre najnovšie upozornenie.",
-                    "name": "Index upozornenia"
+                    "name": "Index upozornenia",
+                    "description": "Index upozornenia, ktoré sa má odstrániť. 0 = najnovšie, 1 = druhé najnovšie, atď."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Odstrániť všetky výstrahy",
-            "description": "Odstráňte všetky upozornenia.",
+            "description": "Odstráni všetky existujúce upozornenia kosačky naraz.",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 }
             }
         },
         "read_alert": {
             "name": "Označiť výstrahu ako prečítanú",
-            "description": "Označte vybrané upozornenie ako prečítané.",
+            "description": "Označí konkrétne upozornenie ako prečítané na základe jeho indexu. Index 0 označuje najnovšie upozornenie.",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
                 "alert_index": {
-                    "description": "Označte vybrané upozornenie ako prečítané. 0 pre najnovšie upozornenie.",
-                    "name": "Index upozornenia"
+                    "name": "Index upozornenia",
+                    "description": "Index upozornenia, ktoré sa má označiť ako prečítané. 0 = najnovšie, 1 = druhé najnovšie, atď."
                 }
             }
         },
         "read_alert_all": {
             "name": "Označiť všetky výstrahy ako prečítané",
-            "description": "Označte všetky upozornenia ako prečítané.",
+            "description": "Označí všetky existujúce upozornenia kosačky ako prečítané.",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 }
             }
         },
         "download_map": {
             "name": "Stiahnuť mapu kosenia",
-            "description": "Stiahne aktuálnu mapu kosenia z Bosch Cloud API a uloží ju lokálne ako \"www/indego_map_base.svg\". Mapa odráža naposledy zaznamenú trasu kosenia.",
+            "description": "Stiahne aktuálnu mapu kosenia z Bosch Cloud API a uloží ju lokálne ako \"www/indego_map_base.svg\". Mapa odráža naposledy zaznamenanú trasu kosenia.",
             "fields": {
                 "mower_serial": {
-                    "description": "Sériové číslo kosačky. Potrebné iba vtedy, keď máte nakonfigurovaných viacero kosačiek.",
-                    "name": "Sériové číslo"
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Aktivovať/deaktivovať časový slot kalendára",
-            "description": "Upraviť časový slot kalendára (zmeniť časy, aktivovať alebo deaktivovať)",
+            "name": "Nastaviť slot kalendára",
+            "description": "Nastaví slot kalendára, keď používate manuálny plán namiesto SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Sériové číslo",
                     "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
-                "calendar_type": {
-                    "name": "Typ kalendára",
-                    "description": "Vyberte kalendár ('calendar' pre manuálny kalendár alebo 'predictive' pre deaktivované časové obdobia v režime SmartMowing)."
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
                 "days": {
-                    "name": "Deň",
-                    "description": "Názov dňa v týždni, ktorý sa má nakonfigurovať."
+                    "name": "Dni",
+                    "description": "Ktorý deň v týždni sa má nakonfigurovať."
                 },
                 "slot": {
-                    "name": "Časový slot",
-                    "description": "Ktorý časový slot sa má zmeniť (1 alebo 2)."
+                    "name": "Slot",
+                    "description": "Ktorý slot vybraného dňa sa má nakonfigurovať (1 alebo 2)."
                 },
                 "enabled": {
                     "name": "Aktivovať/deaktivovať",
-                    "description": "Aktivovať alebo deaktivovať vybraný deň/časový slot."
+                    "description": "Či má byť vybraný slot aktivovaný alebo deaktivovaný."
                 },
                 "start": {
-                    "name": "Začiatok",
-                    "description": "Čas začiatku vybraného slotu. Vyžaduje sa iba v prípade, že sa má slot aktivovať. Použijú sa iba hodiny a minúty."
+                    "name": "Čas začiatku",
+                    "description": "Nastavte čas začiatku pre vybraný slot a deň. Vyžaduje sa iba vtedy, ak chcete aktivovať slot. Používajú sa iba hodiny a minúty."
                 },
                 "end": {
-                    "name": "Koniec",
-                    "description": "Čas ukončenia vybraného slotu. Vyžaduje sa iba v prípade, že sa má slot aktivovať. Použijú sa iba hodiny a minúty."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Nastaviť podmienky trávnika kosačky",
-            "description": "Nastaviť podmienky trávnika kosačky",
-            "fields": {
-                "mower_serial": {
-                    "name": "Sériové číslo",
-                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
-                },
-                "bump_sensitivity": {
-                    "name": "Podmienky trávnika",
-                    "description": "Podmienky trávnika kosačky"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "PIN kód",
-            "description": "Zmeniť PIN kód kosačky",
-            "fields": {
-                "mower_serial": {
-                    "name": "Sériové číslo",
-                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
-                },
-                "pin": {
-                    "name": "PIN kód",
-                    "description": "Nový štvorciferný PIN kód kosačky"
+                    "name": "Čas ukončenia",
+                    "description": "Nastavte čas ukončenia pre vybraný slot a deň. Vyžaduje sa iba vtedy, ak chcete aktivovať slot. Používajú sa iba hodiny a minúty."
                 }
             }
         },
         "set_predictive_mowing_window": {
-            "name": "Nastaviť časové okno SmartMowing",
-            "description": "Časové okno, počas ktorého môže kosačka kosiť v režime SmartMowing.",
+            "name": "Nastaviť okno SmartMowing",
+            "description": "Nastaví povolené okno kosenia pre SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Sériové číslo",
                     "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
                 },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
                 "earliest_start": {
                     "name": "Najskorší štart",
-                    "description": "Najskorší čas, kedy má kosačka začať."
+                    "description": "Najskorší čas, kedy môže SmartMowing kosiť. Používajú sa iba hodiny a minúty."
                 },
                 "latest_end": {
                     "name": "Najneskorší koniec",
-                    "description": "Najneskorší čas, kedy má kosačka skončiť."
+                    "description": "Najneskorší čas, kedy môže SmartMowing kosiť. Používajú sa iba hodiny a minúty."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Nastaviť podmienky trávnika",
+            "description": "Nastavuje citlivosť kosačky na nárazy.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "bump_sensitivity": {
+                    "name": "Podmienky trávnika",
+                    "description": "Citlivosť kosačky na nárazy."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Zmeniť PIN kód",
+            "description": "Zmení PIN kód kosačky.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Sériové číslo",
+                    "description": "Sériové číslo kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "mower_entity": {
+                    "name": "Entita",
+                    "description": "Vyberte entitu kosačky. Vyžaduje sa iba v prípade, že je nakonfigurovaných viac kosačiek."
+                },
+                "pin": {
+                    "name": "PIN kód",
+                    "description": "Nový 4-ciferný PIN kód pre kosačku."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Kosiť",
-                "returnToDock": "Návrat do dokovacej stanice",
+                "return_to_dock": "Návrat do dokovacej stanice",
                 "pause": "Pauza"
             }
         },

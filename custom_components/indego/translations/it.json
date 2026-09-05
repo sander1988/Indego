@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Modalità di taglio",
                 "state": {
-                    "Calendar": "Calendario manuale"
+                    "calendar": "Calendario manuale"
                 }
             },
             "runtime_total": {
@@ -647,167 +647,207 @@
     "services": {
         "command": {
             "name": "Invia comando",
-            "description": "Invia comandi al robot. Seleziona un comando.",
+            "description": "Invia un comando di controllo al rasaerba. I comandi validi sono \"mow\" (avvia il taglio), \"returnToDock\" (ritorna alla stazione di ricarica) e \"pause\" (metti in pausa il taglio).",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
                 "command": {
-                    "name": "Invia comando",
-                    "description": "Invia comandi al robot. Seleziona un comando."
+                    "name": "Comando",
+                    "description": "Comando da inviare al rasaerba."
                 }
             }
         },
         "smartmowing": {
             "name": "Attiva/Disattiva SmartMowing",
-            "description": "Abilita o disabilita SmartMowing. I valori consentiti sono true o false.",
+            "description": "Attiva o disattiva la funzione SmartMowing, che regola automaticamente il programma di taglio in base alle condizioni meteorologiche e alla crescita dell'erba.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
                 "enable": {
-                    "description": "Abilita SmartMowing.",
-                    "name": "Attiva/disattiva"
+                    "name": "Attiva/disattiva",
+                    "description": "Imposta lo stato di SmartMowing. Usa \"true\" per attivare o \"false\" per disattivare la funzione."
                 }
             }
         },
         "delete_alert": {
             "name": "Elimina avviso",
-            "description": "Elimina l'avviso selezionato.",
+            "description": "Elimina un avviso specifico in base al suo indice. L'indice 0 si riferisce all'avviso più recente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
                 "alert_index": {
-                    "description": "Elimina l'avviso selezionato. 0 per l'avviso più recente.",
-                    "name": "Indice avviso"
+                    "name": "Indice avviso",
+                    "description": "Indice dell'avviso da eliminare. 0 = più recente, 1 = secondo più recente, ecc."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Elimina tutti gli avvisi",
-            "description": "Elimina tutti gli avvisi.",
+            "description": "Elimina tutti gli avvisi esistenti del rasaerba in una volta sola.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 }
             }
         },
         "read_alert": {
             "name": "Segna avviso come letto",
-            "description": "Segna l'avviso selezionato come letto.",
+            "description": "Segna un avviso specifico come letto in base al suo indice. L'indice 0 si riferisce all'avviso più recente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
                 "alert_index": {
-                    "description": "Segna l'avviso selezionato come letto. 0 per l'avviso più recente.",
-                    "name": "Indice avviso"
+                    "name": "Indice avviso",
+                    "description": "Indice dell'avviso da segnare come letto. 0 = più recente, 1 = secondo più recente, ecc."
                 }
             }
         },
         "read_alert_all": {
             "name": "Segna tutti gli avvisi come letti",
-            "description": "Segna tutti gli avvisi come letti.",
+            "description": "Segna tutti gli avvisi esistenti del rasaerba come letti.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 }
             }
         },
         "download_map": {
-            "name": "Scarica mappa falciatura",
-            "description": "Scarica la mappa di taglio attuale dall'API Bosch Cloud e la salva localmente come \"www/indego_map_base.svg\". La mappa riflette il percorso di taglio registrato più di recente.",
+            "name": "Scarica mappa di taglio",
+            "description": "Scarica la mappa di taglio corrente dall'API Bosch Cloud e la salva localmente come \"www/indego_map_base.svg\". La mappa riflette il percorso di taglio registrato più di recente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numero di serie del rasaerba. Necessario solo quando hai configurato più rasaerba.",
-                    "name": "Numero di serie"
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Attiva/disattiva slot del calendario",
-            "description": "Modifica uno slot del calendario (cambia orari, attiva o disattiva)",
+            "name": "Configura slot del calendario",
+            "description": "Configura uno slot del calendario quando si utilizza un programma manuale invece di SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Numero di serie",
                     "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
-                "calendar_type": {
-                    "name": "Tipo di calendario",
-                    "description": "Seleziona il calendario ('calendar' per il calendario manuale o 'predictive' per i periodi disattivati in modalità SmartMowing)."
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
                 "days": {
-                    "name": "Giorno",
-                    "description": "Nome del giorno della settimana da configurare."
+                    "name": "Giorni",
+                    "description": "Quale giorno della settimana configurare."
                 },
                 "slot": {
-                    "name": "Fascia oraria",
-                    "description": "Quale fascia oraria deve essere modificata (1 o 2)."
+                    "name": "Slot",
+                    "description": "Quale slot del giorno selezionato configurare (1 o 2)."
                 },
                 "enabled": {
                     "name": "Attiva/disattiva",
-                    "description": "Attiva o disattiva il giorno/la fascia oraria selezionata."
+                    "description": "Indica se lo slot selezionato deve essere attivato o disattivato."
                 },
                 "start": {
-                    "name": "Inizio",
-                    "description": "Ora di inizio della fascia selezionata. Necessaria solo se la fascia deve essere attivata. Vengono utilizzate solo ore e minuti."
+                    "name": "Ora di inizio",
+                    "description": "Ora di inizio dello slot e del giorno selezionati. Necessaria solo se si desidera attivare uno slot. Vengono utilizzate solo ore e minuti."
                 },
                 "end": {
-                    "name": "Fine",
-                    "description": "Ora di fine della fascia selezionata. Necessaria solo se la fascia deve essere attivata. Vengono utilizzate solo ore e minuti."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Imposta le condizioni del prato del tosaerba",
-            "description": "Imposta le condizioni del prato del tosaerba",
-            "fields": {
-                "mower_serial": {
-                    "name": "Numero di serie",
-                    "description": "Numero di serie del tosaerba. Richiesto solo se sono configurati più tosaerba."
-                },
-                "bump_sensitivity": {
-                    "name": "Condizioni del prato",
-                    "description": "Condizioni del prato del tosaerba"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "Codice PIN",
-            "description": "Modifica il codice PIN del rasaerba",
-            "fields": {
-                "mower_serial": {
-                    "name": "Numero di serie",
-                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
-                },
-                "pin": {
-                    "name": "Codice PIN",
-                    "description": "Nuovo codice PIN a quattro cifre del rasaerba"
+                    "name": "Ora di fine",
+                    "description": "Ora di fine dello slot e del giorno selezionati. Necessaria solo se si desidera attivare uno slot. Vengono utilizzate solo ore e minuti."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "Imposta finestra oraria SmartMowing",
-            "description": "La finestra oraria in cui il rasaerba può tagliare in modalità SmartMowing.",
+            "description": "Imposta la finestra di taglio consentita per SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Numero di serie",
                     "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
                 },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
                 "earliest_start": {
                     "name": "Inizio più anticipato",
-                    "description": "L'orario più anticipato in cui il rasaerba deve iniziare."
+                    "description": "Ora più precoce in cui SmartMowing può tagliare. Vengono utilizzate solo ore e minuti."
                 },
                 "latest_end": {
                     "name": "Fine più tardiva",
-                    "description": "L'orario più tardivo in cui il rasaerba deve terminare."
+                    "description": "Ora più tardiva in cui SmartMowing può tagliare. Vengono utilizzate solo ore e minuti."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Imposta condizioni del prato",
+            "description": "Imposta la sensibilità agli urti del rasaerba.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "bump_sensitivity": {
+                    "name": "Condizioni del prato",
+                    "description": "Sensibilità agli urti del rasaerba."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Cambia codice PIN",
+            "description": "Cambia il codice PIN del rasaerba.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numero di serie",
+                    "description": "Numero di serie del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "mower_entity": {
+                    "name": "Entità",
+                    "description": "Seleziona l'entità del rasaerba. Necessario solo se sono configurati più rasaerba."
+                },
+                "pin": {
+                    "name": "Codice PIN",
+                    "description": "Nuovo codice PIN a 4 cifre per il rasaerba."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Taglia l'erba",
-                "returnToDock": "Ritorna alla stazione di ricarica",
+                "return_to_dock": "Ritorna alla stazione di ricarica",
                 "pause": "Pausa"
             }
         },

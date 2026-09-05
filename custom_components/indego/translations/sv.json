@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Klippläge",
                 "state": {
-                    "Calendar": "Manuell kalender"
+                    "calendar": "Manuell kalender"
                 }
             },
             "runtime_total": {
@@ -647,77 +647,101 @@
     "services": {
         "command": {
             "name": "Skicka kommando",
-            "description": "Skicka kommandon till gräsklipparen. Välj ett kommando.",
+            "description": "Skickar ett styrkommando till gräsklipparen. Giltiga kommandon är \"mow\" (starta klippning), \"returnToDock\" (återvänd till laddstationen) och \"pause\" (pausa klippningen).",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 },
                 "command": {
-                    "name": "Skicka kommando",
-                    "description": "Skicka kommandon till gräsklipparen. Välj ett kommando."
+                    "name": "Kommando",
+                    "description": "Kommando som ska skickas till gräsklipparen."
                 }
             }
         },
         "smartmowing": {
             "name": "Slå SmartMowing på/av",
-            "description": "Aktivera eller inaktivera SmartMowing. Tillåtna värden är true eller false.",
+            "description": "Aktiverar eller inaktiverar SmartMowing-funktionen, som automatiskt justerar klippschemat baserat på väderförhållanden och grästillväxt.",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 },
                 "enable": {
-                    "description": "Aktivera SmartMowing.",
-                    "name": "Aktivera/inaktivera"
+                    "name": "Aktivera/inaktivera",
+                    "description": "Ställer in SmartMowing-statusen. Använd \"true\" för att aktivera eller \"false\" för att inaktivera funktionen."
                 }
             }
         },
         "delete_alert": {
             "name": "Ta bort varning",
-            "description": "Radera den valda aviseringen.",
+            "description": "Tar bort en specifik avisering baserat på dess index. Index 0 avser den senaste aviseringen.",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 },
                 "alert_index": {
-                    "description": "Radera den valda aviseringen. 0 för den senaste aviseringen.",
-                    "name": "Aviseringsindex"
+                    "name": "Aviseringsindex",
+                    "description": "Index för aviseringen som ska tas bort. 0 = senaste, 1 = näst senaste, osv."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Ta bort alla varningar",
-            "description": "Radera alla aviseringar.",
+            "description": "Tar bort alla befintliga aviseringar för gräsklipparen på en gång.",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 }
             }
         },
         "read_alert": {
             "name": "Markera varning som läst",
-            "description": "Markera den valda aviseringen som läst.",
+            "description": "Markerar en specifik avisering som läst baserat på dess index. Index 0 avser den senaste aviseringen.",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 },
                 "alert_index": {
-                    "description": "Markera den valda aviseringen som läst. 0 för den senaste aviseringen.",
-                    "name": "Aviseringsindex"
+                    "name": "Aviseringsindex",
+                    "description": "Index för aviseringen som ska markeras som läst. 0 = senaste, 1 = näst senaste, osv."
                 }
             }
         },
         "read_alert_all": {
             "name": "Markera alla varningar som lästa",
-            "description": "Markera alla aviseringar som lästa.",
+            "description": "Markerar alla befintliga aviseringar för gräsklipparen som lästa.",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 }
             }
         },
@@ -726,88 +750,104 @@
             "description": "Hämtar den aktuella klippkartan från Bosch Cloud API och sparar den lokalt som \"www/indego_map_base.svg\". Kartan återspeglar den senast registrerade klippvägen.",
             "fields": {
                 "mower_serial": {
-                    "description": "Gräsklippare serienummer. Krävs endast när du har flera gräsklippare konfigurerade.",
-                    "name": "Serienummer"
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Aktivera/inaktivera kalenderintervall",
-            "description": "Ändra ett kalenderintervall (ändra tider, aktivera eller inaktivera)",
+            "name": "Ställ in kalenderslot",
+            "description": "Ställer in en kalenderslot när du använder ett manuellt schema istället för SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
                     "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
                 },
-                "calendar_type": {
-                    "name": "Kalendertyp",
-                    "description": "Välj kalender ('calendar' för den manuella kalendern eller 'predictive' för inaktiverade tidsperioder i SmartMowing-läge)."
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
                 },
                 "days": {
-                    "name": "Dag",
-                    "description": "Namnet på veckodagen som ska konfigureras."
+                    "name": "Dagar",
+                    "description": "Vilken dag i veckan som ska konfigureras."
                 },
                 "slot": {
-                    "name": "Tidsintervall",
-                    "description": "Vilket tidsintervall som ska ändras (1 eller 2)."
+                    "name": "Slot",
+                    "description": "Vilken slot för den valda dagen som ska konfigureras (1 eller 2)."
                 },
                 "enabled": {
                     "name": "Aktivera/inaktivera",
-                    "description": "Aktivera eller inaktivera vald dag/tidsintervall."
+                    "description": "Om den valda sloten ska aktiveras eller inaktiveras."
                 },
                 "start": {
-                    "name": "Start",
-                    "description": "Starttid för valt tidsintervall. Krävs endast om tidsintervallet ska aktiveras. Endast timmar och minuter används."
+                    "name": "Starttid",
+                    "description": "Ange starttid för vald slot och dag. Behövs endast om du vill aktivera en slot. Endast timme och minut används."
                 },
                 "end": {
-                    "name": "Slut",
-                    "description": "Sluttid för valt tidsintervall. Krävs endast om tidsintervallet ska aktiveras. Endast timmar och minuter används."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Ange gräsförhållanden för klipparen",
-            "description": "Ange gräsförhållandena för klipparen",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serienummer",
-                    "description": "Klipparens serienummer. Krävs endast om flera klippare är konfigurerade."
-                },
-                "bump_sensitivity": {
-                    "name": "Gräsförhållanden",
-                    "description": "Gräsförhållanden för klipparen"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "PIN-kod",
-            "description": "Ändra gräsklipparens PIN-kod",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serienummer",
-                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
-                },
-                "pin": {
-                    "name": "PIN-kod",
-                    "description": "Ny fyrsiffrig PIN-kod för gräsklipparen"
+                    "name": "Sluttid",
+                    "description": "Ange sluttid för vald slot och dag. Behövs endast om du vill aktivera en slot. Endast timme och minut används."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "Ställ in SmartMowing-tidsfönster",
-            "description": "Tidsfönstret då gräsklipparen får klippa i SmartMowing-läge.",
+            "description": "Ställer in det tillåtna klippfönstret för SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
                     "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
                 },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
+                },
                 "earliest_start": {
                     "name": "Tidigaste start",
-                    "description": "Den tidigaste tiden gräsklipparen ska börja."
+                    "description": "Tidigaste tidpunkt då SmartMowing får klippa. Endast timmar och minuter används."
                 },
                 "latest_end": {
                     "name": "Senaste slut",
-                    "description": "Den senaste tiden gräsklipparen ska sluta."
+                    "description": "Senaste tidpunkt då SmartMowing får klippa. Endast timmar och minuter används."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Ställ in gräsförhållanden",
+            "description": "Ställer in klipparens stötkänslighet.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "bump_sensitivity": {
+                    "name": "Gräsförhållanden",
+                    "description": "Klipparens stötkänslighet."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Ändra PIN-kod",
+            "description": "Ändrar klipparens PIN-kod.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Gräsklipparens serienummer. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "mower_entity": {
+                    "name": "Entitet",
+                    "description": "Välj gräsklipparentiteten. Krävs endast om flera gräsklippare är konfigurerade."
+                },
+                "pin": {
+                    "name": "PIN-kod",
+                    "description": "Ny 4-siffrig PIN-kod för gräsklipparen."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Klipp gräs",
-                "returnToDock": "Återvänd till laddstationen",
+                "return_to_dock": "Återvänd till laddstationen",
                 "pause": "Paus"
             }
         },

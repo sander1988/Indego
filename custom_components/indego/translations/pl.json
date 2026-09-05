@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Tryb koszenia",
                 "state": {
-                    "Calendar": "Kalendarz ręczny"
+                    "calendar": "Kalendarz ręczny"
                 }
             },
             "runtime_total": {
@@ -647,167 +647,207 @@
     "services": {
         "command": {
             "name": "Wyślij polecenie",
-            "description": "Wyślij polecenia do kosiarki. Wybierz polecenie.",
+            "description": "Wysyła polecenie sterujące do kosiarki. Dozwolone polecenia to \"mow\" (rozpocznij koszenie), \"returnToDock\" (powrót do stacji ładowania) i \"pause\" (wstrzymaj koszenie).",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
                 "command": {
-                    "name": "Wyślij polecenie",
-                    "description": "Wyślij polecenia do kosiarki. Wybierz polecenie."
+                    "name": "Polecenie",
+                    "description": "Polecenie do wysłania do kosiarki."
                 }
             }
         },
         "smartmowing": {
             "name": "Przełącz SmartMowing",
-            "description": "Włącz lub wyłącz tryb SmartMowing. Dostępne wartości to true lub false.",
+            "description": "Włącza lub wyłącza funkcję SmartMowing, która automatycznie dostosowuje harmonogram koszenia na podstawie warunków pogodowych i wzrostu trawy.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
                 "enable": {
-                    "description": "Włącz tryb SmartMowing.",
-                    "name": "Włącz/wyłącz"
+                    "name": "Włącz/wyłącz",
+                    "description": "Ustawia stan SmartMowing. Użyj \"true\", aby włączyć, lub \"false\", aby wyłączyć funkcję."
                 }
             }
         },
         "delete_alert": {
             "name": "Usuń alert",
-            "description": "Usuń zaznaczony alert.",
+            "description": "Usuwa konkretny alert na podstawie jego indeksu. Indeks 0 oznacza najnowszy alert.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
                 "alert_index": {
-                    "description": "Usuń zaznaczony alert. 0 dla ostatniego alertu.",
-                    "name": "Indeks alertu"
+                    "name": "Indeks alertu",
+                    "description": "Indeks alertu do usunięcia. 0 = najnowszy, 1 = drugi najnowszy, itd."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Usuń wszystkie alerty",
-            "description": "Usuń wszystkie alerty.",
+            "description": "Usuwa wszystkie istniejące alerty dla kosiarki za jednym razem.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 }
             }
         },
         "read_alert": {
             "name": "Oznacz alert jako przeczytany",
-            "description": "Oznacz alert jako przeczytany.",
+            "description": "Oznacza konkretny alert jako przeczytany na podstawie jego indeksu. Indeks 0 oznacza najnowszy alert.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
                 "alert_index": {
-                    "description": "Oznacz wybrany alert jako przeczytany. 0 dla ostatniego alertu.",
-                    "name": "Indeks alertu"
+                    "name": "Indeks alertu",
+                    "description": "Indeks alertu do oznaczenia jako przeczytany. 0 = najnowszy, 1 = drugi najnowszy, itd."
                 }
             }
         },
         "read_alert_all": {
             "name": "Oznacz wszystkie alerty jako przeczytane",
-            "description": "Oznacz wszystkie alerty jako przeczytane.",
+            "description": "Oznacza wszystkie istniejące alerty dla kosiarki jako przeczytane.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 }
             }
         },
         "download_map": {
             "name": "Pobierz mapę koszenia",
-            "description": "Pobiera aktualną mapę koszenia z API Bosch Cloud i zapisuje ją lokalnie jako \"www/indego_map_base.svg\". Mapa odzwierciedla ostatnio zapisaną trasę koszenia.",
+            "description": "Pobiera aktualną mapę koszenia z API Bosch Cloud i zapisuje ją lokalnie jako \"www/indego_map_base.svg\". Mapa odzwierciedla ostatnio zarejestrowaną trasę koszenia.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numer seryjny kosiarki. Wymagany tylko gdy konfigurujesz wiele kosiarek.",
-                    "name": "Numer seryjny"
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Aktywuj/dezaktywuj przedział kalendarza",
-            "description": "Zmień przedział kalendarza (zmień godziny, aktywuj lub dezaktywuj)",
+            "name": "Ustaw slot kalendarza",
+            "description": "Ustawia slot kalendarza, gdy używasz ręcznego harmonogramu zamiast SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Numer seryjny",
-                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano kilka kosiarek."
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
-                "calendar_type": {
-                    "name": "Typ kalendarza",
-                    "description": "Wybierz kalendarz ('calendar' dla kalendarza ręcznego lub 'predictive' dla dezaktywowanych okresów w trybie SmartMowing)."
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
                 "days": {
-                    "name": "Dzień",
-                    "description": "Nazwa dnia tygodnia, który ma zostać skonfigurowany."
+                    "name": "Dni",
+                    "description": "Który dzień tygodnia skonfigurować."
                 },
                 "slot": {
-                    "name": "Przedział czasowy",
-                    "description": "Który przedział czasowy ma zostać zmieniony (1 lub 2)."
+                    "name": "Slot",
+                    "description": "Który slot wybranego dnia skonfigurować (1 lub 2)."
                 },
                 "enabled": {
-                    "name": "Aktywuj/dezaktywuj",
-                    "description": "Aktywuj lub dezaktywuj wybrany dzień/przedział czasowy."
+                    "name": "Włącz/wyłącz",
+                    "description": "Czy wybrany slot ma być włączony czy wyłączony."
                 },
                 "start": {
-                    "name": "Start",
-                    "description": "Godzina rozpoczęcia wybranego przedziału. Wymagana tylko wtedy, gdy przedział ma zostać aktywowany. Używane są tylko godziny i minuty."
+                    "name": "Godzina rozpoczęcia",
+                    "description": "Ustaw godzinę rozpoczęcia dla wybranego slotu i dnia. Wymagane tylko wtedy, gdy chcesz włączyć slot. Używane są tylko godziny i minuty."
                 },
                 "end": {
-                    "name": "Koniec",
-                    "description": "Godzina zakończenia wybranego przedziału. Wymagana tylko wtedy, gdy przedział ma zostać aktywowany. Używane są tylko godziny i minuty."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Ustaw warunki trawnika kosiarki",
-            "description": "Ustaw warunki trawnika kosiarki",
-            "fields": {
-                "mower_serial": {
-                    "name": "Numer seryjny",
-                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano więcej niż jedną kosiarkę."
-                },
-                "bump_sensitivity": {
-                    "name": "Warunki trawnika",
-                    "description": "Warunki trawnika kosiarki"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "Kod PIN",
-            "description": "Zmień kod PIN kosiarki",
-            "fields": {
-                "mower_serial": {
-                    "name": "Numer seryjny",
-                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano więcej niż jedną kosiarkę."
-                },
-                "pin": {
-                    "name": "Kod PIN",
-                    "description": "Nowy czterocyfrowy kod PIN kosiarki"
+                    "name": "Godzina zakończenia",
+                    "description": "Ustaw godzinę zakończenia dla wybranego slotu i dnia. Wymagane tylko wtedy, gdy chcesz włączyć slot. Używane są tylko godziny i minuty."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "Ustaw okno czasowe SmartMowing",
-            "description": "Okno czasowe, w którym kosiarka może kosić w trybie SmartMowing.",
+            "description": "Ustawia dozwolone okno koszenia dla SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Numer seryjny",
-                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano więcej niż jedną kosiarkę."
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
                 },
                 "earliest_start": {
                     "name": "Najwcześniejszy start",
-                    "description": "Najwcześniejsza godzina rozpoczęcia pracy kosiarki."
+                    "description": "Najwcześniejszy czas, w którym SmartMowing może kosić. Używane są tylko godziny i minuty."
                 },
                 "latest_end": {
-                    "name": "Najpóźniejszy koniec",
-                    "description": "Najpóźniejsza godzina zakończenia pracy kosiarki."
+                    "name": "Najpóźniejsze zakończenie",
+                    "description": "Najpóźniejszy czas, w którym SmartMowing może kosić. Używane są tylko godziny i minuty."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Ustaw warunki trawnika",
+            "description": "Ustawia czułość na wstrząsy kosiarki.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "bump_sensitivity": {
+                    "name": "Warunki trawnika",
+                    "description": "Czułość na wstrząsy kosiarki."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Zmień kod PIN",
+            "description": "Zmienia kod PIN kosiarki.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numer seryjny",
+                    "description": "Numer seryjny kosiarki. Wymagany tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "mower_entity": {
+                    "name": "Encja",
+                    "description": "Wybierz encję kosiarki. Wymagane tylko wtedy, gdy skonfigurowano wiele kosiarek."
+                },
+                "pin": {
+                    "name": "Kod PIN",
+                    "description": "Nowy 4-cyfrowy kod PIN dla kosiarki."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Koszenie",
-                "returnToDock": "Powrót do stacji dokującej",
+                "return_to_dock": "Powrót do stacji dokującej",
                 "pause": "Pauza"
             }
         },

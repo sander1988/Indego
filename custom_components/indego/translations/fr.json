@@ -102,10 +102,10 @@
             "mower_state_detail": {
                 "name": "Détails sur l'état de la tondeuse",
                 "state": {
-                    "Sleeping": "En veille",
                     "Reading status": "Obtention du statut en cours",
                     "Charging": "Charge en cours",
                     "Docked": "Dans station de charge",
+                    "Sleeping": "En veille",
                     "Docked - Software update": "Dans station de charge - Mise à jour du logiciel",
                     "Docked - Loading map": "Dans station de charge - Chargement carte",
                     "Docked - Saving map": "Dans station de charge - Enregistrement carte",
@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Mode de tonte",
                 "state": {
-                    "Calendar": "Calendrier manuel"
+                    "calendar": "Calendrier manuel"
                 }
             },
             "runtime_total": {
@@ -647,77 +647,101 @@
     "services": {
         "command": {
             "name": "Envoyer une commande",
-            "description": "Envoyer des commandes à la tondeuse. Sélectionnez une commande.",
+            "description": "Envoie une commande de contrôle à la tondeuse. Les commandes valides sont \"mow\" (démarrer la tonte), \"returnToDock\" (retour à la station de charge) et \"pause\" (mettre en pause la tonte).",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
                 "command": {
-                    "name": "Envoyer une commande",
-                    "description": "Envoyer des commandes à la tondeuse. Sélectionnez une commande."
+                    "name": "Commande",
+                    "description": "Commande à envoyer à la tondeuse."
                 }
             }
         },
         "smartmowing": {
             "name": "Basculer SmartMowing",
-            "description": "Activer ou désactiver le SmartMowing. Les valeurs autorisées sont true (activé) ou false (désactivé).",
+            "description": "Active ou désactive la fonction SmartMowing, qui ajuste automatiquement le programme de tonte en fonction des conditions météorologiques et de la croissance de la pelouse.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
                 "enable": {
-                    "description": "Activer SmartMowing.",
-                    "name": "Activer/désactiver"
+                    "name": "Activer/désactiver",
+                    "description": "Définit l'état de SmartMowing. Utilisez \"true\" pour activer ou \"false\" pour désactiver la fonction."
                 }
             }
         },
         "delete_alert": {
             "name": "Supprimer l'alerte",
-            "description": "Effacer l'alerte sélectionnée.",
+            "description": "Supprime une alerte spécifique en fonction de son index. L'index 0 fait référence à l'alerte la plus récente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
                 "alert_index": {
-                    "description": "Effacer l'alerte sélectionnée. 0 pour la dernière alerte.",
-                    "name": "Index de l'alerte"
+                    "name": "Index de l'alerte",
+                    "description": "Index de l'alerte à supprimer. 0 = plus récente, 1 = deuxième plus récente, etc."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Supprimer toutes les alertes",
-            "description": "Effacer toutes les alertes.",
+            "description": "Supprime toutes les alertes existantes de la tondeuse d'un seul coup.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 }
             }
         },
         "read_alert": {
             "name": "Marquer l'alerte comme lue",
-            "description": "Marquer l'alerte sélectionnée comme lue.",
+            "description": "Marque une alerte spécifique comme lue en fonction de son index. L'index 0 fait référence à l'alerte la plus récente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
                 "alert_index": {
-                    "description": "Marquer l'alerte sélectionnée comme lue. 0 pour la dernière alerte.",
-                    "name": "Index de l'alerte"
+                    "name": "Index de l'alerte",
+                    "description": "Index de l'alerte à marquer comme lue. 0 = plus récente, 1 = deuxième plus récente, etc."
                 }
             }
         },
         "read_alert_all": {
             "name": "Marquer toutes les alertes comme lues",
-            "description": "Marquer toutes les alertes comme lues.",
+            "description": "Marque toutes les alertes existantes de la tondeuse comme lues.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 }
             }
         },
@@ -726,88 +750,104 @@
             "description": "Télécharge la carte de tonte actuelle depuis l'API Bosch Cloud et l'enregistre localement sous \"www/indego_map_base.svg\". La carte reflète l'itinéraire de tonte le plus récemment enregistré.",
             "fields": {
                 "mower_serial": {
-                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si vous avez configuré plusieurs tondeuses.",
-                    "name": "Numéro de série"
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Activer/désactiver un créneau du calendrier",
-            "description": "Modifier un créneau du calendrier (changer les horaires, activer ou désactiver)",
+            "name": "Configurer un créneau du calendrier",
+            "description": "Configure un créneau du calendrier lorsque vous utilisez un programme manuel au lieu de SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Numéro de série",
-                    "description": "Numéro de série de la tondeuse. Nécessaire uniquement si plusieurs tondeuses sont configurées."
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
-                "calendar_type": {
-                    "name": "Type de calendrier",
-                    "description": "Sélectionnez le calendrier ('calendar' pour le calendrier manuel ou 'predictive' pour les périodes désactivées en mode SmartMowing)."
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
                 "days": {
-                    "name": "Jour",
-                    "description": "Nom du jour de la semaine à configurer."
+                    "name": "Jours",
+                    "description": "Quel jour de la semaine configurer."
                 },
                 "slot": {
-                    "name": "Créneau horaire",
-                    "description": "Créneau à modifier (1 ou 2)."
+                    "name": "Créneau",
+                    "description": "Quel créneau du jour sélectionné configurer (1 ou 2)."
                 },
                 "enabled": {
                     "name": "Activer/désactiver",
-                    "description": "Activer ou désactiver le jour/créneau sélectionné."
+                    "description": "Indique si le créneau sélectionné doit être activé ou désactivé."
                 },
                 "start": {
-                    "name": "Début",
-                    "description": "Heure de début du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé. Seules les heures et les minutes sont utilisées."
+                    "name": "Heure de début",
+                    "description": "Heure de début du créneau et du jour sélectionnés. Uniquement nécessaire si vous souhaitez activer un créneau. Seules les heures et les minutes sont utilisées."
                 },
                 "end": {
-                    "name": "Fin",
-                    "description": "Heure de fin du créneau sélectionné. Requise uniquement lorsqu’un créneau doit être activé. Seules les heures et les minutes sont utilisées."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Définir les conditions de la pelouse de la tondeuse",
-            "description": "Définir les conditions de la pelouse de la tondeuse",
-            "fields": {
-                "mower_serial": {
-                    "name": "Numéro de série",
-                    "description": "Numéro de série de la tondeuse. Requis uniquement si plusieurs tondeuses sont configurées."
-                },
-                "bump_sensitivity": {
-                    "name": "Conditions de la pelouse",
-                    "description": "Conditions de la pelouse de la tondeuse"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "Code PIN",
-            "description": "Modifier le code PIN de la tondeuse",
-            "fields": {
-                "mower_serial": {
-                    "name": "Numéro de série",
-                    "description": "Numéro de série de la tondeuse. Requis uniquement si plusieurs tondeuses sont configurées."
-                },
-                "pin": {
-                    "name": "Code PIN",
-                    "description": "Nouveau code PIN à quatre chiffres de la tondeuse"
+                    "name": "Heure de fin",
+                    "description": "Heure de fin du créneau et du jour sélectionnés. Uniquement nécessaire si vous souhaitez activer un créneau. Seules les heures et les minutes sont utilisées."
                 }
             }
         },
         "set_predictive_mowing_window": {
-            "name": "Définir la fenêtre SmartMowing",
-            "description": "La fenêtre horaire pendant laquelle la tondeuse peut tondre en mode SmartMowing.",
+            "name": "Définir la fenêtre horaire SmartMowing",
+            "description": "Définit la fenêtre de tonte autorisée pour SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Numéro de série",
-                    "description": "Numéro de série de la tondeuse. Requis uniquement si plusieurs tondeuses sont configurées."
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
                 },
                 "earliest_start": {
                     "name": "Début le plus tôt",
-                    "description": "L'heure la plus tôt à laquelle la tondeuse doit commencer."
+                    "description": "Heure la plus précoce à laquelle SmartMowing est autorisé à tondre. Seules les heures et les minutes sont utilisées."
                 },
                 "latest_end": {
                     "name": "Fin au plus tard",
-                    "description": "L'heure la plus tardive à laquelle la tondeuse doit terminer."
+                    "description": "Heure la plus tardive à laquelle SmartMowing est autorisé à tondre. Seules les heures et les minutes sont utilisées."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Définir les conditions de la pelouse",
+            "description": "Définit la sensibilité aux chocs de la tondeuse.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "bump_sensitivity": {
+                    "name": "Conditions de la pelouse",
+                    "description": "Sensibilité aux chocs de la tondeuse."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Modifier le code PIN",
+            "description": "Modifie le code PIN de la tondeuse.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Numéro de série",
+                    "description": "Numéro de série de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "mower_entity": {
+                    "name": "Entité",
+                    "description": "Sélectionnez l'entité de la tondeuse. Uniquement nécessaire si plusieurs tondeuses sont configurées."
+                },
+                "pin": {
+                    "name": "Code PIN",
+                    "description": "Nouveau code PIN à 4 chiffres pour la tondeuse."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Tondre",
-                "returnToDock": "Retour à la station de charge",
+                "return_to_dock": "Retour à la station de charge",
                 "pause": "Pause"
             }
         },
