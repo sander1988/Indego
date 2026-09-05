@@ -1,3 +1,5 @@
+"""Vacuum platform for Bosch Indego mowers."""
+
 import logging
 from typing import Any
 
@@ -14,52 +16,33 @@ from homeassistant.components.vacuum import (
 
 from .const import DOMAIN
 from .mixins import IndegoEntity
+from .error_codes import get_mower_state_info, get_error_severity, ErrorSeverity
 
 _LOGGER = logging.getLogger(__name__)
 
-INDEGO_STATE_TO_VACUUM_MAPPING = {
-    0: VacuumActivity.DOCKED,
-    101: VacuumActivity.DOCKED,
-    257: VacuumActivity.DOCKED,
-    258: VacuumActivity.DOCKED,
-    259: VacuumActivity.DOCKED,
-    260: VacuumActivity.DOCKED,
-    261: VacuumActivity.DOCKED,
-    262: VacuumActivity.DOCKED,
-    263: VacuumActivity.DOCKED,
-    266: VacuumActivity.CLEANING,
-    512: VacuumActivity.CLEANING,
-    513: VacuumActivity.CLEANING,
-    514: VacuumActivity.CLEANING,
-    515: VacuumActivity.CLEANING,
-    516: VacuumActivity.CLEANING,
-    517: VacuumActivity.PAUSED,
-    518: VacuumActivity.CLEANING,
-    519: VacuumActivity.IDLE,
-    520: VacuumActivity.CLEANING,
-    521: VacuumActivity.CLEANING,
-    522: VacuumActivity.CLEANING,
-    523: VacuumActivity.CLEANING,
-    524: VacuumActivity.CLEANING,
-    525: VacuumActivity.CLEANING,
-    768: VacuumActivity.RETURNING,
-    769: VacuumActivity.RETURNING,
-    770: VacuumActivity.RETURNING,
-    771: VacuumActivity.RETURNING,
-    772: VacuumActivity.RETURNING,
-    773: VacuumActivity.RETURNING,
-    774: VacuumActivity.RETURNING,
-    775: VacuumActivity.RETURNING,
-    776: VacuumActivity.RETURNING,
-    1005: VacuumActivity.CLEANING,
-    1025: VacuumActivity.ERROR,
-    1026: VacuumActivity.ERROR,
-    1027: VacuumActivity.ERROR,
-    1038: VacuumActivity.ERROR,
-    1281: VacuumActivity.DOCKED,
-    1537: VacuumActivity.ERROR,
-    64513: VacuumActivity.DOCKED,
-    99999: VacuumActivity.ERROR,
+# Mapping from state classification to VacuumActivity
+STATE_CLASSIFICATION_TO_ACTIVITY = {
+    "docked": VacuumActivity.DOCKED,
+    "mowing": VacuumActivity.CLEANING,
+    "returning": VacuumActivity.RETURNING,
+    "paused": VacuumActivity.PAUSED,
+    "idle": VacuumActivity.IDLE,
+    "low_power": VacuumActivity.IDLE,
+    "maintenance": VacuumActivity.IDLE,
+    "updating": VacuumActivity.DOCKED,
+    "mapping": VacuumActivity.CLEANING,
+    "mapping_paused": VacuumActivity.PAUSED,
+    "spot_mowing": VacuumActivity.CLEANING,
+    "random_mowing": VacuumActivity.CLEANING,
+    "zone_mowing": VacuumActivity.CLEANING,
+    "leaving": VacuumActivity.CLEANING,
+    "not_mapped": VacuumActivity.ERROR,
+    "no_pin": VacuumActivity.ERROR,
+    "disabled": VacuumActivity.ERROR,
+    "unpaired": VacuumActivity.ERROR,
+    "offline": VacuumActivity.ERROR,
+    "error": VacuumActivity.ERROR,
+    "unknown": VacuumActivity.ERROR,
 }
 
 INDEGO_VACUUM_FEATURES = (
@@ -68,6 +51,7 @@ INDEGO_VACUUM_FEATURES = (
     | VacuumEntityFeature.RETURN_HOME
     | VacuumEntityFeature.START
 )
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -85,15 +69,22 @@ async def async_setup_entry(
 
 
 class IndegoVacuum(IndegoEntity, StateVacuumEntity):
-    """Class to expose the Indego mower a vacuum."""
+    """Class to expose the Indego mower as a vacuum."""
 
     def __init__(self, entity_id, name, device_info: DeviceInfo, indego_hub):
-        super().__init__(VACUUM_SENSOR_FORMAT.format(entity_id), name, "mdi:robot-mower", None, device_info)
-
+        """Initialize the vacuum entity."""
+        super().__init__(
+            VACUUM_SENSOR_FORMAT.format(entity_id),
+            name,
+            "mdi:robot-mower",
+            None,
+            device_info,
+        )
         self._indego_hub = indego_hub
         self._attr_supported_features = INDEGO_VACUUM_FEATURES
         self._attr_indego_state = None
-        self._attr_activity = None
+        self._attr_activity = VacuumActivity.ERROR
+        self._attr_indego_state_detail = ""
 
     async def async_start(self) -> None:
         """Start or resume the cleaning task."""
@@ -121,14 +112,90 @@ class IndegoVacuum(IndegoEntity, StateVacuumEntity):
     def indego_state(self, indego_state: int):
         """Set the mower state by converting the Indego mower state to a vacuum state."""
         self._attr_indego_state = indego_state
-        new_activity = INDEGO_STATE_TO_VACUUM_MAPPING[indego_state] \
-            if indego_state in INDEGO_STATE_TO_VACUUM_MAPPING \
-            else None
+        self._update_activity()
 
+    @property
+    def indego_state_detail(self) -> str:
+        """Return the detailed Indego state description."""
+        return self._attr_indego_state_detail
+
+    @indego_state_detail.setter
+    def indego_state_detail(self, state_detail: str):
+        """Set the detailed Indego state description and update activity."""
+        self._attr_indego_state_detail = state_detail
+        self._update_activity()
+
+    def _update_activity(self) -> None:
+        """Update the vacuum activity based on state code and details."""
+        if self._attr_indego_state is None:
+            self._attr_activity = VacuumActivity.ERROR
+            return
+
+        # Get state information from error_codes.py
+        state_info = get_mower_state_info(str(self._attr_indego_state))
+
+        # Determine activity from state classification
+        if state_info:
+            state_classification = state_info.get("state", "unknown")
+            new_activity = STATE_CLASSIFICATION_TO_ACTIVITY.get(
+                state_classification, VacuumActivity.ERROR
+            )
+        else:
+            # Unknown state code -> error
+            new_activity = VacuumActivity.ERROR
+            _LOGGER.warning(
+                "Unknown Indego state code: %d - setting vacuum activity to ERROR",
+                self._attr_indego_state,
+            )
+
+        # Override for "Returning to" states based on detail text
+        if self._attr_indego_state_detail.startswith("Returning to"):
+            new_activity = VacuumActivity.RETURNING
+
+        # Check for active unread alerts with severity ERROR or higher
+        has_critical_unread = False
+        if self._indego_hub and hasattr(self._indego_hub, "_indego_client"):
+            alerts = getattr(self._indego_hub._indego_client, "alerts", [])
+            for alert in alerts:
+                read_status = getattr(alert, "read_status", None)
+                is_unread = str(read_status).strip().lower() == "unread" or read_status is False
+                if is_unread:
+                    error_code = str(getattr(alert, "error_code", ""))
+                    severity = get_error_severity(error_code)
+                    if severity.value >= ErrorSeverity.ERROR.value:  # ERROR or CRITICAL
+                        has_critical_unread = True
+                        break
+
+        if has_critical_unread:
+            new_activity = VacuumActivity.ERROR
+
+        # Update if changed
         if self._attr_activity != new_activity:
             self._attr_activity = new_activity
             self.async_schedule_update_ha_state()
-            _LOGGER.debug("Vacuum activity: %s (mower state: %d)", self._attr_activity, indego_state)
+            _LOGGER.debug(
+                "Vacuum activity updated: %s (state: %d, detail: %s, critical_unread: %s)",
+                self._attr_activity,
+                self._attr_indego_state,
+                self._attr_indego_state_detail,
+                has_critical_unread,
+            )
 
-            if self._attr_activity is None:
-                _LOGGER.warning("Unsupported mower state received: %d - vacuum activity cannot be determined", indego_state)
+        # Log unsupported states - only for truly unknown states
+        if self._attr_activity == VacuumActivity.ERROR and not has_critical_unread:
+            # Check if this state was explicitly classified via STATE_CLASSIFICATION_TO_ACTIVITY
+            if state_info and state_info.get("state") in STATE_CLASSIFICATION_TO_ACTIVITY:
+                # State is known but classified as ERROR - log as debug
+                _LOGGER.debug(
+                    "Vacuum state %d classified as ERROR: %s (state: %s)",
+                    self._attr_indego_state,
+                    self._attr_indego_state_detail,
+                    state_info.get("state"),
+                )
+            else:
+                # Truly unknown state - log as warning
+                _LOGGER.warning(
+                    "Unsupported or unknown state detected: %d (%s)",
+                    self._attr_indego_state,
+                    self._attr_indego_state_detail,
+                )

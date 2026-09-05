@@ -1,3 +1,5 @@
+"""Lawn Mower platform for Bosch Indego mowers."""
+
 import logging
 
 from homeassistant.core import HomeAssistant
@@ -7,62 +9,41 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.components.lawn_mower import (
     LawnMowerEntity,
     LawnMowerEntityFeature,
-    LawnMowerActivity
+    LawnMowerActivity,
 )
-from homeassistant.components.lawn_mower import (
-    DOMAIN as LAWN_MOWER_DOMAIN
-)
+from homeassistant.components.lawn_mower import DOMAIN as LAWN_MOWER_DOMAIN
 
 from .const import DOMAIN
 from .mixins import IndegoEntity
+from .error_codes import get_mower_state_info, get_error_severity, ErrorSeverity
 
 LAWN_MOWER_DOMAIN_FORMAT = LAWN_MOWER_DOMAIN + ".{}"
 
 _LOGGER = logging.getLogger(__name__)
 
-INDEGO_STATE_TO_LAWN_MOWER_MAPPING = {
-    0: LawnMowerActivity.DOCKED,
-    101: LawnMowerActivity.DOCKED,
-    257: LawnMowerActivity.DOCKED,
-    258: LawnMowerActivity.DOCKED,
-    259: LawnMowerActivity.DOCKED,
-    260: LawnMowerActivity.DOCKED,
-    261: LawnMowerActivity.DOCKED,
-    262: LawnMowerActivity.DOCKED,
-    263: LawnMowerActivity.DOCKED,
-    266: LawnMowerActivity.MOWING,
-    512: LawnMowerActivity.MOWING,
-    513: LawnMowerActivity.MOWING,
-    514: LawnMowerActivity.MOWING,
-    515: LawnMowerActivity.MOWING,
-    516: LawnMowerActivity.MOWING,
-    517: LawnMowerActivity.PAUSED,
-    518: LawnMowerActivity.MOWING,
-    519: LawnMowerActivity.PAUSED,
-    520: LawnMowerActivity.MOWING,
-    521: LawnMowerActivity.MOWING,
-    522: LawnMowerActivity.MOWING,
-    523: LawnMowerActivity.MOWING,
-    524: LawnMowerActivity.MOWING,
-    525: LawnMowerActivity.MOWING,
-    768: LawnMowerActivity.MOWING,
-    769: LawnMowerActivity.MOWING,
-    770: LawnMowerActivity.MOWING,
-    771: LawnMowerActivity.MOWING,
-    772: LawnMowerActivity.MOWING,
-    773: LawnMowerActivity.MOWING,
-    774: LawnMowerActivity.MOWING,
-    775: LawnMowerActivity.MOWING,
-    776: LawnMowerActivity.MOWING,
-    1005: LawnMowerActivity.MOWING,
-    1025: LawnMowerActivity.ERROR,
-    1026: LawnMowerActivity.ERROR,
-    1027: LawnMowerActivity.ERROR,
-    1038: LawnMowerActivity.ERROR,
-    1281: LawnMowerActivity.DOCKED,
-    1537: LawnMowerActivity.ERROR,
-    64513: LawnMowerActivity.DOCKED,
-    99999: LawnMowerActivity.ERROR,
+# Mapping from state classification to LawnMowerActivity
+STATE_CLASSIFICATION_TO_ACTIVITY = {
+    "docked": LawnMowerActivity.DOCKED,
+    "mowing": LawnMowerActivity.MOWING,
+    "returning": LawnMowerActivity.RETURNING,
+    "paused": LawnMowerActivity.PAUSED,
+    "idle": LawnMowerActivity.PAUSED,
+    "low_power": LawnMowerActivity.PAUSED,
+    "maintenance": LawnMowerActivity.PAUSED,
+    "updating": LawnMowerActivity.PAUSED,
+    "mapping": LawnMowerActivity.MOWING,
+    "mapping_paused": LawnMowerActivity.PAUSED,
+    "spot_mowing": LawnMowerActivity.MOWING,
+    "random_mowing": LawnMowerActivity.MOWING,
+    "zone_mowing": LawnMowerActivity.MOWING,
+    "leaving": LawnMowerActivity.MOWING,
+    "not_mapped": LawnMowerActivity.ERROR,
+    "no_pin": LawnMowerActivity.ERROR,
+    "disabled": LawnMowerActivity.ERROR,
+    "unpaired": LawnMowerActivity.ERROR,
+    "offline": LawnMowerActivity.ERROR,
+    "error": LawnMowerActivity.ERROR,
+    "unknown": LawnMowerActivity.ERROR,
 }
 
 INDEGO_LAWN_MOWER_FEATURES = (
@@ -73,9 +54,9 @@ INDEGO_LAWN_MOWER_FEATURES = (
 
 
 async def async_setup_entry(
-        hass: HomeAssistant,
-        config_entry: ConfigEntry,
-        async_add_entities: AddEntitiesCallback,
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the lawn mower platform."""
     async_add_entities(
@@ -88,74 +69,128 @@ async def async_setup_entry(
 
 
 class IndegoLawnMower(IndegoEntity, LawnMowerEntity):
+    """Representation of a Bosch Indego lawn mower."""
 
     def __init__(self, entity_id, name, device_info: DeviceInfo, indego_hub):
-        super().__init__(LAWN_MOWER_DOMAIN_FORMAT.format(entity_id), name, None, None, device_info)
+        """Initialize the lawn mower entity."""
+        super().__init__(
+            LAWN_MOWER_DOMAIN_FORMAT.format(entity_id),
+            name,
+            None,
+            None,
+            device_info,
+        )
         self._indego_hub = indego_hub
-
         self._attr_supported_features = INDEGO_LAWN_MOWER_FEATURES
         self._attr_indego_state = None
-        self._attr_state = None
+        self._attr_indego_state_detail = ""
+        self._attr_activity = LawnMowerActivity.ERROR
 
     async def async_start_mowing(self) -> None:
+        """Start mowing."""
         await self._indego_hub.async_send_command_to_client("mow")
 
     async def async_dock(self) -> None:
+        """Return to dock."""
         await self._indego_hub.async_send_command_to_client("returnToDock")
 
     async def async_pause(self) -> None:
+        """Pause mowing."""
         await self._indego_hub.async_send_command_to_client("pause")
 
     @property
     def indego_state(self) -> int:
+        """Return the raw Indego state code."""
         return self._attr_indego_state
 
     @indego_state.setter
     def indego_state(self, indego_state: int):
+        """Set the raw Indego state code and update activity."""
         self._attr_indego_state = indego_state
         self._update_activity()
 
     @property
     def indego_state_detail(self) -> str:
-        return getattr(self, "_attr_indego_state_detail", "")
+        """Return the detailed Indego state description."""
+        return self._attr_indego_state_detail
 
     @indego_state_detail.setter
     def indego_state_detail(self, state_detail: str):
+        """Set the detailed Indego state description and update activity."""
         self._attr_indego_state_detail = state_detail
         self._update_activity()
 
     def _update_activity(self) -> None:
-        """Update activity based on state and state detail."""
-        state_detail = self.indego_state_detail or ""
+        """Update the lawn mower activity based on state code and details."""
+        if self._attr_indego_state is None:
+            self._attr_activity = LawnMowerActivity.ERROR
+            return
 
-        # Check if there are active errors/alerts - if so, activity should be ERROR
-        has_active_error = False
-        if self._indego_hub and hasattr(self._indego_hub, '_indego_client'):
-            alerts = getattr(self._indego_hub._indego_client, 'alerts', [])
-            # Check if there are any unread alerts (active errors)
-            has_active_error = any(not alert.read_status for alert in alerts) if alerts else False
+        # Get state information from error_codes.py
+        state_info = get_mower_state_info(str(self._attr_indego_state))
 
-        if has_active_error:
-            new_activity = LawnMowerActivity.ERROR
-        # Check if returning to dock based on state description
-        elif state_detail.startswith("Returning to"):
-            new_activity = LawnMowerActivity.RETURNING
+        # Determine activity from state classification
+        if state_info:
+            state_classification = state_info.get("state", "unknown")
+            new_activity = STATE_CLASSIFICATION_TO_ACTIVITY.get(
+                state_classification, LawnMowerActivity.ERROR
+            )
         else:
-            new_activity = INDEGO_STATE_TO_LAWN_MOWER_MAPPING.get(self._attr_indego_state)
+            # Unknown state code -> error
+            new_activity = LawnMowerActivity.ERROR
+            _LOGGER.warning(
+                "Unknown Indego state code: %d - setting activity to ERROR",
+                self._attr_indego_state,
+            )
 
+        # Override for "Returning to" states based on detail text
+        if self._attr_indego_state_detail.startswith("Returning to"):
+            new_activity = LawnMowerActivity.RETURNING
+
+        # Check for active unread alerts with severity ERROR or higher
+        has_critical_unread = False
+        if self._indego_hub and hasattr(self._indego_hub, "_indego_client"):
+            alerts = getattr(self._indego_hub._indego_client, "alerts", [])
+            for alert in alerts:
+                read_status = getattr(alert, "read_status", None)
+                is_unread = str(read_status).strip().lower() == "unread" or read_status is False
+                if is_unread:
+                    error_code = str(getattr(alert, "error_code", ""))
+                    severity = get_error_severity(error_code)
+                    if severity.value >= ErrorSeverity.ERROR.value:  # ERROR or CRITICAL
+                        has_critical_unread = True
+                        break
+
+        if has_critical_unread:
+            new_activity = LawnMowerActivity.ERROR
+
+        # Update if changed
         if self._attr_activity != new_activity:
             self._attr_activity = new_activity
             self.async_schedule_update_ha_state()
             _LOGGER.debug(
-                "Lawn mower activity: %s (mower state: %d, detail: %s, has_error: %s)",
+                "Lawn mower activity updated: %s (state: %d, detail: %s, critical_unread: %s)",
                 self._attr_activity,
                 self._attr_indego_state,
-                state_detail,
-                has_active_error,
+                self._attr_indego_state_detail,
+                has_critical_unread,
             )
 
-            if self._attr_activity is None:
-                _LOGGER.warning(
-                    "Unsupported mower state received: %d - lawn mower activity cannot be determined",
+        # Log unsupported states - only for truly unknown states
+        if self._attr_activity == LawnMowerActivity.ERROR and not has_critical_unread:
+            # Check if this state was explicitly classified via STATE_CLASSIFICATION_TO_ACTIVITY
+            if state_info and state_info.get("state") in STATE_CLASSIFICATION_TO_ACTIVITY:
+                # State is known but classified as ERROR - log as debug
+                _LOGGER.debug(
+                    "Mower state %d classified as ERROR: %s (state: %s)",
                     self._attr_indego_state,
+                    self._attr_indego_state_detail,
+                    state_info.get("state"),
+                )
+            else:
+                # Truly unknown state - log as warning
+                _LOGGER.warning(
+                    "Unsupported or unknown state detected: %d (%s)",
+                    self._attr_indego_state,
+                    self._attr_indego_state_detail,
                 )
