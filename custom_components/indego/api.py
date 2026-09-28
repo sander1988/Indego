@@ -1,14 +1,18 @@
-from homeassistant.components.application_credentials import AuthImplementation
-from homeassistant.helpers.config_entry_oauth2_flow import OAuth2Session
-from typing import cast
+import asyncio
+import logging
 import time
+from typing import cast
+
+from homeassistant.components.application_credentials import AuthImplementation
+from homeassistant.exceptions import OAuth2TokenRequestTransientError
+from homeassistant.helpers.config_entry_oauth2_flow import OAuth2Session
 
 
-class IndegoLocalOAuth2Implementation(
-    AuthImplementation,
-):
+_LOGGER = logging.getLogger(__name__)
+
+
+class IndegoLocalOAuth2Implementation(AuthImplementation):
     """Indego Local OAuth2 implementation."""
-    pass
 
     @property
     def redirect_uri(self) -> str:
@@ -19,19 +23,55 @@ class IndegoLocalOAuth2Implementation(
 class IndegoOAuth2Session(OAuth2Session):
     """Indego OAuth2 session implementation."""
 
+    TOKEN_REFRESH_BACKOFF = 60
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self._token_refresh_backoff_until = 0.0
+        self._indego_refresh_lock = asyncio.Lock()
+
     @property
     def valid_token(self) -> bool:
         """Return if token is still valid."""
-
-        # The Bosch OAuth server returns an access and refresh token with the same value of 1 day (86400). Misconfiguration?
-        # HomeAssistant only refreshes when the access token is expired (actually 20 seconds before expiring; see CLOCK_OUT_OF_SYNC_MAX_SEC).
-        # So this could result in token refresh failure and the API start to respond with 400 Bad Request (which requires to the user to reauthenticate).
-        # To prevent this we override the default implementation here and set it to expire 12 hours before the real expire time.
-        # This means the token is refreshed twice a day.
-        #
-        # NOTE: The 400 Bad Request issue could still happen if HomeAssistant (or network connection) is offline for more than 12 hours. We can't ḟix this.
-        #
         return (
             cast(float, self.token["expires_at"])
             > time.time() + 43200
         )
+
+    async def async_ensure_token_valid(self) -> None:
+        """Ensure token is valid while protecting the OAuth endpoint."""
+
+        if self.valid_token:
+            return
+
+        if time.monotonic() < self._token_refresh_backoff_until:
+            raise OAuth2TokenRequestTransientError()
+
+        async with self._indego_refresh_lock:
+            # Another coroutine may have refreshed the token while
+            # this coroutine was waiting for the lock.
+            if self.valid_token:
+                return
+
+            if time.monotonic() < self._token_refresh_backoff_until:
+                raise OAuth2TokenRequestTransientError()
+
+            try:
+                await super().async_ensure_token_valid()
+
+            except OAuth2TokenRequestTransientError:
+                self._token_refresh_backoff_until = (
+                    time.monotonic() + self.TOKEN_REFRESH_BACKOFF
+                )
+
+                _LOGGER.warning(
+                    "OAuth token refresh temporarily failed; "
+                    "suppressing further refresh attempts for %d seconds",
+                    self.TOKEN_REFRESH_BACKOFF,
+                )
+
+                raise
+
+            else:
+                self._token_refresh_backoff_until = 0.0

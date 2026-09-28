@@ -12,7 +12,12 @@ from aiohttp.client_exceptions import ClientResponseError
 import homeassistant.util.dt
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, CoreState
-from homeassistant.exceptions import HomeAssistantError, ConfigEntryAuthFailed
+from homeassistant.exceptions import (
+    HomeAssistantError,
+    ConfigEntryAuthFailed,
+    OAuth2TokenRequestReauthError,
+    OAuth2TokenRequestTransientError,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_DEVICE_CLASS,
@@ -25,8 +30,15 @@ from homeassistant.const import (
     EVENT_HOMEASSISTANT_STOP,
     STATE_ON,
     STATE_UNKNOWN,
+    SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
+    PERCENTAGE,
+    UnitOfArea,
+    UnitOfElectricPotential,
+    UnitOfEnergy,
     UnitOfTemperature,
+    UnitOfTime,
 )
+
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.helpers import config_validation as cv
@@ -65,38 +77,46 @@ _LOGGER = logging.getLogger(__name__)
 
 SERVICE_SCHEMA_COMMAND = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(CONF_SEND_COMMAND): cv.string
 })
 
 SERVICE_SCHEMA_SMARTMOWING = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(CONF_SMARTMOWING): cv.boolean
 })
 
 SERVICE_SCHEMA_DELETE_ALERT = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(SERVER_DATA_ALERT_INDEX): cv.positive_int
 })
 
 SERVICE_SCHEMA_DELETE_ALERT_ALL = vol.Schema({
-    vol.Optional(CONF_MOWER_SERIAL): cv.string
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id
 })
 
 SERVICE_SCHEMA_READ_ALERT = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(SERVER_DATA_ALERT_INDEX): cv.positive_int
 })
 
 SERVICE_SCHEMA_READ_ALERT_ALL = vol.Schema({
-    vol.Optional(CONF_MOWER_SERIAL): cv.string
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id
 })
 
 SERVICE_SCHEMA_DOWNLOAD_MAP = vol.Schema({
-    vol.Optional(CONF_MOWER_SERIAL): cv.string
+    vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id
 })
 
 SERVICE_SCHEMA_SET_CALENDAR_SLOT = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(CONF_DAYS): vol.All(
         cv.ensure_list,
         [vol.In([
@@ -112,12 +132,14 @@ SERVICE_SCHEMA_SET_CALENDAR_SLOT = vol.Schema({
 
 SERVICE_SCHEMA_SET_PREDICTIVE_MOWING_WINDOW = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(CONF_EARLIEST_START): cv.string,
     vol.Required(CONF_LATEST_END): cv.string,
 })
 
 SERVICE_SCHEMA_SET_BUMP_SENSITIVITY = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(CONF_BUMP_SENSITIVITY): vol.In([
         "normal",
         "slippery",
@@ -127,6 +149,7 @@ SERVICE_SCHEMA_SET_BUMP_SENSITIVITY = vol.Schema({
 
 SERVICE_SCHEMA_SET_PIN = vol.Schema({
     vol.Optional(CONF_MOWER_SERIAL): cv.string,
+    vol.Optional(CONF_MOWER_ENTITY): cv.entity_id,
     vol.Required(CONF_PIN): vol.All(
         cv.string,
         vol.Length(min=4, max=4),
@@ -146,6 +169,7 @@ ENTITY_DEFINITIONS = {
         CONF_ICON: "mdi:cloud-check",
         CONF_DEVICE_CLASS: BinarySensorDeviceClass.CONNECTIVITY,
         CONF_ATTR: [],
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "online",
     },
     ENTITY_UPDATE_AVAILABLE: {
@@ -173,6 +197,7 @@ ENTITY_DEFINITIONS = {
             "error_0_message",
             "error_0_read",
         ],
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "indego_alert",
     },
     ENTITY_MOWER_STATE: {
@@ -197,9 +222,9 @@ ENTITY_DEFINITIONS = {
     },
     ENTITY_BATTERY: {
         CONF_TYPE: SENSOR_TYPE,
-        CONF_ICON: "battery",
+        CONF_ICON: "mdi:battery",
         CONF_DEVICE_CLASS: SensorDeviceClass.BATTERY,
-        CONF_UNIT_OF_MEASUREMENT: "%",
+        CONF_UNIT_OF_MEASUREMENT: PERCENTAGE,
         CONF_ATTR: [
             "last_updated",
             "voltage_V",
@@ -215,7 +240,7 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:grass",
         CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "%",
+        CONF_UNIT_OF_MEASUREMENT: PERCENTAGE,
         CONF_ATTR: [
             "last_updated",
             "last_completed_mow",
@@ -224,13 +249,14 @@ ENTITY_DEFINITIONS = {
             "last_session_cut_min",
             "last_session_charge_min",
         ],
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
         CONF_TRANSLATION_KEY: "lawn_mowed",
     },
     ENTITY_LAWN_MOWED_SIZE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:grass",
         CONF_DEVICE_CLASS: SensorDeviceClass.AREA,
-        CONF_UNIT_OF_MEASUREMENT: "m²",
+        CONF_UNIT_OF_MEASUREMENT: UnitOfArea.SQUARE_METERS,
         CONF_ATTR: [
             "last_updated",
         ],
@@ -259,13 +285,14 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "mowing_mode",
     },
     ENTITY_RUNTIME: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:information-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "h",
+        CONF_DEVICE_CLASS: SensorDeviceClass.DURATION,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfTime.HOURS,
         CONF_ATTR: [
             "total_mowing_time_h",
             "total_charging_time_h",
@@ -283,9 +310,11 @@ ENTITY_DEFINITIONS = {
     ENTITY_GARDEN_SIZE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:ruler-square",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "m²",
+        CONF_DEVICE_CLASS: SensorDeviceClass.AREA,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfArea.SQUARE_METERS,
         CONF_ATTR: [],
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "garden_size",
     },
     ENTITY_CAMERA: {
@@ -299,6 +328,7 @@ ENTITY_DEFINITIONS = {
         CONF_UNIT_OF_MEASUREMENT: "px",
         CONF_ATTR: [],
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        CONF_STATE_CLASS: None,
         CONF_TRANSLATION_KEY: "mower_position_x",
     },
     ENTITY_MOWER_SVG_Y: {
@@ -308,6 +338,7 @@ ENTITY_DEFINITIONS = {
         CONF_UNIT_OF_MEASUREMENT: "px",
         CONF_ATTR: [],
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        CONF_STATE_CLASS: None,
         CONF_TRANSLATION_KEY: "mower_position_y",
     },
     ENTITY_MOWER_STUCK: {
@@ -315,6 +346,7 @@ ENTITY_DEFINITIONS = {
         CONF_ICON: "mdi:alert-circle-outline",
         CONF_DEVICE_CLASS: BinarySensorDeviceClass.PROBLEM,
         CONF_ATTR: ["stuck_since", "stuck_x", "stuck_y"],
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "mower_stuck",
     },
     ENTITY_LAST_ERROR_CODE: {
@@ -323,6 +355,7 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: ["error_code", "error_time"],
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "last_error_code",
     },
     ENTITY_FIRMWARE_VERSION: {
@@ -337,9 +370,11 @@ ENTITY_DEFINITIONS = {
     ENTITY_MAINTENANCE_HOURS: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:tools",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "h",
+        CONF_DEVICE_CLASS: SensorDeviceClass.DURATION,
+        CONF_UNIT_OF_MEASUREMENT: UnitOfTime.HOURS,
         CONF_ATTR: ["maintenance_status"],
+        CONF_STATE_CLASS: SensorStateClass.TOTAL_INCREASING,
+        CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "maintenance_hours",
     },
     ENTITY_SESSION_COUNT: {
@@ -348,15 +383,18 @@ ENTITY_DEFINITIONS = {
         CONF_DEVICE_CLASS: None,
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
+        CONF_STATE_CLASS: SensorStateClass.TOTAL_INCREASING,
+        CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "session_count",
     },
     ENTITY_BATTERY_VOLTAGE: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:lightning-bolt",
         CONF_DEVICE_CLASS: SensorDeviceClass.VOLTAGE,
-        CONF_UNIT_OF_MEASUREMENT: "V",
+        CONF_UNIT_OF_MEASUREMENT: UnitOfElectricPotential.VOLT,
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "battery_voltage",
     },
@@ -367,6 +405,7 @@ ENTITY_DEFINITIONS = {
         CONF_UNIT_OF_MEASUREMENT: UnitOfTemperature.CELSIUS,
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "battery_temperature",
     },
@@ -377,6 +416,8 @@ ENTITY_DEFINITIONS = {
         CONF_UNIT_OF_MEASUREMENT: UnitOfTemperature.CELSIUS,
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
+        CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "ambient_temperature",
     },
     ENTITY_BATTERY_CYCLES: {
@@ -386,6 +427,7 @@ ENTITY_DEFINITIONS = {
         CONF_UNIT_OF_MEASUREMENT: None,
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
+        CONF_STATE_CLASS: SensorStateClass.TOTAL_INCREASING,
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "battery_cycles",
     },
@@ -393,11 +435,11 @@ ENTITY_DEFINITIONS = {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:battery-minus",
         CONF_DEVICE_CLASS: SensorDeviceClass.ENERGY,
-        CONF_UNIT_OF_MEASUREMENT: "Wh",
+        CONF_UNIT_OF_MEASUREMENT: UnitOfEnergy.WATT_HOUR,
         CONF_ATTR: [],
         CONF_ENABLED_BY_DEFAULT: False,
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
-        CONF_STATE_CLASS: SensorStateClass.TOTAL_INCREASING,
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
         CONF_TRANSLATION_KEY: "battery_discharge",
     },
     ENTITY_BATTERY_CHARGING: {
@@ -532,19 +574,20 @@ ENTITY_DEFINITIONS = {
             "exclusion_sunday_user",
             "exclusion_sunday_weather",
         ],
+        CONF_ENTITY_CATEGORY: None,
         CONF_TRANSLATION_KEY: "predictive_schedule",
     },
     ENTITY_NETWORK_SIGNAL: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:signal-cellular-outline",
-        CONF_DEVICE_CLASS: None,
-        CONF_UNIT_OF_MEASUREMENT: "dBm",
+        CONF_DEVICE_CLASS: SensorDeviceClass.SIGNAL_STRENGTH,
+        CONF_UNIT_OF_MEASUREMENT: SIGNAL_STRENGTH_DECIBELS_MILLIWATT,
         CONF_ATTR: ["last_updated"],
         CONF_TRANSLATION_KEY: "network_signal",
         CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        CONF_STATE_CLASS: SensorStateClass.MEASUREMENT,
         CONF_ENABLED_BY_DEFAULT: False,
     },
-
     ENTITY_NETWORK_OPERATOR: {
         CONF_TYPE: SENSOR_TYPE,
         CONF_ICON: "mdi:access-point-network",
@@ -591,7 +634,7 @@ ENTITY_DEFINITIONS = {
             "garden_country",
         ],
         CONF_TRANSLATION_KEY: "predictive_setup",
-        CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
+        CONF_ENTITY_CATEGORY: None,
     },
     ENTITY_BUMP_SENSITIVITY: {
         CONF_TYPE: SENSOR_TYPE,
@@ -601,6 +644,7 @@ ENTITY_DEFINITIONS = {
         CONF_ATTR: [
             "last_updated",
         ],
+        CONF_ENTITY_CATEGORY: EntityCategory.DIAGNOSTIC,
         CONF_TRANSLATION_KEY: "bump_sensitivity",
     },
     ENTITY_SECURITY_ENABLED: {
@@ -628,7 +672,6 @@ ENTITY_DEFINITIONS = {
         CONF_ENTITY_CATEGORY: EntityCategory.CONFIG,
     },
 }
-
 
 def format_indego_date(date: datetime) -> str:
     return date.astimezone().strftime("%Y-%m-%d %H:%M:%S")
@@ -1255,7 +1298,24 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         _LOGGER.warning("Error setting up features: %s", err)
 
     def find_instance_for_mower_service_call(call):
+        mower_entity = call.data.get(CONF_MOWER_ENTITY, None)
         mower_serial = call.data.get(CONF_MOWER_SERIAL, None)
+        
+        if mower_entity is not None:
+            for config_entry_id in hass.data[DOMAIN]:
+                if config_entry_id == CONF_SERVICES_REGISTERED:
+                    continue
+
+                instance = hass.data[DOMAIN][config_entry_id]
+                expected_entity_id = f"lawn_mower.indego_{instance.serial}"
+
+                if mower_entity == expected_entity_id:
+                    return instance
+
+            raise HomeAssistantError(
+                "No mower instance found for entity '%s'" % mower_entity
+            )
+
         if mower_serial is None:
             # Return the first instance when params is missing for backwards compatibility.
             return hass.data[DOMAIN][hass.data[DOMAIN][CONF_SERVICES_REGISTERED]]
@@ -1314,7 +1374,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         await instance._update_alerts()
         await instance._indego_client.delete_alert(index)
-        await instance._update_alerts()
+        await instance._update_alerts(force_alert_state=True)
 
     async def async_delete_alert_all(call):
         """Handle the service call."""
@@ -1353,7 +1413,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             await instance._indego_client.delete_all_alerts()
             await asyncio.sleep(5)
 
-        await instance._update_alerts()
+        await instance._update_alerts(force_alert_state=True)
 
     async def async_read_alert(call):
         """Handle the service call."""
@@ -1363,7 +1423,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         await instance._update_alerts()
         await instance._indego_client.put_alert_read(index)
-        await instance._update_alerts()
+        await instance._update_alerts(force_alert_state=True)
 
     async def async_read_alert_all(call):
         """Handle the service call."""
@@ -1372,7 +1432,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         await instance._update_alerts()
         await instance._indego_client.put_all_alerts_read()
-        await instance._update_alerts()
+        await instance._update_alerts(force_alert_state=True)
 
     async def async_download_map(call):
         """Handle the download_map service call."""
@@ -1559,6 +1619,40 @@ class IndegoHub:
         526,  # Random mowing complete (Pendant zu 525, fehlte bisher)
     }
 
+    POSITION_POLL_ACTIVE_STATES = {
+        266,   # Leaving dock
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520,
+        521,
+        522,
+        523,
+        524,
+        525,
+        526,
+        528,
+        529,
+        530,
+        531,
+        768,
+        769,
+        770,
+        771,
+        772,
+        773,
+        774,
+        775,
+        776,
+        777,
+        1792,
+    }
+
     # Grace period after mowing session starts (in seconds)
     MOWING_SESSION_GRACE_PERIOD = 90
 
@@ -1582,6 +1676,7 @@ class IndegoHub:
         self._refresh_24h_remover = None
         self._shutdown = False
         self._latest_alert = None
+        self._empty_alert_refresh_count = 0
         self.entities = {}
         self._update_fail_count = None
         self._lawn_map = None
@@ -1605,7 +1700,19 @@ class IndegoHub:
         self._forced_mowing_mode = None # force mowing mode and calendar sensors to update
 
         async def async_token_refresh() -> str:
-            await session.async_ensure_token_valid()
+            """Ensure OAuth token is valid."""
+        
+            try:
+                await session.async_ensure_token_valid()
+        
+            except OAuth2TokenRequestReauthError as exc:
+                raise ConfigEntryAuthFailed(
+                    "Bosch OAuth refresh token is no longer valid"
+                ) from exc
+        
+            except OAuth2TokenRequestTransientError:
+                raise
+        
             return session.token["access_token"]
 
         self._indego_client = IndegoAsyncClient(
@@ -2418,6 +2525,21 @@ class IndegoHub:
         )
 
     async def _check_position_and_state(self, now):
+        state = self._indego_client.state
+    
+        current_state = (
+            getattr(state, "state", None)
+            if state
+            else None
+        )
+    
+        if current_state not in self.POSITION_POLL_ACTIVE_STATES:
+            _LOGGER.debug(
+                "Skipping periodic position poll for inactive mower state: %s",
+                current_state,
+            )
+            return
+            
         try:
             _LOGGER.debug("Fetching latest mower position and state")
             await self._indego_client.update_state(force=True)
@@ -2766,8 +2888,6 @@ class IndegoHub:
             # Mark service as UP on successful response
             self.set_service_status(True)
 
-            self._update_alert_state()
-
             # Check for offline error codes (WiFi lost, API error, No connection to server)
             state_code = getattr(self._indego_client.state, 'state', None)
             if state_code in (802, 803, 804):
@@ -3098,16 +3218,9 @@ class IndegoHub:
 
         return self._indego_client.generic_data
 
-    async def _update_alerts(self):
+    async def _update_alerts(self, force_alert_state: bool = False):
 
         await self._indego_client.update_alerts()
-
-        # Show "Problem" only if there are unread alerts
-        unread_count = sum(
-            1 for alert in self._indego_client.alerts
-            if str(alert.read_status).strip().lower() == "unread"
-        )
-        self.entities[ENTITY_ALERT].state = unread_count > 0
 
         if self._indego_client.alerts:
             # Build complete alert attributes with enhanced error descriptions
@@ -3170,26 +3283,46 @@ class IndegoHub:
             while self.entities[ENTITY_ALERT].clear_attribute(f"error_{error_index}_code", False):
                 error_index += 1
 
-        self._update_alert_state()
+        self._update_alert_state(force=force_alert_state)
 
-    def _update_alert_state(self):
-        """Set alert sensor state based on current active error code, not just unread status."""
+    def _update_alert_state(self, force: bool = False):
+        """Update alert state based on unread alerts."""
         if ENTITY_ALERT not in self.entities:
             return
-
-        # Check if state is available and has 'error' attribute, otherwise default to 0 (no error)
-        current_error = getattr(self._indego_client.state, "error", 0)
-
-        # If there are no active errors (current_error == 0) but the mower state is None, check for unread alerts to determine if we should show a problem state
-        if current_error == 0 and self._indego_client.state is None:
-            unread_count = sum(
-                1 for alert in self._indego_client.alerts
-                if str(alert.read_status).strip().lower() == "unread"
-            )
-            self.entities[ENTITY_ALERT].state = unread_count > 0
-        else:
-            # Show "Problem" if there is an active error code, otherwise "OK"
-            self.entities[ENTITY_ALERT].state = current_error != 0
+    
+        alerts = self._indego_client.alerts or []
+    
+        has_unread_alerts = any(
+            str(alert.read_status).strip().lower() == "unread"
+            for alert in alerts
+        )
+    
+        if has_unread_alerts:
+            # At least one unread alert exists.
+            self._empty_alert_refresh_count = 0
+            self.entities[ENTITY_ALERT].state = True
+            return
+    
+        if alerts:
+            # Alerts exist, but all of them have been read.
+            self._empty_alert_refresh_count = 0
+            self.entities[ENTITY_ALERT].state = False
+            return
+    
+        if force:
+            # An explicit read/delete operation was performed.
+            # Accept the empty alert list immediately.
+            self._empty_alert_refresh_count = 0
+            self.entities[ENTITY_ALERT].state = False
+            return
+    
+        # Bosch may occasionally return an empty alert list during
+        # periodic refreshes. Require two consecutive empty responses
+        # before clearing the problem state.
+        self._empty_alert_refresh_count += 1
+    
+        if self._empty_alert_refresh_count >= 2:
+            self.entities[ENTITY_ALERT].state = False
 
     async def _update_updates_available(self):
         await self._indego_client.update_updates_available()
@@ -3323,8 +3456,14 @@ class IndegoHub:
         time_since_success = current_time - self._last_successful_update
 
         if time_since_success > ONLINE_TIMEOUT_SECONDS:
-            _LOGGER.warning("Mower offline - no successful API response for %d seconds (timeout threshold: %d seconds)",
-                           int(time_since_success), ONLINE_TIMEOUT_SECONDS)
+            if self.entities[ENTITY_ONLINE].state is not False:
+                _LOGGER.warning(
+                    "Mower offline - no successful API response for %d seconds "
+                    "(timeout threshold: %d seconds)",
+                    int(time_since_success),
+                    ONLINE_TIMEOUT_SECONDS,
+                )
+        
             self.set_online_state(False)
 
     async def _update_firmware_version(self):
