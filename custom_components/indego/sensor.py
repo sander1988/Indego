@@ -1,7 +1,7 @@
 """Class for Indego Sensors."""
 import logging
 
-from homeassistant.components.sensor import SensorEntity, SensorStateClass, ENTITY_ID_FORMAT as SENSOR_FORMAT
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass, ENTITY_ID_FORMAT as SENSOR_FORMAT
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
@@ -98,7 +98,7 @@ class IndegoSensor(IndegoEntity, SensorEntity):
         """Return the icon to use in the frontend, if any."""
         if self._updateble_icon:
             return self._icon_func(self._state)
-        if self._icon == "battery":
+        if self._device_class == SensorDeviceClass.BATTERY:
             return icon_for_battery_level(
                 int(self._state) if self._state is not None and (isinstance(self._state, int) or self._state.isdigit()) else None, self.charging
             )

@@ -46,9 +46,7 @@ class IndegoOAuth2Session(OAuth2Session):
             return
 
         if time.monotonic() < self._token_refresh_backoff_until:
-            raise OAuth2TokenRequestTransientError(
-                "OAuth token refresh is temporarily in backoff"
-            )
+            raise OAuth2TokenRequestTransientError()
 
         async with self._indego_refresh_lock:
             # Another coroutine may have refreshed the token while
@@ -57,9 +55,7 @@ class IndegoOAuth2Session(OAuth2Session):
                 return
 
             if time.monotonic() < self._token_refresh_backoff_until:
-                raise OAuth2TokenRequestTransientError(
-                    "OAuth token refresh is temporarily in backoff"
-                )
+                raise OAuth2TokenRequestTransientError()
 
             try:
                 await super().async_ensure_token_valid()
