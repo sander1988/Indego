@@ -1591,6 +1591,40 @@ class IndegoHub:
         526,  # Random mowing complete (Pendant zu 525, fehlte bisher)
     }
 
+    POSITION_POLL_ACTIVE_STATES = {
+        266,   # Leaving dock
+        512,
+        513,
+        514,
+        515,
+        516,
+        517,
+        518,
+        519,
+        520,
+        521,
+        522,
+        523,
+        524,
+        525,
+        526,
+        528,
+        529,
+        530,
+        531,
+        768,
+        769,
+        770,
+        771,
+        772,
+        773,
+        774,
+        775,
+        776,
+        777,
+        1792,
+    }
+
     # Grace period after mowing session starts (in seconds)
     MOWING_SESSION_GRACE_PERIOD = 90
 
@@ -2463,6 +2497,21 @@ class IndegoHub:
         )
 
     async def _check_position_and_state(self, now):
+        state = self._indego_client.state
+    
+        current_state = (
+            getattr(state, "state", None)
+            if state
+            else None
+        )
+    
+        if current_state not in self.POSITION_POLL_ACTIVE_STATES:
+            _LOGGER.debug(
+                "Skipping periodic position poll for inactive mower state: %s",
+                current_state,
+            )
+            return
+            
         try:
             _LOGGER.debug("Fetching latest mower position and state")
             await self._indego_client.update_state(force=True)
