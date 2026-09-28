@@ -152,7 +152,10 @@
                 "name": "Next Mow"
             },
             "mowing_mode": {
-                "name": "Mowing Mode"
+                "name": "Mowing Mode",
+                "state": {
+                    "calendar": "Manual calendar"
+                }
             },
             "runtime_total": {
                 "name": "Mow Time Total"
@@ -219,7 +222,7 @@
             "calendar_slots": {
                 "state": {
                     "smartmowing_active": "SmartMowing active",
-                    "calendar_selection_required": "Kalenderauswahl erforderlich",
+                    "calendar_selection_required": "Calendar selection required",
                     "off": "Off"
                 },
                 "name": "Planned mowing times",
@@ -587,77 +590,101 @@
     "services": {
         "command": {
             "name": "Send command",
-            "description": "Send commands to the mower. Allowed commands are mow, returnToDock, and pause.",
+            "description": "Sends a control command to the mower. Valid commands are \"mow\" (start mowing), \"returnToDock\" (return to charging station) and \"pause\" (pause mowing).",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 },
                 "command": {
                     "name": "Command",
-                    "description": "Select a command to send to the mower."
+                    "description": "Command to send to the mower."
                 }
             }
         },
         "smartmowing": {
             "name": "Toggle SmartMowing",
-            "description": "Enable or disable SmartMowing. Allowed values are true or false.",
+            "description": "Enables or disables the SmartMowing feature, which automatically adjusts the mowing schedule based on weather conditions and lawn growth.",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 },
                 "enable": {
-                    "name": "Enable",
-                    "description": "Enable SmartMowing."
+                    "name": "Activate/Deactivate",
+                    "description": "Sets the SmartMowing state. Use \"true\" to enable or \"false\" to disable the feature."
                 }
             }
         },
         "delete_alert": {
             "name": "Delete alert",
-            "description": "Delete the selected alert.",
+            "description": "Deletes a specific alert by its index. Index 0 refers to the most recent alert.",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 },
                 "alert_index": {
-                    "name": "Alert Index",
-                    "description": "Delete the selected alert. 0 for the latest alert."
+                    "name": "Alert index",
+                    "description": "Index of the alert to delete. 0 = most recent, 1 = second most recent, and so on."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Delete all alerts",
-            "description": "Delete all alerts.",
+            "description": "Deletes all existing alerts for the mower at once.",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 }
             }
         },
         "read_alert": {
             "name": "Mark alert as read",
-            "description": "Mark the selected alert as read.",
+            "description": "Marks a specific alert as read by its index. Index 0 refers to the most recent alert.",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 },
                 "alert_index": {
-                    "name": "Alert Index",
-                    "description": "Mark the selected alert as read. 0 for the latest alert."
+                    "name": "Alert index",
+                    "description": "Index of the alert to mark as read. 0 = most recent, 1 = second most recent, and so on."
                 }
             }
         },
         "read_alert_all": {
             "name": "Mark all alerts as read",
-            "description": "Mark all alerts as read.",
+            "description": "Marks all existing alerts for the mower as read.",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 }
             }
         },
@@ -666,89 +693,104 @@
             "description": "Downloads the current mowing map from the Bosch Cloud API and saves it locally as \"www/indego_map_base.svg\". The map reflects the most recently recorded mowing route.",
             "fields": {
                 "mower_serial": {
-                    "name": "Mower Serial",
-                    "description": "Mower serial. Only needed when you have configured multiple mowers."
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Activate/Deactivate calendar slot",
-            "description": "Set a calender slot when you use the manual calendar instead of SmartMowing.",
+            "name": "Set calendar slot",
+            "description": "Set a calendar slot when you use a manual schedule instead of SmartMowing.",
             "fields": {
                 "mower_serial": {
-                    "name": "Serialnumber",
+                    "name": "Serial number",
                     "description": "Serial number of the mower. Only required if multiple mowers are configured."
                 },
-                "calendar_type": {
-                    "name": "Calendar Type",
-                    "description": "Type of calendar to use. Use 'calendar' for manual calendar or 'predictive' for the forbidden time slots in SmartMowing mode."
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
                 },
                 "days": {
-                    "name": "Day",
-                    "description": "Which day to configure.",
-                    "example": "Montag"
+                    "name": "Days",
+                    "description": "Which day to configure."
                 },
                 "slot": {
-                    "name": "Time slot",
-                    "description": "Which Slot of the selected day should be configured (1 or 2)."
+                    "name": "Slot",
+                    "description": "Which slot of the selected day should be configured (1 or 2)."
                 },
                 "enabled": {
                     "name": "Activate/Deactivate",
                     "description": "Should the selected slot be enabled or disabled."
                 },
                 "start": {
-                    "name": "Start",
-                    "description": "Set Start Time of the selected slot and day. Only needed if you want to enable a slot."
+                    "name": "Start time",
+                    "description": "Set the start time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used."
                 },
                 "end": {
-                    "name": "End",
-                    "description": "Set End Time of the selected slot and day. Only needed if you want to enable a slot."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Set mower lawn conditions",
-            "description": "Set the mower lawn conditions",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serial number",
-                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
-                },
-                "bump_sensitivity": {
-                    "name": "Lawn conditions",
-                    "description": "Lawn conditions of the mower"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "PIN Code",
-            "description": "Change the mower PIN code",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serial number",
-                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
-                },
-                "pin": {
-                    "name": "PIN Code",
-                    "description": "New four-digit mower PIN code"
+                    "name": "End time",
+                    "description": "Set the end time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "Set SmartMowing mowing window",
-            "description": "Set the time window in which the mower may mow in SmartMowing mode.",
+            "description": "Set the allowed mowing window for SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Serial number",
                     "description": "Serial number of the mower. Only required if multiple mowers are configured."
                 },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
+                },
                 "earliest_start": {
                     "name": "Earliest start",
-                    "description": "The earliest time the mower should start."
+                    "description": "Earliest time SmartMowing is allowed to mow. Only hours and minutes are used."
                 },
                 "latest_end": {
                     "name": "Latest end",
-                    "description": "The latest time the mower should finish."
+                    "description": "Latest time SmartMowing is allowed to mow. Only hours and minutes are used."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Set lawn conditions",
+            "description": "Set the mower bump sensitivity.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
+                },
+                "bump_sensitivity": {
+                    "name": "Lawn conditions",
+                    "description": "Bump sensitivity of the mower."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Change PIN code",
+            "description": "Change the mower PIN code.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serial number",
+                    "description": "Serial number of the mower. Only required if multiple mowers are configured."
+                },
+                "mower_entity": {
+                    "name": "Entity",
+                    "description": "Select the mower entity. Only required if multiple mowers are configured."
+                },
+                "pin": {
+                    "name": "PIN code",
+                    "description": "New 4-digit mower PIN code."
                 }
             }
         }

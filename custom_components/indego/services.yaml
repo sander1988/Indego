@@ -8,6 +8,14 @@ command:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     command:
       name: Command
       description: Command to send to the mower.
@@ -19,6 +27,7 @@ command:
             - "mow"
             - "returnToDock"
             - "pause"
+
 smartmowing:
   description: Enables or disables the SmartMowing feature, which automatically adjusts the mowing schedule based on weather conditions and lawn growth.
   fields:
@@ -29,6 +38,14 @@ smartmowing:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     enable:
       name: Activate/Deactivate
       description: Sets the SmartMowing state. Use "true" to enable or "false" to disable the feature.
@@ -36,6 +53,7 @@ smartmowing:
       required: true
       selector:
         boolean: {}
+
 delete_alert:
   description: Deletes a specific alert by its index. Index 0 refers to the most recent alert.
   fields:
@@ -46,13 +64,25 @@ delete_alert:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     alert_index:
       name: Alert index
       description: Index of the alert to delete. 0 = most recent, 1 = second most recent, and so on.
-      example: "0"
+      example: 0
       required: true
       selector:
-        text: {}
+        number:
+          min: 0
+          step: 1
+          mode: box
+
 delete_alert_all:
   description: Deletes all existing alerts for the mower at once.
   fields:
@@ -63,6 +93,15 @@ delete_alert_all:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
+
 read_alert:
   description: Marks a specific alert as read by its index. Index 0 refers to the most recent alert.
   fields:
@@ -73,13 +112,25 @@ read_alert:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     alert_index:
       name: Alert Index
       description: Index of the alert to mark as read. 0 = most recent, 1 = second most recent, and so on.
-      example: "0"
+      example: 0
       required: true
       selector:
-        text: {}
+        number:
+          min: 0
+          step: 1
+          mode: box
+
 read_alert_all:
   description: Marks all existing alerts for the mower as read.
   fields:
@@ -90,6 +141,15 @@ read_alert_all:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
+
 download_map:
   description: Downloads the current mowing map from the Bosch Cloud API and saves it locally as "www/indego_map_base.svg". The map reflects the most recently recorded mowing route.
   fields:
@@ -100,8 +160,17 @@ download_map:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
+
 set_calendar_slot:
-  description: Set a calender slot when you use the manual calendar instead of SmartMowing.
+  description: Set a calendar slot when you use a manual schedule instead of SmartMowing.
   fields:
     mower_serial:
       name: Serialnumber
@@ -110,9 +179,17 @@ set_calendar_slot:
       required: false
       selector:
         text: {}
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     days:
       name: Days
-      description: Which day to configure.
+      description: Which days to configure.
       example: "monday"
       required: true
       selector:
@@ -129,8 +206,8 @@ set_calendar_slot:
             - "sunday"
     slot:
       name: Slot
-      description: Which Slot of the selected day should be configured (1 or 2).
-      example: "1"
+      description: Which slot of the selected day should be configured (1 or 2).
+      example: 1
       required: true
       selector:
         number:
@@ -141,21 +218,21 @@ set_calendar_slot:
     enabled:
       name: Activate/Deactivate
       description: Should the selected slot be enabled or disabled.
-      example: "true"
+      example: true
       required: false
       selector:
         boolean: {}
     start:
       name: Start time
-      description: Set Start Time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used.
-      example: '"08:00"'
+      description: Set the start time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used.
+      example: "08:00"
       required: false
       selector:
         time: {}
     end:
       name: End time
-      description: Set End Time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used.
-      example: '"20:00"'
+      description: Set the end time of the selected slot and day. Only needed if you want to enable a slot. Only hour and minute will be used.
+      example: "20:00"
       required: false
       selector:
         time: {}
@@ -170,7 +247,14 @@ set_predictive_mowing_window:
       required: false
       selector:
         text: {}
-
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     earliest_start:
       name: Earliest start
       description: Earliest time SmartMowing is allowed to mow. Only hours and minutes are used.
@@ -178,7 +262,6 @@ set_predictive_mowing_window:
       required: true
       selector:
         time: {}
-
     latest_end:
       name: Latest end
       description: Latest time SmartMowing is allowed to mow. Only hours and minutes are used.
@@ -197,7 +280,14 @@ set_bump_sensitivity:
       required: false
       selector:
         text: {}
-
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     bump_sensitivity:
       name: Bump sensitivity
       description: Bump sensitivity of the mower.
@@ -213,14 +303,21 @@ set_bump_sensitivity:
 set_pin:
   name: Change mower PIN
   description: Change the mower PIN.
-
   fields:
     mower_serial:
       name: Serial number
+      description: Serial number of the mower. Only required if multiple mowers are configured.
       required: false
       selector:
         text: {}
-
+    mower_entity:
+      name: Entity
+      description: Select the mower entity. Only required if multiple mowers are configured.
+      required: false
+      selector:
+        entity:
+          domain: lawn_mower
+          integration: indego
     pin:
       name: PIN
       description: New 4-digit mower PIN.

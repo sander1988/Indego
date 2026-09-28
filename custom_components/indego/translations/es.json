@@ -647,77 +647,101 @@
     "services": {
         "command": {
             "name": "Enviar comando",
-            "description": "Enviar comandos al cortacésped. Seleccione un comando.",
+            "description": "Envía un comando de control al cortacésped. Los comandos válidos son \"mow\" (iniciar corte), \"returnToDock\" (volver a la estación de carga) y \"pause\" (pausar el corte).",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
                 "command": {
-                    "name": "Enviar comando",
-                    "description": "Enviar comandos al cortacésped. Seleccione un comando."
+                    "name": "Comando",
+                    "description": "Comando a enviar al cortacésped."
                 }
             }
         },
         "smartmowing": {
             "name": "Alternar SmartMowing",
-            "description": "Habilitar o deshabilitar SmartMowing. Los valores permitidos son true o false.",
+            "description": "Activa o desactiva la función SmartMowing, que ajusta automáticamente el programa de corte según las condiciones meteorológicas y el crecimiento del césped.",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
                 "enable": {
-                    "description": "Habilitar SmartMowing.",
-                    "name": "Activar/desactivar"
+                    "name": "Activar/desactivar",
+                    "description": "Establece el estado de SmartMowing. Use \"true\" para activar o \"false\" para desactivar la función."
                 }
             }
         },
         "delete_alert": {
             "name": "Eliminar alerta",
-            "description": "Eliminar la alerta seleccionada.",
+            "description": "Elimina una alerta específica según su índice. El índice 0 se refiere a la alerta más reciente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
                 "alert_index": {
-                    "description": "Eliminar la alerta seleccionada. 0 para la alerta más reciente.",
-                    "name": "Índice de alerta"
+                    "name": "Índice de alerta",
+                    "description": "Índice de la alerta a eliminar. 0 = más reciente, 1 = segunda más reciente, etc."
                 }
             }
         },
         "delete_alert_all": {
             "name": "Eliminar todas las alertas",
-            "description": "Eliminar todas las alertas.",
+            "description": "Elimina todas las alertas existentes del cortacésped de una vez.",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 }
             }
         },
         "read_alert": {
             "name": "Marcar alerta como leída",
-            "description": "Marcar la alerta seleccionada como leída.",
+            "description": "Marca una alerta específica como leída según su índice. El índice 0 se refiere a la alerta más reciente.",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
                 "alert_index": {
-                    "description": "Marcar la alerta seleccionada como leída. 0 para la alerta más reciente.",
-                    "name": "Índice de alerta"
+                    "name": "Índice de alerta",
+                    "description": "Índice de la alerta a marcar como leída. 0 = más reciente, 1 = segunda más reciente, etc."
                 }
             }
         },
         "read_alert_all": {
             "name": "Marcar todas las alertas como leídas",
-            "description": "Marcar todas las alertas como leídas.",
+            "description": "Marca todas las alertas existentes del cortacésped como leídas.",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 }
             }
         },
@@ -726,88 +750,104 @@
             "description": "Descarga el mapa de corte actual desde la API de Bosch Cloud y lo guarda localmente como \"www/indego_map_base.svg\". El mapa refleja la ruta de corte más recientemente registrada.",
             "fields": {
                 "mower_serial": {
-                    "description": "Número de serie del robot. Solo es necesario cuando tiene configurados varios robots cortacéspedes.",
-                    "name": "Número de serie"
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 }
             }
         },
         "set_calendar_slot": {
-            "name": "Activar/desactivar intervalo del calendario",
-            "description": "Modificar un intervalo del calendario (cambiar horarios, activar o desactivar)",
+            "name": "Configurar intervalo del calendario",
+            "description": "Configura un intervalo del calendario cuando se usa un horario manual en lugar de SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Número de serie",
                     "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
-                "calendar_type": {
-                    "name": "Tipo de calendario",
-                    "description": "Selecciona el calendario ('calendar' para el calendario manual o 'predictive' para los períodos desactivados en el modo SmartMowing)."
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
                 "days": {
-                    "name": "Día",
-                    "description": "Nombre del día de la semana que se va a configurar."
+                    "name": "Días",
+                    "description": "Qué día de la semana configurar."
                 },
                 "slot": {
-                    "name": "Intervalo de tiempo",
-                    "description": "Qué intervalo de tiempo se debe modificar (1 o 2)."
+                    "name": "Intervalo",
+                    "description": "Qué intervalo del día seleccionado configurar (1 o 2)."
                 },
                 "enabled": {
                     "name": "Activar/desactivar",
-                    "description": "Activar o desactivar el día/intervalo seleccionado."
+                    "description": "Si el intervalo seleccionado debe estar activado o desactivado."
                 },
                 "start": {
-                    "name": "Inicio",
-                    "description": "Hora de inicio del intervalo seleccionado. Solo es necesaria si se va a activar un intervalo. Solo se utilizan horas y minutos."
+                    "name": "Hora de inicio",
+                    "description": "Hora de inicio del intervalo y día seleccionados. Solo es necesario si se desea activar un intervalo. Solo se utilizan horas y minutos."
                 },
                 "end": {
-                    "name": "Fin",
-                    "description": "Hora de finalización del intervalo seleccionado. Solo es necesaria si se va a activar un intervalo. Solo se utilizan horas y minutos."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Configurar las condiciones del césped del cortacésped",
-            "description": "Configurar las condiciones del césped del cortacésped",
-            "fields": {
-                "mower_serial": {
-                    "name": "Número de serie",
-                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
-                },
-                "bump_sensitivity": {
-                    "name": "Condiciones del césped",
-                    "description": "Condiciones del césped del cortacésped"
-                }
-            }
-        },
-        "set_pin": {
-            "name": "Código PIN",
-            "description": "Cambiar el código PIN del cortacésped",
-            "fields": {
-                "mower_serial": {
-                    "name": "Número de serie",
-                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
-                },
-                "pin": {
-                    "name": "Código PIN",
-                    "description": "Nuevo código PIN de cuatro dígitos del cortacésped"
+                    "name": "Hora de fin",
+                    "description": "Hora de fin del intervalo y día seleccionados. Solo es necesario si se desea activar un intervalo. Solo se utilizan horas y minutos."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "Establecer ventana horaria de SmartMowing",
-            "description": "La ventana horaria en la que el cortacésped puede cortar en modo SmartMowing.",
+            "description": "Establece la ventana de corte permitida para SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Número de serie",
                     "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
                 },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
                 "earliest_start": {
                     "name": "Inicio más temprano",
-                    "description": "La hora más temprana a la que debe empezar el cortacésped."
+                    "description": "Hora más temprana en la que SmartMowing puede cortar. Solo se utilizan horas y minutos."
                 },
                 "latest_end": {
                     "name": "Fin más tardío",
-                    "description": "La hora más tardía a la que debe terminar el cortacésped."
+                    "description": "Hora más tardía en la que SmartMowing puede cortar. Solo se utilizan horas y minutos."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Establecer condiciones del césped",
+            "description": "Establece la sensibilidad a impactos del cortacésped.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "bump_sensitivity": {
+                    "name": "Condiciones del césped",
+                    "description": "Sensibilidad a impactos del cortacésped."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "Cambiar código PIN",
+            "description": "Cambia el código PIN del cortacésped.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Número de serie",
+                    "description": "Número de serie del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "mower_entity": {
+                    "name": "Entidad",
+                    "description": "Seleccione la entidad del cortacésped. Solo es necesario si hay varios cortacéspedes configurados."
+                },
+                "pin": {
+                    "name": "Código PIN",
+                    "description": "Nuevo código PIN de 4 dígitos para el cortacésped."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Cortar césped",
-                "returnToDock": "Volver a la estación de carga",
+                "return_to_dock": "Volver a la estación de carga",
                 "pause": "Pausa"
             }
         },

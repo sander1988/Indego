@@ -154,7 +154,7 @@
             "mowing_mode": {
                 "name": "Maaimode",
                 "state": {
-                    "Calendar": "Handmatige kalender"
+                    "calendar": "Handmatige kalender"
                 }
             },
             "runtime_total": {
@@ -647,167 +647,207 @@
     "services": {
         "command": {
             "name": "Stuur commando",
-            "description": "Stuur commando's naar de grasmaaier. Selecteer een commando.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                },
-                "command": {
-                    "name": "Stuur commando",
-                    "description": "Stuur commando's naar de grasmaaier. Selecteer een commando."
-                }
-            }
-        },
-        "smartmowing": {
-            "name": "SmartMowing inschakelen",
-            "description": "Schakel SmartMowing in of uit. Ondersteunde waardes zijn: true of false.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                },
-                "enable": {
-                    "description": "Schakel SmartMowing in of uit.",
-                    "name": "Inschakelen/uitschakelen"
-                }
-            }
-        },
-        "delete_alert": {
-            "name": "Waarschuwing verwijderen",
-            "description": "Verwijder een specifieke melding.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                },
-                "alert_index": {
-                    "description": "De index van de melding. 0 is het nieuwste bericht.",
-                    "name": "Meldingsindex"
-                }
-            }
-        },
-        "delete_alert_all": {
-            "name": "Alle waarschuwingen verwijderen",
-            "description": "Verwijder alle meldingen.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                }
-            }
-        },
-        "read_alert": {
-            "name": "Waarschuwing als gelezen markeren",
-            "description": "Markeer een specifieke melding als gelezen.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                },
-                "alert_index": {
-                    "description": "De index van de melding. 0 is het nieuwste bericht.",
-                    "name": "Meldingsindex"
-                }
-            }
-        },
-        "read_alert_all": {
-            "name": "Alle waarschuwingen als gelezen markeren",
-            "description": "Markeer alle meldingen als gelezen.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                }
-            }
-        },
-        "download_map": {
-            "name": "Maaiwerkkaart downloaden",
-            "description": "Downloaded de huidge maaikaart van de Bosch Cloud API en slaat deze lokaal op als \"www/indego_map_base.svg\". De kaart weerspiegelt de laatst opgenomen maairoute.",
-            "fields": {
-                "mower_serial": {
-                    "description": "Grasmaaier serienummer. Alleen nodig wanneer je meerdere grasmaaiers hebt geconfigureerd.",
-                    "name": "Serienummer"
-                }
-            }
-        },
-        "set_calendar_slot": {
-            "name": "Kalenderslot activeren/deactiveren",
-            "description": "Wijzig een kalenderslot (tijden wijzigen, activeren of deactiveren)",
-            "fields": {
-                "mower_serial": {
-                    "name": "Serienummer",
-                    "description": "Serienummer van de grasmaaier. Alleen nodig als er meerdere grasmaaiers zijn geconfigureerd."
-                },
-                "calendar_type": {
-                    "name": "Kalendertype",
-                    "description": "Selecteer de kalender ('calendar' voor de handmatige kalender of 'predictive' voor gedeactiveerde tijden in SmartMowing-modus)."
-                },
-                "days": {
-                    "name": "Dag",
-                    "description": "Naam van de weekdag die moet worden geconfigureerd."
-                },
-                "slot": {
-                    "name": "Tijdslot",
-                    "description": "Welk tijdslot moet worden gewijzigd (1 of 2)."
-                },
-                "enabled": {
-                    "name": "Activeren/deactiveren",
-                    "description": "Activeer of deactiveer de geselecteerde dag/het geselecteerde tijdslot."
-                },
-                "start": {
-                    "name": "Start",
-                    "description": "Starttijd van het geselecteerde tijdslot. Alleen nodig als het tijdslot geactiveerd moet worden. Alleen uren en minuten worden gebruikt."
-                },
-                "end": {
-                    "name": "Einde",
-                    "description": "Eindtijd van het geselecteerde tijdslot. Alleen nodig als het tijdslot geactiveerd moet worden. Alleen uren en minuten worden gebruikt."
-                }
-            }
-        },
-        "set_bump_sensitivity": {
-            "name": "Gazonomstandigheden van de maaier instellen",
-            "description": "De gazonomstandigheden van de maaier instellen",
+            "description": "Stuurt een besturingscommando naar de maaier. Geldige commando's zijn \"mow\" (maaien starten), \"returnToDock\" (terug naar oplaadstation) en \"pause\" (maaien pauzeren).",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
                     "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
                 },
-                "bump_sensitivity": {
-                    "name": "Gazonomstandigheden",
-                    "description": "Gazonomstandigheden van de maaier"
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "command": {
+                    "name": "Commando",
+                    "description": "Commando dat naar de maaier moet worden verzonden."
                 }
             }
         },
-        "set_pin": {
-            "name": "PIN-code",
-            "description": "PIN-code van de maaier wijzigen",
+        "smartmowing": {
+            "name": "SmartMowing inschakelen",
+            "description": "In- of uitschakelen van de SmartMowing-functie, die het maaischema automatisch aanpast op basis van weersomstandigheden en grasgroei.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Serienummer van de maaier. Alleen nodig als meerdere maaiers zijn geconfigureerd."
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
                 },
-                "pin": {
-                    "name": "PIN-code",
-                    "description": "Nieuwe viercijferige PIN-code van de maaier"
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "enable": {
+                    "name": "Inschakelen/uitschakelen",
+                    "description": "Stelt de SmartMowing-status in. Gebruik \"true\" om in te schakelen of \"false\" om uit te schakelen."
+                }
+            }
+        },
+        "delete_alert": {
+            "name": "Waarschuwing verwijderen",
+            "description": "Verwijdert een specifieke waarschuwing op basis van de index. Index 0 verwijst naar de meest recente waarschuwing.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "alert_index": {
+                    "name": "Waarschuwingsindex",
+                    "description": "Index van de te verwijderen waarschuwing. 0 = meest recente, 1 = op één na meest recente, enz."
+                }
+            }
+        },
+        "delete_alert_all": {
+            "name": "Alle waarschuwingen verwijderen",
+            "description": "Verwijdert alle bestaande waarschuwingen van de maaier in één keer.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                }
+            }
+        },
+        "read_alert": {
+            "name": "Waarschuwing als gelezen markeren",
+            "description": "Markeert een specifieke waarschuwing als gelezen op basis van de index. Index 0 verwijst naar de meest recente waarschuwing.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "alert_index": {
+                    "name": "Waarschuwingsindex",
+                    "description": "Index van de als gelezen te markeren waarschuwing. 0 = meest recente, 1 = op één na meest recente, enz."
+                }
+            }
+        },
+        "read_alert_all": {
+            "name": "Alle waarschuwingen als gelezen markeren",
+            "description": "Markeert alle bestaande waarschuwingen van de maaier als gelezen.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                }
+            }
+        },
+        "download_map": {
+            "name": "Maaiwerkkaart downloaden",
+            "description": "Downloadt de huidige maaikaart van de Bosch Cloud API en slaat deze lokaal op als \"www/indego_map_base.svg\". De kaart weerspiegelt de laatst opgenomen maairoute.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                }
+            }
+        },
+        "set_calendar_slot": {
+            "name": "Kalenderslot instellen",
+            "description": "Stelt een kalenderslot in wanneer u een handmatig schema gebruikt in plaats van SmartMowing.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "days": {
+                    "name": "Dagen",
+                    "description": "Welke dag van de week moet worden geconfigureerd."
+                },
+                "slot": {
+                    "name": "Slot",
+                    "description": "Welk slot van de geselecteerde dag moet worden geconfigureerd (1 of 2)."
+                },
+                "enabled": {
+                    "name": "Inschakelen/uitschakelen",
+                    "description": "Of het geselecteerde slot moet worden ingeschakeld of uitgeschakeld."
+                },
+                "start": {
+                    "name": "Starttijd",
+                    "description": "Stel de starttijd in voor het geselecteerde slot en de dag. Alleen nodig als u een slot wilt inschakelen. Alleen uren en minuten worden gebruikt."
+                },
+                "end": {
+                    "name": "Eindtijd",
+                    "description": "Stel de eindtijd in voor het geselecteerde slot en de dag. Alleen nodig als u een slot wilt inschakelen. Alleen uren en minuten worden gebruikt."
                 }
             }
         },
         "set_predictive_mowing_window": {
             "name": "SmartMowing-tijdvenster instellen",
-            "description": "Het tijdvenster waarin de maaier in SmartMowing-modus mag maaien.",
+            "description": "Stelt het toegestane maaivenster in voor SmartMowing.",
             "fields": {
                 "mower_serial": {
                     "name": "Serienummer",
-                    "description": "Serienummer van de maaier. Alleen nodig als meerdere maaiers zijn geconfigureerd."
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
                 },
                 "earliest_start": {
                     "name": "Vroegste start",
-                    "description": "De vroegste tijd waarop de maaier moet beginnen."
+                    "description": "Vroegste tijd waarop SmartMowing mag maaien. Alleen uren en minuten worden gebruikt."
                 },
                 "latest_end": {
                     "name": "Laatste einde",
-                    "description": "De laatste tijd waarop de maaier moet stoppen."
+                    "description": "Laatste tijd waarop SmartMowing mag maaien. Alleen uren en minuten worden gebruikt."
+                }
+            }
+        },
+        "set_bump_sensitivity": {
+            "name": "Gazonomstandigheden instellen",
+            "description": "Stelt de stootgevoeligheid van de maaier in.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "bump_sensitivity": {
+                    "name": "Gazonomstandigheden",
+                    "description": "Stootgevoeligheid van de maaier."
+                }
+            }
+        },
+        "set_pin": {
+            "name": "PIN-code wijzigen",
+            "description": "Wijzigt de PIN-code van de maaier.",
+            "fields": {
+                "mower_serial": {
+                    "name": "Serienummer",
+                    "description": "Serienummer van de maaier. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "mower_entity": {
+                    "name": "Entiteit",
+                    "description": "Selecteer de maaier-entiteit. Alleen vereist als meerdere maaiers zijn geconfigureerd."
+                },
+                "pin": {
+                    "name": "PIN-code",
+                    "description": "Nieuwe 4-cijferige PIN-code voor de maaier."
                 }
             }
         }
@@ -833,7 +873,7 @@
         "command_options": {
             "options": {
                 "mow": "Maaien",
-                "returnToDock": "Terug naar het laadstation",
+                "return_to_dock": "Terug naar het laadstation",
                 "pause": "Pauze"
             }
         },

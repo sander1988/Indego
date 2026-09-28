@@ -14,6 +14,7 @@ DATA_UPDATED: Final = f"{DOMAIN}_data_updated"
 
 CONF_MOWER_SERIAL: Final = "mower_serial"
 CONF_MOWER_NAME: Final = "mower_name"
+CONF_MOWER_ENTITY: Final = "mower_entity"
 CONF_EXPOSE_INDEGO_AS_MOWER: Final = "expose_mower"
 CONF_EXPOSE_INDEGO_AS_VACUUM: Final = "expose_vacuum"
 CONF_SHOW_ALL_ALERTS: Final = "show_all_alerts"
