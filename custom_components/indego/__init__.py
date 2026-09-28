@@ -3428,8 +3428,14 @@ class IndegoHub:
         time_since_success = current_time - self._last_successful_update
 
         if time_since_success > ONLINE_TIMEOUT_SECONDS:
-            _LOGGER.warning("Mower offline - no successful API response for %d seconds (timeout threshold: %d seconds)",
-                           int(time_since_success), ONLINE_TIMEOUT_SECONDS)
+            if self.entities[ENTITY_ONLINE].state is not False:
+                _LOGGER.warning(
+                    "Mower offline - no successful API response for %d seconds "
+                    "(timeout threshold: %d seconds)",
+                    int(time_since_success),
+                    ONLINE_TIMEOUT_SECONDS,
+                )
+        
             self.set_online_state(False)
 
     async def _update_firmware_version(self):
