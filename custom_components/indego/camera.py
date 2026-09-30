@@ -3,6 +3,7 @@ import time
 import asyncio
 import aiofiles
 import os
+import re
 
 from homeassistant.components.camera import (
     Camera,
@@ -13,7 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import DOMAIN, ENTITY_ONLINE, ENTITY_MOWER_STATE
+from .const import DOMAIN, ENTITY_ONLINE, ENTITY_MOWER_STATE, CONF_MAP_ROTATION
 from .mixins import IndegoEntity
 
 _LOGGER = logging.getLogger(__name__)
@@ -147,6 +148,31 @@ class IndegoCamera(IndegoEntity, Camera):
 
                 svg_text = svg_text.replace('<path id="mower"', '<!-- removed mower -->')
                 svg_text = svg_text.replace("</svg>", symbol + "</svg>")
+
+            # --- NEU: Karte um den eingestellten Winkel drehen ---
+            rotation = self._indego_hub.config_entry.options.get(CONF_MAP_ROTATION, 0)
+            if rotation:
+                # ViewBox auslesen, um den Mittelpunkt für die Drehung zu berechnen
+                viewbox_match = re.search(r'viewBox=["\']([^"\']+)["\']', svg_text)
+                if viewbox_match:
+                    parts = viewbox_match.group(1).split()
+                    if len(parts) == 4:
+                        x, y, w, h = map(float, parts)
+                        cx = x + w / 2
+                        cy = y + h / 2
+                        center = f"{cx},{cy}"
+                    else:
+                        center = "50%,50%"
+                else:
+                    center = "50%,50%"
+
+                # transform-Attribut zum <svg>-Tag hinzufügen (falls noch nicht vorhanden)
+                svg_tag_match = re.search(r'(<svg[^>]*>)', svg_text)
+                if svg_tag_match:
+                    old_tag = svg_tag_match.group(1)
+                    if 'transform=' not in old_tag:
+                        new_tag = old_tag.rstrip('>') + f' transform="rotate({rotation}, {center})">'
+                        svg_text = svg_text.replace(old_tag, new_tag, 1)
 
             self._svg_map = svg_text
             self.async_write_ha_state()

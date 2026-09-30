@@ -22,6 +22,7 @@ from .const import (
     CONF_EXPOSE_INDEGO_AS_VACUUM,
     CONF_SHOW_ALL_ALERTS,
     CONF_USER_AGENT,
+    CONF_MAP_ROTATION,
     OAUTH2_CLIENT_ID,
     HTTP_HEADER_USER_AGENT,
     HTTP_HEADER_USER_AGENT_DEFAULT,
@@ -79,6 +80,10 @@ class IndegoOptionsFlowHandler(OptionsFlowWithConfigEntry):
                 vol.Optional(
                     CONF_SHOW_ALL_ALERTS, default=self.options.get(CONF_SHOW_ALL_ALERTS, False)
                 ): bool,
+                vol.Optional(
+                    CONF_MAP_ROTATION,
+                    default=self.options.get(CONF_MAP_ROTATION, 0)
+                ): vol.Coerce(int),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)
