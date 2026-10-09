@@ -184,7 +184,7 @@ class IndegoFlowHandler(config_entry_oauth2_flow.AbstractOAuth2FlowHandler, doma
                 if self._data[CONF_MOWER_SERIAL] not in self._mower_serials:
                     return self.async_abort(reason="mower_not_found")
 
-                self.async_set_unique_id(self._data[CONF_MOWER_SERIAL])
+                await self.async_set_unique_id(self._data[CONF_MOWER_SERIAL])
                 self._abort_if_unique_id_mismatch()
 
                 _LOGGER.debug("Reauth - updating configuration for mower: %s", self._data[CONF_MOWER_SERIAL])
