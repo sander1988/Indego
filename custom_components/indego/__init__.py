@@ -2809,7 +2809,7 @@ class IndegoHub:
         )
 
     def set_online_state(self, online: bool):
-        current_is_online = self.entities[ENTITY_ONLINE].state
+        current_is_online = self.entities[ENTITY_ONLINE].is_on
         if current_is_online != online:
             if online:
                 _LOGGER.info("Mower is now ONLINE")
@@ -2831,7 +2831,7 @@ class IndegoHub:
         if ENTITY_SERVICE_STATUS not in self.entities:
             return
 
-        current_status = self.entities[ENTITY_SERVICE_STATUS].state
+        current_status = self.entities[ENTITY_SERVICE_STATUS].is_on
         if current_status != service_up:
             if service_up:
                 _LOGGER.info("Bosch service is now UP")
@@ -2868,11 +2868,13 @@ class IndegoHub:
                 _LOGGER.debug(log_msg)
 
             self.set_online_state(False)
-            return
+            # Re-raise so refresh_state() applies STATUS_UPDATE_FAILURE_DELAY_TIME
+            # instead of immediately scheduling the next request.
+            raise
         except Exception as exc:
             _LOGGER.error("Failed to fetch mower state from Bosch API: %s", str(exc))
             self.set_online_state(False)
-            return
+            raise
 
         if self._shutdown:
             return
@@ -3456,7 +3458,7 @@ class IndegoHub:
         time_since_success = current_time - self._last_successful_update
 
         if time_since_success > ONLINE_TIMEOUT_SECONDS:
-            if self.entities[ENTITY_ONLINE].state is not False:
+            if self.entities[ENTITY_ONLINE].is_on is not False:
                 _LOGGER.warning(
                     "Mower offline - no successful API response for %d seconds "
                     "(timeout threshold: %d seconds)",
